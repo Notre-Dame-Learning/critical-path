@@ -1,0 +1,25 @@
+{
+  "_note": "Phases follow the ODL PM SOP (Design, Development, Delivery) with Learning Design milestones and the Media 2M-7M steps. Discovery, intake and the signed charter happen before week 1.",
+  "id": "intro-psych-online",
+  "title": "Intro to Psychology online",
+  "brief": "The charter is signed: convert Dr. Ward's in-person Intro to Psychology into a fully online Canvas course with 8 modules, eight 5-minute studio lecture videos and new assessments. The course goes live on the first day of term.",
+  "facultyId": "fac1",
+  "team": { "ld": "ld1", "mp": "mp1", "faculty": "fac1" },
+  "launchWeek": 14,
+  "actionPointsPerWeek": 2,
+  "tasks": [
+    { "id": "analysis", "name": "Front-end analysis (LD Milestone 1)", "phase": "Design", "owner": "ld", "effort": 8, "dependsOn": [] },
+    { "id": "brief", "name": "Creative brief and lookbook", "phase": "Design", "owner": "mp", "effort": 6, "dependsOn": [] },
+    { "id": "coursemap", "name": "Course map and assessment plan (LD Milestone 2)", "phase": "Design", "owner": "ld", "effort": 14, "dependsOn": ["analysis"] },
+    { "id": "scripts", "name": "Faculty drafts video scripts", "phase": "Development", "owner": "faculty", "effort": 16, "dependsOn": ["coursemap", "brief"] },
+    { "id": "content", "name": "Faculty develops readings and assessments", "phase": "Development", "owner": "faculty", "effort": 12, "dependsOn": ["coursemap"] },
+    { "id": "scriptreview", "name": "Script review and finalize", "phase": "Development", "owner": "mp", "effort": 6, "dependsOn": ["scripts"] },
+    { "id": "production", "name": "Production days in studio", "phase": "Development", "owner": "mp", "effort": 12, "dependsOn": ["scriptreview"] },
+    { "id": "post", "name": "Post-production: rough cuts and final cut", "phase": "Development", "owner": "mp", "effort": 24, "dependsOn": ["production"] },
+    { "id": "distribution", "name": "Distribution: Panopto, captions, embed codes", "phase": "Development", "owner": "mp", "effort": 5, "dependsOn": ["post"] },
+    { "id": "mastersite", "name": "Master site build in Canvas", "phase": "Development", "owner": "ld", "effort": 20, "dependsOn": ["content"] },
+    { "id": "embed", "name": "Embed videos in the master site", "phase": "Development", "owner": "ld", "effort": 4, "dependsOn": ["mastersite", "distribution"] },
+    { "id": "qa", "name": "Migrate to live course and QA", "phase": "Delivery", "owner": "ld", "effort": 8, "dependsOn": ["embed"], "isQA": true },
+    { "id": "handoff", "name": "Hand-off document and meeting", "phase": "Delivery", "owner": "ld", "effort": 3, "dependsOn": ["qa"] }
+  ]
+}

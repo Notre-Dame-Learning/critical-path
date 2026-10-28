@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Critical Path</title>
+  <meta name="claude:viewport-fit-sides" content="cover">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <h1>Critical Path</h1>
+      <p class="sub">A project management simulator · Office of Digital Learning</p>
+    </div>
+    <div class="clock" id="clock"></div>
+  </header>
+
+  <main id="main">
+    <section class="intro card" id="intro" hidden>
+      <h2>Your first project</h2>
+      <p id="brief"></p>
+      <div class="cast" id="cast"></div>
+      <ul class="how">
+        <li>Each turn is one week. Spend <strong>Action Points</strong> on moves, then end the week.</li>
+        <li>Situations come up at least every other week. Several answers are partly right; one is best. Escalating to your supervisor PM is always allowed, and the debrief shows what you could have done yourself.</li>
+        <li>Mistakes hide. Rework you don't find early shows up late.</li>
+        <li>The course opens on launch day whether it's ready or not.</li>
+      </ul>
+      <button class="primary" id="start">Start week 1</button>
+    </section>
+
+    <div class="grid" id="game" hidden>
+      <section class="card" aria-labelledby="board-h">
+        <h2 id="board-h">Project plan</h2>
+        <ol class="tasks" id="tasks"></ol>
+      </section>
+
+      <section class="card turn" aria-labelledby="turn-h">
+        <h2 id="turn-h">This week</h2>
+        <div id="report"></div>
+        <div id="event"></div>
+        <div id="actions"></div>
+        <ul class="feed" id="feed"></ul>
+        <button class="primary" id="end-week">End week</button>
+      </section>
+
+      <section class="card" aria-labelledby="team-h">
+        <h2 id="team-h">People</h2>
+        <div id="team"></div>
+      </section>
+    </div>
+
+    <section class="card end" id="end" hidden></section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

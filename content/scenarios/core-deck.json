@@ -1,0 +1,2127 @@
+{
+  "_note": "Situations grounded in the ODL PM, Learning Design and Media SOPs. Each has exactly one full-credit answer; other answers earn partial credit and explain why in 'why'. 'who' is the person shown; 'mood' their face when the situation appears; 'reaction' their face after the choice.",
+  "id": "core-deck",
+  "events": [
+    {
+      "id": "no-agenda",
+      "title": "Tomorrow's Meeting Has No Agenda",
+      "who": "ld",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          1,
+          3
+        ],
+        "requires": {},
+        "chance": 0.5
+      },
+      "text": "Priya stops by: \"Tomorrow's content mapping meeting with Dr. Ward is our first real working session. Is there an agenda? I need her to bring her old syllabus and her top three outcomes.\"",
+      "choices": [
+        {
+          "id": "draft-with-ld",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Draft the agenda with Priya today, list what Dr. Ward should bring, and send it with the materials so she can prepare.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 4
+            },
+            {
+              "type": "addEffort",
+              "task": "coursemap",
+              "value": -2
+            }
+          ],
+          "outcome": "Dr. Ward arrives with her syllabus and outcomes. The meeting ends early with decisions made.",
+          "why": "The SOP asks the PM to draft every agenda with the lead designer or producer and share materials ahead, especially for busy faculty."
+        },
+        {
+          "id": "send-myself",
+          "tier": "resolve",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Write a quick agenda yourself and send it tomorrow morning.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "coursemap",
+              "value": 1
+            }
+          ],
+          "outcome": "The agenda goes out, but Dr. Ward hasn't seen it before the meeting and arrives without her syllabus.",
+          "why": "Having an agenda helps, but it missed Priya's goals for the meeting and gave the faculty no time to prepare."
+        },
+        {
+          "id": "wing-it",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "frustrated",
+          "label": "Skip the agenda; it's a casual first meeting.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "coursemap",
+              "value": 4
+            },
+            {
+              "type": "trust",
+              "value": -3
+            }
+          ],
+          "outcome": "The hour drifts. You leave with a second meeting to schedule.",
+          "why": "Meetings without an agenda wander, and faculty time is the scarcest resource on the project."
+        },
+        {
+          "id": "reschedule",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "worried",
+          "label": "Postpone the meeting a week so there's time to prepare.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": -3,
+              "weeks": 1
+            },
+            {
+              "type": "trust",
+              "value": -2
+            }
+          ],
+          "outcome": "You get prepared, but lose a week of design time and Dr. Ward has to rearrange her calendar.",
+          "why": "A day is enough time to draft an agenda; moving the meeting costs schedule and goodwill."
+        }
+      ],
+      "debrief": {
+        "concept": "Meetings are the PM's main tool. Prepare them so faculty time isn't wasted.",
+        "independent": "Agree the meeting goals with the lead designer, draft the agenda from the template, and send it with any materials a day or more ahead.",
+        "escalateWhen": "Not an escalation issue. This is core PM work.",
+        "sop": "PM SOP: Managing Meetings, Meeting agendas"
+      }
+    },
+    {
+      "id": "timeline-slip-request",
+      "title": "Can We Just Move the Date?",
+      "who": "ld",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          2,
+          6
+        ],
+        "requires": {
+          "taskStarted": "coursemap",
+          "taskNotDone": "coursemap"
+        },
+        "chance": 0.4
+      },
+      "text": "Priya needs one more week on the course map. \"Can you just slide it in Asana? It's only a week.\" The timeline was reviewed by the ODL directors last month.",
+      "choices": [
+        {
+          "id": "knock-on-then-approval",
+          "tier": "escalate_plan",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Map the knock-on effects with Priya and Marcus, propose how to absorb them, then take the change to the directors for approval before updating Asana.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": 2,
+              "weeks": 1
+            }
+          ],
+          "outcome": "The directors approve a one-week shift with scripting starting in parallel. Everyone sees the same dates.",
+          "why": "Once a timeline is established, changes need director review. Bringing the knock-on effects and a plan is exactly how to ask."
+        },
+        {
+          "id": "just-move-it",
+          "tier": "resolve",
+          "credit": 0.2,
+          "reaction": "happy",
+          "label": "Slide the date in Asana. It's only a week.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "scripts",
+              "value": 3
+            }
+          ],
+          "outcome": "Asana updates. Marcus finds out two weeks later that scripting now collides with another shoot.",
+          "why": "Quiet changes skip the approval the SOP requires and hide knock-on effects from the rest of the team."
+        },
+        {
+          "id": "say-no",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "sad",
+          "label": "Hold the date. Ask Priya to finish on time.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -8
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "coursemap",
+              "value": 3
+            }
+          ],
+          "outcome": "Priya delivers on time, but the assessment plan is thin.",
+          "why": "Holding a date by pressure alone moves the problem into quality."
+        },
+        {
+          "id": "cut-assessment-plan",
+          "tier": "resolve",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Keep the date by finishing the assessment plan later, during development.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "content",
+              "value": 3
+            }
+          ],
+          "outcome": "The course map lands on time; the assessment work shifts into development.",
+          "why": "A sensible trade-off, but it changes the plan without the team or directors agreeing to it."
+        },
+        {
+          "id": "forward-to-sup",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Tell Jordan that Priya wants more time and ask what to do.",
+          "effects": [],
+          "outcome": "Jordan asks what the change affects. You don't know yet.",
+          "why": "Escalating is right here, but bring the impact and a recommendation, not just the request."
+        }
+      ],
+      "debrief": {
+        "concept": "Change control: know who approves timeline changes, and surface knock-on effects before asking.",
+        "independent": "Meet with the affected people, review the timeline, list knock-on effects and how to absorb them. Then get a clear approval and update Asana.",
+        "escalateWhen": "Here escalation is required: established timelines change only with director approval. Come with the analysis.",
+        "sop": "PM SOP: Design phase; When Things Go Wrong, With Timelines"
+      }
+    },
+    {
+      "id": "meeting-derails",
+      "title": "The Scripting Workshop Gets Heated",
+      "who": "mp",
+      "mood": "frustrated",
+      "trigger": {
+        "weeks": [
+          3,
+          8
+        ],
+        "requires": {
+          "taskDone": "brief"
+        },
+        "chance": 0.4
+      },
+      "text": "Forty minutes into the scripting workshop, Dr. Ward and Marcus are arguing about tone. She wants formal lectures; he's pitching the conversational style from the lookbook. Half the agenda is untouched.",
+      "choices": [
+        {
+          "id": "refocus-park",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "neutral",
+          "label": "Restate the meeting goals, summarize both views, and park the tone question for a short follow-up where Marcus shows two sample clips.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 3
+            },
+            {
+              "type": "addEffort",
+              "task": "scripts",
+              "value": -2
+            }
+          ],
+          "outcome": "The room calms down. You finish the agenda, and the sample clips settle tone the next week.",
+          "why": "The SOP's first move: remind everyone of the objectives, summarize, and refocus. Parking the debate keeps the meeting productive."
+        },
+        {
+          "id": "end-meeting",
+          "tier": "resolve",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Professionally end the meeting and reschedule.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "scripts",
+              "value": 2
+            }
+          ],
+          "outcome": "Things cool off, but you lose the rest of the agenda and a week of scripting.",
+          "why": "Ending a meeting is a valid SOP option when it's unproductive, but try refocusing first."
+        },
+        {
+          "id": "side-with-faculty",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "sad",
+          "label": "Side with Dr. Ward. It's her course.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -10
+            },
+            {
+              "type": "trust",
+              "value": 3
+            }
+          ],
+          "outcome": "Dr. Ward is satisfied. Marcus goes quiet for the rest of the meeting.",
+          "why": "The PM facilitates; picking a side undermines the producer's expertise and skips the evidence."
+        },
+        {
+          "id": "let-it-run",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "frustrated",
+          "label": "Let them work it out; creative tension is healthy.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -5
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -5
+            },
+            {
+              "type": "addEffort",
+              "task": "scripts",
+              "value": 3
+            }
+          ],
+          "outcome": "The meeting runs over and ends without decisions.",
+          "why": "Keeping meetings on task is the PM's job."
+        },
+        {
+          "id": "escalate-tone",
+          "tier": "escalate_plan",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "After the meeting, ask Jordan to step in on the tone decision.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "scripts",
+              "value": 1
+            }
+          ],
+          "outcome": "Jordan suggests the sample-clip approach you could have proposed in the room.",
+          "why": "This is a facilitation problem you can handle. Escalate only if the disagreement persists."
+        }
+      ],
+      "debrief": {
+        "concept": "Facilitation: restate goals, summarize, refocus, and know when to end a meeting.",
+        "independent": "Remind people what the meeting is for, summarize where things stand, and move the disagreement to a follow-up with evidence (sample clips, lookbook). End the meeting professionally if it keeps going sideways, and do an internal touchbase before the next one.",
+        "escalateWhen": "Bring in ODL leadership when a disagreement keeps blocking decisions across meetings.",
+        "sop": "PM SOP: When Things Go Wrong, In Meetings"
+      }
+    },
+    {
+      "id": "silent-faculty",
+      "title": "Silent Faculty",
+      "who": "ld",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          4,
+          10
+        ],
+        "requires": {
+          "taskStarted": "scripts",
+          "taskNotDone": "scripts"
+        },
+        "chance": 0.45
+      },
+      "text": "Dr. Ward hasn't answered Priya's or Marcus's last emails. Scripts are due in two weeks. Priya: \"I've sent three messages. Marcus sent two of his own.\"",
+      "choices": [
+        {
+          "id": "streamline-checkins",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Route all requests through you, and propose a standing 15-minute Friday check-in plus comments in the script Google Docs.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 5
+            },
+            {
+              "type": "responsiveness",
+              "value": 0.2,
+              "weeks": 5
+            }
+          ],
+          "outcome": "Dr. Ward accepts the Friday slot. Fewer emails, faster answers.",
+          "why": "For hard-to-reach faculty the SOP says streamline communication through as few people as possible, limit emails, and use short check-ins and async comments."
+        },
+        {
+          "id": "long-email",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "neutral",
+          "label": "Send one long email listing everything the team needs from her.",
+          "effects": [
+            {
+              "type": "responsiveness",
+              "value": 0.05,
+              "weeks": 2
+            }
+          ],
+          "outcome": "She replies to the first item and misses the rest.",
+          "why": "One channel is better, but a long list buries the asks."
+        },
+        {
+          "id": "everyone-follow-up",
+          "tier": "resolve",
+          "credit": 0.1,
+          "reaction": "frustrated",
+          "label": "Ask Priya and Marcus to each follow up again.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -5
+            },
+            {
+              "type": "responsiveness",
+              "value": -0.1,
+              "weeks": 2
+            }
+          ],
+          "outcome": "Dr. Ward now has seven unread emails from ODL.",
+          "why": "More senders means more noise. This is the opposite of what the SOP recommends."
+        },
+        {
+          "id": "escalate-with-plan",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Brief Jordan on the risk to the script deadline, what's been tried, and your proposed check-in plan.",
+          "effects": [
+            {
+              "type": "responsiveness",
+              "value": 0.15,
+              "weeks": 3
+            }
+          ],
+          "outcome": "Jordan agrees with your plan and suggests you try it first.",
+          "why": "A solid escalation, but this is a communication fix within your control."
+        },
+        {
+          "id": "forward",
+          "tier": "escalate",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Forward the thread to Jordan: \"Faculty isn't responding.\"",
+          "effects": [
+            {
+              "type": "responsiveness",
+              "value": 0.05,
+              "weeks": 2
+            }
+          ],
+          "outcome": "Jordan asks what you've tried and what you recommend.",
+          "why": "Escalating without options hands the thinking upward."
+        },
+        {
+          "id": "wait",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Wait. She's probably just busy with midterms.",
+          "effects": [
+            {
+              "type": "responsiveness",
+              "value": -0.15,
+              "weeks": 3
+            }
+          ],
+          "outcome": "Another week passes in silence.",
+          "why": "Waiting lets the risk grow."
+        }
+      ],
+      "debrief": {
+        "concept": "Stakeholder communication: fit the channel to the person.",
+        "independent": "Find out how the faculty member prefers to communicate. Funnel requests through one person, keep emails few and short, and use brief standing check-ins and doc comments.",
+        "escalateWhen": "Bring in ODL leadership when silence persists after you've changed the approach and the delivery date is at risk.",
+        "sop": "PM SOP: Challenging Faculty; Faculty Availability"
+      }
+    },
+    {
+      "id": "faculty-overwhelmed",
+      "title": "Dr. Ward Is Drowning",
+      "who": "faculty",
+      "mood": "sad",
+      "trigger": {
+        "weeks": [
+          5,
+          10
+        ],
+        "requires": {
+          "taskStarted": "content"
+        },
+        "chance": 0.4
+      },
+      "text": "Dr. Ward emails late at night: \"Scripts, quiz questions and reading lists are all due the same week as my midterms. I can't do all of this.\"",
+      "choices": [
+        {
+          "id": "repace",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Re-pace with Priya and Marcus: stagger the deadlines, and have Priya draft quiz questions from the course map for her to edit.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 8
+            },
+            {
+              "type": "addEffort",
+              "task": "content",
+              "value": -4
+            },
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": -2,
+              "weeks": 2
+            }
+          ],
+          "outcome": "\"This I can do.\" Her drafts start arriving again.",
+          "why": "The SOP asks the PM to watch faculty pacing, and to work offline on drafts the faculty can react to."
+        },
+        {
+          "id": "extend-all",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Push all her deadlines back two weeks.",
+          "effects": [
+            {
+              "type": "responsiveness",
+              "value": -0.1,
+              "weeks": 2
+            },
+            {
+              "type": "trust",
+              "value": 3
+            }
+          ],
+          "outcome": "She's relieved, but production and the build now start late.",
+          "why": "Moving everything ignores the knock-on effects on media and design, and skips approval."
+        },
+        {
+          "id": "hold-firm",
+          "tier": "resolve",
+          "credit": 0.2,
+          "reaction": "sad",
+          "label": "Remind her the charter set these dates.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -8
+            }
+          ],
+          "outcome": "She goes quiet.",
+          "why": "The charter matters, but this is a pacing problem the team can solve together."
+        },
+        {
+          "id": "escalate-with-plan",
+          "tier": "escalate_plan",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Ask Jordan for approval to re-sequence her deliverables, with a proposed staggered schedule.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 4
+            },
+            {
+              "type": "addEffort",
+              "task": "content",
+              "value": -2
+            }
+          ],
+          "outcome": "Jordan approves. The new schedule helps, a few days later than it could have.",
+          "why": "Fine if the re-pace changes milestone dates; otherwise you can rearrange within the window yourself."
+        }
+      ],
+      "debrief": {
+        "concept": "Pace the faculty: steady progress beats a pile-up.",
+        "independent": "Stagger asks, let designers and producers draft so faculty only react, and keep the delivery date fixed while moving work within it.",
+        "escalateWhen": "Escalate if re-pacing moves established milestones; those need director approval.",
+        "sop": "PM SOP: Development phase note on pacing; Faculty Availability"
+      }
+    },
+    {
+      "id": "script-too-long",
+      "title": "The 5-Minute Video Is 14 Minutes",
+      "who": "mp",
+      "mood": "frustrated",
+      "trigger": {
+        "weeks": [
+          5,
+          11
+        ],
+        "requires": {
+          "taskStarted": "scriptreview",
+          "taskNotDone": "production"
+        },
+        "chance": 0.45
+      },
+      "text": "Marcus is reviewing scripts: \"Module 3 reads at about 14 minutes. The charter says 5-minute videos. She's attached to every word.\"",
+      "choices": [
+        {
+          "id": "charter-trim",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Remind Dr. Ward the charter commits to 5-minute videos and make trimming a priority, with Marcus marking which parts could move to a reading.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -1
+            },
+            {
+              "type": "addEffort",
+              "task": "scriptreview",
+              "value": 2
+            }
+          ],
+          "outcome": "She trims to 6 minutes and moves the rest to a reading. Marcus can live with 6.",
+          "why": "This is the SOP's own example: point to the charter, prioritize the trim, and offer an in-scope alternative."
+        },
+        {
+          "id": "split-in-two",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Split it into two videos.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 5
+            },
+            {
+              "type": "addEffort",
+              "task": "production",
+              "value": 2
+            }
+          ],
+          "outcome": "Everyone's happy until post-production runs long.",
+          "why": "It adds a deliverable that isn't in the charter."
+        },
+        {
+          "id": "fix-in-post",
+          "tier": "ignore",
+          "credit": 0.2,
+          "reaction": "frustrated",
+          "label": "Film it as written and cut it down in editing.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "post",
+              "value": 8
+            }
+          ],
+          "outcome": "The shoot runs long and the edit becomes a puzzle.",
+          "why": "Problems left in the script get more expensive in production and post."
+        },
+        {
+          "id": "marcus-rewrites",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "worried",
+          "label": "Ask Marcus to rewrite it shorter himself.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -6
+            },
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -3,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Dr. Ward rejects the rewrite as \"not my voice.\"",
+          "why": "Producers review scripts, but the content belongs to the faculty member."
+        },
+        {
+          "id": "escalate-plan",
+          "tier": "escalate_plan",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask Jordan to talk to Dr. Ward about the length.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "scriptreview",
+              "value": 2
+            }
+          ],
+          "outcome": "Jordan points back to the charter, just as you could have.",
+          "why": "Scope reminders are the PM's job first. Escalate if creep keeps coming back."
+        }
+      ],
+      "debrief": {
+        "concept": "Scope: the charter is your tool for holding the line kindly.",
+        "independent": "Refer to the charter, make the fix an action item, and offer an in-scope alternative (move detail to a reading or the LMS).",
+        "escalateWhen": "If scope creep persists, work with the practice area directors to find the cause; in the worst case escalate to the ODL director.",
+        "sop": "PM SOP: Change of Scope"
+      }
+    },
+    {
+      "id": "interactive-request",
+      "title": "Can We Add a Simulation?",
+      "who": "faculty",
+      "mood": "happy",
+      "trigger": {
+        "weeks": [
+          3,
+          10
+        ],
+        "requires": {
+          "taskDone": "coursemap"
+        },
+        "chance": 0.4
+      },
+      "text": "Dr. Ward saw a colleague's custom interactive brain simulation. \"Can we build one for Module 5? It would be perfect.\" It isn't in the charter.",
+      "choices": [
+        {
+          "id": "lms-alternative",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "neutral",
+          "label": "Ask what she wants students to learn from it, then have Priya propose a way to meet that goal directly in Canvas.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 2
+            }
+          ],
+          "outcome": "Priya designs a labelled-diagram activity in Canvas. Dr. Ward likes it, and nothing new goes into scope.",
+          "why": "The SOP suggests discussing ways to reach the goal directly on the LMS when an interactive isn't in scope."
+        },
+        {
+          "id": "build-it",
+          "tier": "resolve",
+          "credit": 0.1,
+          "reaction": "happy",
+          "label": "Say yes. It'll make the course stand out.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 6
+            },
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 14
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -10
+            }
+          ],
+          "outcome": "Dr. Ward is thrilled. Marcus is now animating on top of eight videos.",
+          "why": "Out-of-scope work with no trade-off lands on the team and the schedule."
+        },
+        {
+          "id": "flat-no",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "sad",
+          "label": "Tell her it's out of scope.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -6
+            }
+          ],
+          "outcome": "Correct, but she feels shut down.",
+          "why": "Scope holds, but without an alternative it costs trust."
+        },
+        {
+          "id": "phase-two",
+          "tier": "resolve",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Log it as a possible future project after launch.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -1
+            }
+          ],
+          "outcome": "She agrees to revisit after launch.",
+          "why": "Good scope control; even better is meeting the learning goal now within scope."
+        },
+        {
+          "id": "escalate-plan",
+          "tier": "escalate_plan",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask Jordan whether ODL can take on the extra work.",
+          "effects": [],
+          "outcome": "Jordan asks whether you explored an in-scope option first.",
+          "why": "Explore in-scope options before asking for more resources."
+        }
+      ],
+      "debrief": {
+        "concept": "Scope: go back to the learning goal behind the request.",
+        "independent": "Ask what the request is for. Propose an in-scope way to reach the same goal, often directly in the LMS.",
+        "escalateWhen": "Escalate when the faculty member insists on out-of-scope work after you've offered alternatives.",
+        "sop": "PM SOP: Change of Scope"
+      }
+    },
+    {
+      "id": "calendar-not-blocked",
+      "title": "Somebody Else Booked the Studio",
+      "who": "mp",
+      "mood": "sad",
+      "trigger": {
+        "weeks": [
+          6,
+          12
+        ],
+        "requires": {
+          "taskStarted": "scriptreview",
+          "taskNotDone": "production"
+        },
+        "chance": 0.45
+      },
+      "text": "Marcus: \"The studio and two of our crew are booked for another project on our shoot days. Our dates were never blocked on the media calendar.\"",
+      "choices": [
+        {
+          "id": "rebook-block-resequence",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Book the next open dates and block every remaining production day on the media calendar now. Have Priya build the master site with video placeholders meanwhile.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -4,
+              "weeks": 2
+            },
+            {
+              "type": "addEffort",
+              "task": "embed",
+              "value": -1
+            }
+          ],
+          "outcome": "You lose a week of shooting, but the build keeps moving and it won't happen again.",
+          "why": "Blocking production days is a PM duty in the SOP; re-sequencing keeps the rest of the team productive."
+        },
+        {
+          "id": "just-rebook",
+          "tier": "resolve",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Book the next open dates.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -5,
+              "weeks": 2
+            }
+          ],
+          "outcome": "New dates are set. The other remaining days are still unblocked.",
+          "why": "Fixes today's problem but not the cause."
+        },
+        {
+          "id": "weekend-shoot",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Ask Marcus to shoot on a Saturday.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -12
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "production",
+              "value": 3
+            }
+          ],
+          "outcome": "The shoot happens, with a tired crew.",
+          "why": "Overtime as a first resort costs morale and quality."
+        },
+        {
+          "id": "escalate-plan",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Ask Jordan and the directors whether the other project can swap a day, with the impact on our launch.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -2,
+              "weeks": 1
+            }
+          ],
+          "outcome": "The other project swaps one day. You still need to block the rest.",
+          "why": "Reasonable for a shared-resource conflict, but the root cause, blocking calendars, is yours to fix."
+        },
+        {
+          "id": "wait",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Wait for the studio to free up.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -7,
+              "weeks": 3
+            }
+          ],
+          "outcome": "Three weeks pass before the cameras roll.",
+          "why": "Production sits on the critical path; waiting moves the launch."
+        }
+      ],
+      "debrief": {
+        "concept": "Protect the critical path: production dates are scarce.",
+        "independent": "As soon as production dates are known, block them on the media team's calendar. When a path stalls, re-sequence other work (placeholders in the master site).",
+        "escalateWhen": "Escalate for shared-resource conflicts you can't resolve with the other project's PM.",
+        "sop": "PM SOP: Design phase (block media calendars); LD SOP: placeholders"
+      }
+    },
+    {
+      "id": "video-late",
+      "title": "Two Videos Will Be a Week Late",
+      "who": "mp",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          9,
+          14
+        ],
+        "requires": {
+          "taskStarted": "post",
+          "taskNotDone": "post"
+        },
+        "chance": 0.45
+      },
+      "text": "Marcus: \"Modules 7 and 8 will be a week late. The audio from the shoot needs more cleanup than I planned.\"",
+      "choices": [
+        {
+          "id": "timeline-meeting",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Meet with Marcus and Priya, check that Priya still has time to place the videos before launch, have her finish the rest of the site first, then get a clear change approval and update Asana.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 3
+            },
+            {
+              "type": "addEffort",
+              "task": "embed",
+              "value": -1
+            }
+          ],
+          "outcome": "Priya reorders her build. The late videos slot in with days to spare.",
+          "why": "This is the SOP's worked example: surface knock-on effects, let design prioritize the rest of the LMS, document the change."
+        },
+        {
+          "id": "update-asana",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "neutral",
+          "label": "Update the dates in Asana.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 3
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "embed",
+              "value": 2
+            }
+          ],
+          "outcome": "Priya notices the new dates a week later.",
+          "why": "Silent date changes skip the conversation about knock-on effects."
+        },
+        {
+          "id": "rush-it",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Ask Marcus to hit the original date anyway.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -10
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "post",
+              "value": 5
+            }
+          ],
+          "outcome": "The videos arrive on time with audio issues QA will find.",
+          "why": "Pressure shifts the problem into quality."
+        },
+        {
+          "id": "another-producer",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Ask the directors whether another producer can take some editing.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": 3,
+              "weeks": 2
+            }
+          ],
+          "outcome": "A second editor helps for two weeks.",
+          "why": "A valid SOP option when internal changes can't be accommodated; here a re-sequence would have been enough."
+        }
+      ],
+      "debrief": {
+        "concept": "Knock-on effects: every slip lands on someone downstream.",
+        "independent": "Meet with the affected team, review the timeline, surface knock-on effects, and make them manageable (re-order the build). Get clear approval, then update Asana.",
+        "escalateWhen": "When the change can't be absorbed internally, work with the directors on shifting work between team members or revising scope.",
+        "sop": "PM SOP: When Things Go Wrong, With Timelines"
+      }
+    },
+    {
+      "id": "rough-cut-notes",
+      "title": "Forty Notes on Rough Cut 2",
+      "who": "mp",
+      "mood": "frustrated",
+      "trigger": {
+        "weeks": [
+          9,
+          14
+        ],
+        "requires": {
+          "taskStarted": "post",
+          "taskNotDone": "post"
+        },
+        "chance": 0.4
+      },
+      "text": "Dr. Ward sent 40 notes on Rough Cut 2. About half are fixes; the other half rewrite content she approved in the script.",
+      "choices": [
+        {
+          "id": "sort-notes",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Meet with Dr. Ward and Marcus to sort fixes from new content. Schedule one more rough cut for fixes; move new content to a reading or after launch.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 4
+            },
+            {
+              "type": "trust",
+              "value": 2
+            }
+          ],
+          "outcome": "A third rough cut handles the fixes. The new material becomes a short reading.",
+          "why": "The media SOP allows extra rough cuts when notes keep coming; the charter and approved scripts define what counts as a fix."
+        },
+        {
+          "id": "accept-all",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "sad",
+          "label": "Apply all 40 notes.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 12
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -8
+            },
+            {
+              "type": "trust",
+              "value": 3
+            }
+          ],
+          "outcome": "Marcus starts re-editing whole sections.",
+          "why": "Treating new content as fixes is scope creep at the most expensive stage."
+        },
+        {
+          "id": "reject-new",
+          "tier": "resolve",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Email her that only fixes will be applied.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 4
+            },
+            {
+              "type": "trust",
+              "value": -6
+            }
+          ],
+          "outcome": "Right call, rough delivery. She feels dismissed.",
+          "why": "The decision is right; a conversation with an alternative would have kept trust."
+        },
+        {
+          "id": "escalate-bare",
+          "tier": "escalate",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Send the notes to Jordan to decide.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 5
+            }
+          ],
+          "outcome": "Jordan asks you to sort them first.",
+          "why": "Sorting notes is PM and producer work."
+        }
+      ],
+      "debrief": {
+        "concept": "Review windows: separate fixes from changes.",
+        "independent": "Sort feedback into fixes and new requests, use extra rough cuts for fixes, and redirect new content using the charter.",
+        "escalateWhen": "Escalate if late-stage changes keep threatening the delivery date.",
+        "sop": "Media SOP: 4M Post-Production; PM SOP: Change of Scope"
+      }
+    },
+    {
+      "id": "summary-email-miss",
+      "title": "\"Nobody Told Me Scripts Were Due\"",
+      "who": "faculty",
+      "mood": "frustrated",
+      "trigger": {
+        "weeks": [
+          4,
+          9
+        ],
+        "requires": {
+          "taskStarted": "scripts"
+        },
+        "chance": 0.4
+      },
+      "text": "Dr. Ward: \"I didn't know scripts were due this week.\" The deadline was in three meeting summary emails.",
+      "choices": [
+        {
+          "id": "weekly-summary",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Learn how she reads email. Move key asks and dates to the top of the Friday weekly summary, and share a one-page development timeline.",
+          "effects": [
+            {
+              "type": "responsiveness",
+              "value": 0.15,
+              "weeks": 6
+            },
+            {
+              "type": "trust",
+              "value": 4
+            }
+          ],
+          "outcome": "She reads Friday summaries. Deadlines stop being surprises.",
+          "why": "The SOP: find out which emails a faculty member reads, put careful thought into the weekly summary, and use a development timeline to track progress."
+        },
+        {
+          "id": "forward-proof",
+          "tier": "resolve",
+          "credit": 0.1,
+          "reaction": "frustrated",
+          "label": "Forward the three emails that mentioned the deadline.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -8
+            }
+          ],
+          "outcome": "Technically right. Relationship worse.",
+          "why": "Proving you sent it doesn't fix how she receives information."
+        },
+        {
+          "id": "more-emails",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "neutral",
+          "label": "Send a reminder email before every deadline from now on.",
+          "effects": [
+            {
+              "type": "responsiveness",
+              "value": 0.05,
+              "weeks": 3
+            }
+          ],
+          "outcome": "More emails, some of which she reads.",
+          "why": "Adding email volume works against busy faculty."
+        },
+        {
+          "id": "cc-chair",
+          "tier": "escalate",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Copy her department chair on future reminders.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -12
+            }
+          ],
+          "outcome": "She feels policed.",
+          "why": "Going around a partner damages trust and isn't how ODL escalates."
+        }
+      ],
+      "debrief": {
+        "concept": "Communication: match the channel to how the person actually reads.",
+        "independent": "Ask which messages they read; use meeting summaries and Friday weekly summaries deliberately, lead with asks and dates, and share a visible development timeline.",
+        "escalateWhen": "Not an escalation issue unless deadlines keep slipping after you've adapted.",
+        "sop": "PM SOP: Summary emails; Challenging Faculty"
+      }
+    },
+    {
+      "id": "overloaded-ld",
+      "title": "Priya Is Stretched Thin",
+      "who": "ld",
+      "mood": "sad",
+      "trigger": {
+        "weeks": [
+          6,
+          13
+        ],
+        "requires": {
+          "taskStarted": "mastersite"
+        },
+        "chance": 0.35
+      },
+      "text": "Priya mentions she's lead designer on four other courses. Her milestone check-ins have gotten shorter, and the master site is behind.",
+      "choices": [
+        {
+          "id": "one-on-one",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Hold a 1:1, agree what this course needs from her each week, and simplify the module template to cut non-essential build work.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": 12
+            },
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": -4
+            }
+          ],
+          "outcome": "Priya is relieved. A simpler template saves hours.",
+          "why": "Early, direct conversations and small scope trims protect both quality and morale."
+        },
+        {
+          "id": "escalate-workload",
+          "tier": "escalate_plan",
+          "credit": 0.8,
+          "reaction": "neutral",
+          "label": "Bring Jordan Priya's workload and ask whether a supporting designer can help for a month.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": 3,
+              "weeks": 4
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": 5
+            }
+          ],
+          "outcome": "A supporting designer takes two modules.",
+          "why": "Good: cross-project workload is a leadership decision. Talking to Priya first would have been better."
+        },
+        {
+          "id": "push-through",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Remind her of the deadline and ask her to push through.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -12
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 6
+            }
+          ],
+          "outcome": "She works late. Mistakes pile up quietly.",
+          "why": "Overload shows up as errors before it shows up as missed dates."
+        },
+        {
+          "id": "do-it-yourself",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "worried",
+          "label": "Offer to build some Canvas pages yourself.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 4
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": 3
+            }
+          ],
+          "outcome": "Kind, but Priya now has to check your pages against the design.",
+          "why": "Doing team members' work pulls the PM off coordination and often adds rework."
+        }
+      ],
+      "debrief": {
+        "concept": "Team health: overload causes errors first and delays second.",
+        "independent": "Talk early, agree priorities, and trim polish that doesn't serve learning.",
+        "escalateWhen": "Escalate when overload comes from other projects; shifting work across people is decided with the directors.",
+        "sop": "PM SOP: With Timelines (shifting work between team members)"
+      }
+    },
+    {
+      "id": "captions-missing",
+      "title": "No Captions Ordered",
+      "who": "ld",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          10,
+          15
+        ],
+        "requires": {
+          "taskStarted": "distribution"
+        },
+        "chance": 0.5
+      },
+      "text": "Priya: \"The first videos are in Panopto, but no captions were ordered. I can't embed them until they're accessible.\"",
+      "choices": [
+        {
+          "id": "order-and-checklist",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Have Marcus order and QA captions now, and add the distribution checklist (upload, captions, thumbnails, embed codes) to every video's task in Asana.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "distribution",
+              "value": 2
+            }
+          ],
+          "outcome": "Captions arrive in days, and the checklist catches the remaining videos.",
+          "why": "Captions ordered and QA'd are part of the media SOP's distribution step; making the checklist visible prevents repeats."
+        },
+        {
+          "id": "auto-captions",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Use Panopto's automatic captions without review.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "qa",
+              "value": 4
+            }
+          ],
+          "outcome": "Fast, but psychology terms come out garbled.",
+          "why": "Captions must be QA'd, not just generated."
+        },
+        {
+          "id": "after-launch",
+          "tier": "ignore",
+          "credit": 0.0,
+          "reaction": "sad",
+          "label": "Launch without captions and add them later.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "qa",
+              "value": 12
+            }
+          ],
+          "outcome": "QA will flag every video.",
+          "why": "Accessibility is a launch requirement."
+        },
+        {
+          "id": "priya-transcripts",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Ask Priya to post transcripts instead.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": -3,
+              "weeks": 1
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -5
+            }
+          ],
+          "outcome": "Priya loses a day doing media work.",
+          "why": "Transcripts are part of distribution, which belongs to media."
+        }
+      ],
+      "debrief": {
+        "concept": "Quality is planned in: use the checklist, every time.",
+        "independent": "Hold media to the distribution checklist for every asset, and track it where the team works.",
+        "escalateWhen": "Escalate if captioning services or budget are unavailable.",
+        "sop": "Media SOP: 7M Distribution"
+      }
+    },
+    {
+      "id": "embed-codes",
+      "title": "Where Are the Embed Codes?",
+      "who": "ld",
+      "mood": "frustrated",
+      "trigger": {
+        "weeks": [
+          11,
+          16
+        ],
+        "requires": {
+          "taskStarted": "embed"
+        },
+        "chance": 0.5
+      },
+      "text": "Priya has been hunting through Slack and Panopto for an hour: the embed codes and in-video quiz timestamps were never shared.",
+      "choices": [
+        {
+          "id": "asset-list",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Ask Marcus to document every embed code and quiz timestamp in the shared learning asset list, and make that the handoff point from now on.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -1,
+              "weeks": 1
+            },
+            {
+              "type": "addEffort",
+              "task": "embed",
+              "value": -1
+            }
+          ],
+          "outcome": "One list, one place. Priya embeds the rest in an afternoon.",
+          "why": "The media SOP has producers document embed codes and share them with the designer; the LD SOP's asset list is the natural home."
+        },
+        {
+          "id": "priya-hunts",
+          "tier": "ignore",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Let Priya keep looking; she'll find them.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": -3,
+              "weeks": 1
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -5
+            }
+          ],
+          "outcome": "She finds most of them.",
+          "why": "Handoffs that depend on hunting cost the downstream person time."
+        },
+        {
+          "id": "marcus-sends-slack",
+          "tier": "resolve",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Ask Marcus to Slack Priya the codes.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Solved for today; next batch, same problem.",
+          "why": "Fixes the instance, not the handoff."
+        }
+      ],
+      "debrief": {
+        "concept": "Handoffs: define where work passes from one team to another.",
+        "independent": "Agree one shared place (the asset list) where media hands assets to design, and make it part of the checklist.",
+        "escalateWhen": "Not an escalation issue.",
+        "sop": "Media SOP: 7M Distribution; LD SOP: Milestone 3 asset list"
+      }
+    },
+    {
+      "id": "release-form",
+      "title": "The Guest Didn't Sign a Release",
+      "who": "mp",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          8,
+          14
+        ],
+        "requires": {
+          "taskDone": "production"
+        },
+        "chance": 0.45
+      },
+      "text": "Dr. Ward brought a graduate student on camera for a demonstration. Marcus just realized there's no signed release form.",
+      "choices": [
+        {
+          "id": "get-release",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Get the release signed before any cut is shared, name it to convention, file it in the project's Admin folder, and add releases to the production checklist.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Signed the next day. Nothing delayed.",
+          "why": "Release forms are a pre-production step in the media SOP, and the PM SOP names where they're stored."
+        },
+        {
+          "id": "use-anyway",
+          "tier": "ignore",
+          "credit": 0.0,
+          "reaction": "sad",
+          "label": "Use the footage; she's a student here.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "qa",
+              "value": 6
+            }
+          ],
+          "outcome": "The footage goes in without permission.",
+          "why": "Using someone's likeness without a release is a real risk to the university."
+        },
+        {
+          "id": "cut-scene",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Cut the demonstration.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 3
+            },
+            {
+              "type": "trust",
+              "value": -4
+            }
+          ],
+          "outcome": "Safe, but the module loses its best moment.",
+          "why": "Getting the signature would have kept it."
+        },
+        {
+          "id": "escalate-plan",
+          "tier": "escalate_plan",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Ask Jordan how to handle it.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Jordan says: get it signed.",
+          "why": "The process is documented; you can follow it."
+        }
+      ],
+      "debrief": {
+        "concept": "Risk: paperwork before publishing.",
+        "independent": "Collect releases before anyone appears on camera when possible, and always before footage is shared. File them by the naming convention.",
+        "escalateWhen": "Escalate if the person refuses to sign and the footage is essential.",
+        "sop": "Media SOP: 2M Release Forms; PM SOP: Google Drive structure"
+      }
+    },
+    {
+      "id": "ip-agreement",
+      "title": "Who Owns These Videos?",
+      "who": "faculty",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          6,
+          13
+        ],
+        "requires": {
+          "taskStarted": "production"
+        },
+        "chance": 0.4
+      },
+      "text": "Dr. Ward asks whether she can reuse the lecture videos if she moves to another university. No IP agreement has been drafted.",
+      "choices": [
+        {
+          "id": "draft-ip",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Draft the IP agreement from past examples and the university policy, and finalize it with the ODL director.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 5
+            }
+          ],
+          "outcome": "She gets a clear answer in writing within two weeks.",
+          "why": "Drafting IP agreements during development is a PM responsibility in the SOP, finalized with the director."
+        },
+        {
+          "id": "guess",
+          "tier": "resolve",
+          "credit": 0.1,
+          "reaction": "frustrated",
+          "label": "Tell her the university owns everything.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -10
+            }
+          ],
+          "outcome": "That's not necessarily what the policy says, and now she's upset.",
+          "why": "Never answer legal-ish questions from memory."
+        },
+        {
+          "id": "escalate-bare",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Tell her you'll ask the director.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 1
+            }
+          ],
+          "outcome": "The director asks you to draft it.",
+          "why": "The director finalizes, but the PM drafts."
+        },
+        {
+          "id": "later",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "worried",
+          "label": "Say you'll sort it out after launch.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -6
+            }
+          ],
+          "outcome": "She hesitates to approve the final cuts.",
+          "why": "Unresolved rights questions stall approvals."
+        }
+      ],
+      "debrief": {
+        "concept": "Agreements protect everyone: get rights in writing during development.",
+        "independent": "Draft from the template and past examples, check the university IP policy, and review with the ODL director.",
+        "escalateWhen": "The director finalizes the agreement; you bring the draft.",
+        "sop": "PM SOP: Development (IP agreements)"
+      }
+    },
+    {
+      "id": "copyright-snag",
+      "title": "Copyright Snag",
+      "who": "ld",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          5,
+          12
+        ],
+        "requires": {
+          "taskStarted": "content"
+        },
+        "chance": 0.35
+      },
+      "text": "A textbook chapter and two figures Dr. Ward relies on can't be posted in the online course as files.",
+      "choices": [
+        {
+          "id": "library-options",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Ask the library about library reserves or linking, have Priya add a placeholder, and bring Dr. Ward open alternatives for the figures.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": -2,
+              "weeks": 1
+            },
+            {
+              "type": "trust",
+              "value": 3
+            }
+          ],
+          "outcome": "Library reserves cover the chapter; open figures replace the rest.",
+          "why": "Go to the specialists, and bring the faculty member choices. The LD SOP already plans placeholders for library reserves."
+        },
+        {
+          "id": "post-anyway",
+          "tier": "ignore",
+          "credit": 0.0,
+          "reaction": "sad",
+          "label": "Post them anyway; only enrolled students can see them.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "qa",
+              "value": 8
+            }
+          ],
+          "outcome": "It goes in. QA will flag it.",
+          "why": "Restricted access doesn't make posting legal."
+        },
+        {
+          "id": "drop-content",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Drop the chapter and figures.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -5
+            }
+          ],
+          "outcome": "Clean, but Dr. Ward has to rework the module.",
+          "why": "Removing content without alternatives hurts the course."
+        },
+        {
+          "id": "ask-jordan",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask Jordan what to do.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Jordan points you to the library.",
+          "why": "Know your campus experts and go to them directly."
+        }
+      ],
+      "debrief": {
+        "concept": "Risk: know your campus experts and bring alternatives.",
+        "independent": "Go to the people who own the question (library, copyright), and offer the faculty member options rather than a problem.",
+        "escalateWhen": "Escalate if the faculty member refuses compliant alternatives.",
+        "sop": "LD SOP: Development (placeholders for library reserves)"
+      }
+    },
+    {
+      "id": "publisher-tool",
+      "title": "Set Up the Publisher Homework Tool",
+      "who": "faculty",
+      "mood": "neutral",
+      "trigger": {
+        "weeks": [
+          9,
+          15
+        ],
+        "requires": {
+          "taskStarted": "mastersite"
+        },
+        "chance": 0.4
+      },
+      "text": "Dr. Ward wants Priya to configure the textbook publisher's homework tool in the master site this week.",
+      "choices": [
+        {
+          "id": "placeholder",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "neutral",
+          "label": "Add a placeholder in the master site, and document in the hand-off guide that the instructor of record activates and configures it on the live site.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "handoff",
+              "value": 1
+            }
+          ],
+          "outcome": "Layout complete; setup steps are written for her term.",
+          "why": "The LD SOP: external tools get placeholders and are configured by the instructor of record on the live site."
+        },
+        {
+          "id": "priya-configures",
+          "tier": "resolve",
+          "credit": 0.2,
+          "reaction": "frustrated",
+          "label": "Have Priya configure it now.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": -4,
+              "weeks": 1
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "qa",
+              "value": 3
+            }
+          ],
+          "outcome": "It's set up in the master site, then breaks when migrated.",
+          "why": "Tool configuration belongs on the live site, by the instructor of record."
+        },
+        {
+          "id": "say-no",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "sad",
+          "label": "Tell her that's her job.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -6
+            }
+          ],
+          "outcome": "True, unhelpfully put.",
+          "why": "Explain the process and support her with hand-off documentation."
+        }
+      ],
+      "debrief": {
+        "concept": "Know the boundaries: what ODL builds and what the instructor owns.",
+        "independent": "Use placeholders and clear hand-off documentation for tools the instructor configures.",
+        "escalateWhen": "Not an escalation issue.",
+        "sop": "LD SOP: Master Site Completion"
+      }
+    },
+    {
+      "id": "handoff-prep",
+      "title": "Launch Is Close and No Hand-off Is Scheduled",
+      "who": "sup",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          13,
+          16
+        ],
+        "requires": {
+          "taskStarted": "embed"
+        },
+        "chance": 0.5
+      },
+      "text": "Jordan asks: \"When's the hand-off meeting with Dr. Ward? Is the hand-off document started?\" Neither is.",
+      "choices": [
+        {
+          "id": "schedule-prep",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Schedule the hand-off meeting now, and start the hand-off document with Priya (deliverables, maintenance instructions, resources), with the design document and links to every deliverable.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "handoff",
+              "value": -1
+            },
+            {
+              "type": "trust",
+              "value": 4
+            }
+          ],
+          "outcome": "Dr. Ward blocks the time. The document is ready before the meeting.",
+          "why": "The PM SOP's delivery checklist: hand-off document with the lead designer, all deliverables compiled, PM runs the meeting."
+        },
+        {
+          "id": "email-links",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "neutral",
+          "label": "Email Dr. Ward the course link on launch day.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -4
+            }
+          ],
+          "outcome": "She has a course but no idea how to maintain it.",
+          "why": "A link isn't a hand-off."
+        },
+        {
+          "id": "priya-handles",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "frustrated",
+          "label": "Ask Priya to handle the hand-off.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": -2,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Priya does it on top of QA.",
+          "why": "The designer drafts with you, but the PM owns the hand-off meeting."
+        }
+      ],
+      "debrief": {
+        "concept": "Delivery: finish the project, not just the course.",
+        "independent": "Plan the hand-off weeks ahead: document, deliverables, meeting, follow-ups. Then run the retrospective.",
+        "escalateWhen": "Not an escalation issue.",
+        "sop": "PM SOP: Delivery; Retrospective"
+      }
+    },
+    {
+      "id": "qa-findings",
+      "title": "QA Turns Up a Pile of Issues",
+      "who": "ld",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          11,
+          14
+        ],
+        "requires": {},
+        "chance": 0.45
+      },
+      "text": "Priya's first QA pass on the live course found broken links, two quizzes with wrong settings, and a module unpublished. Launch is days away.",
+      "choices": [
+        {
+          "id": "triage",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Triage with Priya: fix launch-blocking issues first (settings, publishing, links in Module 1), log the rest with owners, and re-run the QA checklist before launch.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "qa",
+              "value": 3
+            }
+          ],
+          "outcome": "Blockers are fixed in a day; the rest are scheduled and tracked.",
+          "why": "The LD SOP's QA step covers content, technology and platform with a checklist; triage protects launch day."
+        },
+        {
+          "id": "fix-everything",
+          "tier": "resolve",
+          "credit": 0.5,
+          "reaction": "frustrated",
+          "label": "Ask Priya to fix everything before doing anything else.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "qa",
+              "value": 5
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -5
+            }
+          ],
+          "outcome": "Everything gets fixed, slowly, with the critical items mixed in with cosmetic ones.",
+          "why": "Fixing all of it is fine, but without priorities the launch-blocking issues wait in line."
+        },
+        {
+          "id": "launch-and-patch",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Launch as is and patch during week one.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "qa",
+              "value": 8
+            }
+          ],
+          "outcome": "Students find the broken quiz first.",
+          "why": "Known issues at launch hit students and the faculty member's first impression."
+        },
+        {
+          "id": "escalate-plan",
+          "tier": "escalate_plan",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Tell Jordan and ask whether launch should move.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "qa",
+              "value": 3
+            }
+          ],
+          "outcome": "Jordan asks which issues actually block launch.",
+          "why": "Moving a term launch is rarely an option; triage first, then escalate if blockers remain."
+        }
+      ],
+      "debrief": {
+        "concept": "Launch readiness: separate blockers from polish.",
+        "independent": "Run the QA checklist early, triage by impact on students, assign owners, and re-check before launch.",
+        "escalateWhen": "Escalate if launch-blocking issues can't be fixed before the course opens.",
+        "sop": "LD SOP: Step 4 Implementation, QA checks"
+      }
+    },
+    {
+      "id": "last-minute-change",
+      "title": "A New Module, Two Weeks Out",
+      "who": "faculty",
+      "mood": "happy",
+      "trigger": {
+        "weeks": [
+          10,
+          13
+        ],
+        "requires": {},
+        "chance": 0.4
+      },
+      "text": "Dr. Ward: \"I just got back from a conference. I want to add a module on a new study everyone's talking about. Just one short video and a reading?\"",
+      "choices": [
+        {
+          "id": "after-launch",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "neutral",
+          "label": "Acknowledge the idea, point to the charter's eight modules, and offer to add it as an announcement and reading now with a full module considered for next term.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 1
+            },
+            {
+              "type": "trust",
+              "value": -1
+            }
+          ],
+          "outcome": "She posts it as a discussion prompt and adds the module to her wish list.",
+          "why": "Hold scope with the charter and offer an in-scope way to include the idea now."
+        },
+        {
+          "id": "yes",
+          "tier": "resolve",
+          "credit": 0.1,
+          "reaction": "happy",
+          "label": "Say yes; it's just one video.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 8
+            },
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 4
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -8
+            }
+          ],
+          "outcome": "Marcus books an extra shoot two weeks before launch.",
+          "why": "A small yes late in development costs the most."
+        },
+        {
+          "id": "reading-only",
+          "tier": "resolve",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Agree to add a reading only.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 2
+            }
+          ],
+          "outcome": "A reading gets added; she's mostly satisfied.",
+          "why": "A good compromise, but it still changes scope without referencing the charter or the team."
+        },
+        {
+          "id": "escalate",
+          "tier": "escalate",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Tell her you'll check with Jordan.",
+          "effects": [],
+          "outcome": "Jordan points back to the charter.",
+          "why": "You have the charter; use it first."
+        }
+      ],
+      "debrief": {
+        "concept": "Late changes cost the most; the charter is your anchor.",
+        "independent": "Thank them, reference the agreed scope, and offer an in-scope option now plus a path for later.",
+        "escalateWhen": "Escalate if the faculty member insists and the change threatens launch.",
+        "sop": "PM SOP: Change of Scope; Drafting a Charter"
+      }
+    }
+  ]
+}

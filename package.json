@@ -1,0 +1,12 @@
+{
+  "name": "critical-path",
+  "version": "0.2.0",
+  "description": "A project management simulator for Notre Dame ODL's PM Student Fellow.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "start": "npx --yes http-server . -p 8080 -c-1",
+    "bundle": "node scripts/bundle.mjs"
+  }
+}
