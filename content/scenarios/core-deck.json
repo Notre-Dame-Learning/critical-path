@@ -15,14 +15,14 @@
         "requires": {},
         "chance": 0.5
       },
-      "text": "Priya stops by: \"Tomorrow's content mapping meeting with Dr. Ward is our first real working session. Is there an agenda? I need her to bring her old syllabus and her top three outcomes.\"",
+      "text": "{ld} stops by: \"Tomorrow's content mapping meeting with {faculty} is our first real working session. Is there an agenda? I need {fobj} to bring {fpos} old syllabus and {fpos} top three outcomes.\"",
       "choices": [
         {
           "id": "draft-with-ld",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Draft the agenda with Priya today, list what Dr. Ward should bring, and send it with the materials so she can prepare.",
+          "label": "Draft the agenda with {ld} today, list what {faculty} should bring, and send it with the materials so {fsub} can prepare.",
           "effects": [
             {
               "type": "trust",
@@ -34,7 +34,7 @@
               "value": -2
             }
           ],
-          "outcome": "Dr. Ward arrives with her syllabus and outcomes. The meeting ends early with decisions made.",
+          "outcome": "{faculty} arrives with {fpos} syllabus and outcomes. The meeting ends early with decisions made.",
           "why": "The SOP asks the PM to draft every agenda with the lead designer or producer and share materials ahead, especially for busy faculty."
         },
         {
@@ -50,8 +50,8 @@
               "value": 1
             }
           ],
-          "outcome": "The agenda goes out, but Dr. Ward hasn't seen it before the meeting and arrives without her syllabus.",
-          "why": "Having an agenda helps, but it missed Priya's goals for the meeting and gave the faculty no time to prepare."
+          "outcome": "The agenda goes out, but {faculty} hasn't seen it before the meeting and arrives without {fpos} syllabus.",
+          "why": "Having an agenda helps, but it missed {ld}'s goals for the meeting and gave the faculty no time to prepare."
         },
         {
           "id": "wing-it",
@@ -91,7 +91,7 @@
               "value": -2
             }
           ],
-          "outcome": "You get prepared, but lose a week of design time and Dr. Ward has to rearrange her calendar.",
+          "outcome": "You get prepared, but lose a week of design time and {faculty} has to rearrange {fpos} calendar.",
           "why": "A day is enough time to draft an agenda; moving the meeting costs schedule and goodwill."
         }
       ],
@@ -118,14 +118,14 @@
         },
         "chance": 0.4
       },
-      "text": "Priya needs one more week on the course map. \"Can you just slide it in Asana? It's only a week.\" The timeline was reviewed by the ODL directors last month.",
+      "text": "{ld} needs one more week on the course map. \"Can you just slide it in Asana? It's only a week.\" The timeline was reviewed by the ODL directors last month.",
       "choices": [
         {
           "id": "knock-on-then-approval",
           "tier": "escalate_plan",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Map the knock-on effects with Priya and Marcus, propose how to absorb them, then take the change to the directors for approval before updating Asana.",
+          "label": "Map the knock-on effects with {ld} and {mp}, propose how to absorb them, then take the change to the directors for approval before updating Asana.",
           "effects": [
             {
               "type": "capacity",
@@ -150,7 +150,7 @@
               "value": 3
             }
           ],
-          "outcome": "Asana updates. Marcus finds out two weeks later that scripting now collides with another shoot.",
+          "outcome": "Asana updates. {mp} finds out two weeks later that scripting now collides with another shoot.",
           "why": "Quiet changes skip the approval the SOP requires and hide knock-on effects from the rest of the team."
         },
         {
@@ -158,7 +158,7 @@
           "tier": "resolve",
           "credit": 0.3,
           "reaction": "sad",
-          "label": "Hold the date. Ask Priya to finish on time.",
+          "label": "Hold the date. Ask {ld} to finish on time.",
           "effects": [
             {
               "type": "morale",
@@ -171,7 +171,7 @@
               "value": 3
             }
           ],
-          "outcome": "Priya delivers on time, but the assessment plan is thin.",
+          "outcome": "{ld} delivers on time, but the assessment plan is thin.",
           "why": "Holding a date by pressure alone moves the problem into quality."
         },
         {
@@ -195,9 +195,9 @@
           "tier": "escalate",
           "credit": 0.5,
           "reaction": "neutral",
-          "label": "Tell Jordan that Priya wants more time and ask what to do.",
+          "label": "Tell {sup} that {ld} wants more time and ask what to do.",
           "effects": [],
-          "outcome": "Jordan asks what the change affects. You don't know yet.",
+          "outcome": "{sup} asks what the change affects. You don't know yet.",
           "why": "Escalating is right here, but bring the impact and a recommendation, not just the request."
         }
       ],
@@ -223,14 +223,14 @@
         },
         "chance": 0.4
       },
-      "text": "Forty minutes into the scripting workshop, Dr. Ward and Marcus are arguing about tone. She wants formal lectures; he's pitching the conversational style from the lookbook. Half the agenda is untouched.",
+      "text": "Forty minutes into the scripting workshop, {faculty} and {mp} are arguing about tone. {Fsub} wants formal lectures; {mp} is pitching the conversational style from the lookbook. Half the agenda is untouched.",
       "choices": [
         {
           "id": "refocus-park",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "neutral",
-          "label": "Restate the meeting goals, summarize both views, and park the tone question for a short follow-up where Marcus shows two sample clips.",
+          "label": "Restate the meeting goals, summarize both views, and park the tone question for a short follow-up where {mp} shows two sample clips.",
           "effects": [
             {
               "type": "trust",
@@ -266,7 +266,7 @@
           "tier": "resolve",
           "credit": 0.3,
           "reaction": "sad",
-          "label": "Side with Dr. Ward. It's her course.",
+          "label": "Side with {faculty}. It's {fpos} course.",
           "effects": [
             {
               "type": "morale",
@@ -278,7 +278,7 @@
               "value": 3
             }
           ],
-          "outcome": "Dr. Ward is satisfied. Marcus goes quiet for the rest of the meeting.",
+          "outcome": "{faculty} is satisfied. {mp} goes quiet for the rest of the meeting.",
           "why": "The PM facilitates; picking a side undermines the producer's expertise and skips the evidence."
         },
         {
@@ -311,7 +311,7 @@
           "tier": "escalate_plan",
           "credit": 0.5,
           "reaction": "neutral",
-          "label": "After the meeting, ask Jordan to step in on the tone decision.",
+          "label": "After the meeting, ask {sup} to step in on the tone decision.",
           "effects": [
             {
               "type": "addEffort",
@@ -319,7 +319,7 @@
               "value": 1
             }
           ],
-          "outcome": "Jordan suggests the sample-clip approach you could have proposed in the room.",
+          "outcome": "{sup} suggests the sample-clip approach you could have proposed in the room.",
           "why": "This is a facilitation problem you can handle. Escalate only if the disagreement persists."
         }
       ],
@@ -346,7 +346,7 @@
         },
         "chance": 0.45
       },
-      "text": "Dr. Ward hasn't answered Priya's or Marcus's last emails. Scripts are due in two weeks. Priya: \"I've sent three messages. Marcus sent two of his own.\"",
+      "text": "{faculty} hasn't answered {ld}'s or {mp}'s last emails. Scripts are due in two weeks. {ld}: \"I've sent three messages. {mp} sent two more.\"",
       "choices": [
         {
           "id": "streamline-checkins",
@@ -365,7 +365,7 @@
               "weeks": 5
             }
           ],
-          "outcome": "Dr. Ward accepts the Friday slot. Fewer emails, faster answers.",
+          "outcome": "{faculty} accepts the Friday slot. Fewer emails, faster answers.",
           "why": "For hard-to-reach faculty the SOP says streamline communication through as few people as possible, limit emails, and use short check-ins and async comments."
         },
         {
@@ -373,7 +373,7 @@
           "tier": "resolve",
           "credit": 0.3,
           "reaction": "neutral",
-          "label": "Send one long email listing everything the team needs from her.",
+          "label": "Send one long email listing everything the team needs from {fobj}.",
           "effects": [
             {
               "type": "responsiveness",
@@ -381,7 +381,7 @@
               "weeks": 2
             }
           ],
-          "outcome": "She replies to the first item and misses the rest.",
+          "outcome": "{Fsub} replies to the first item and misses the rest.",
           "why": "One channel is better, but a long list buries the asks."
         },
         {
@@ -389,7 +389,7 @@
           "tier": "resolve",
           "credit": 0.1,
           "reaction": "frustrated",
-          "label": "Ask Priya and Marcus to each follow up again.",
+          "label": "Ask {ld} and {mp} to each follow up again.",
           "effects": [
             {
               "type": "trust",
@@ -401,7 +401,7 @@
               "weeks": 2
             }
           ],
-          "outcome": "Dr. Ward now has seven unread emails from ODL.",
+          "outcome": "{faculty} now has seven unread emails from ODL.",
           "why": "More senders means more noise. This is the opposite of what the SOP recommends."
         },
         {
@@ -409,7 +409,7 @@
           "tier": "escalate_plan",
           "credit": 0.7,
           "reaction": "neutral",
-          "label": "Brief Jordan on the risk to the script deadline, what's been tried, and your proposed check-in plan.",
+          "label": "Brief {sup} on the risk to the script deadline, what's been tried, and your proposed check-in plan.",
           "effects": [
             {
               "type": "responsiveness",
@@ -417,7 +417,7 @@
               "weeks": 3
             }
           ],
-          "outcome": "Jordan agrees with your plan and suggests you try it first.",
+          "outcome": "{sup} agrees with your plan and suggests you try it first.",
           "why": "A solid escalation, but this is a communication fix within your control."
         },
         {
@@ -425,7 +425,7 @@
           "tier": "escalate",
           "credit": 0.4,
           "reaction": "neutral",
-          "label": "Forward the thread to Jordan: \"Faculty isn't responding.\"",
+          "label": "Forward the thread to {sup}: \"Faculty isn't responding.\"",
           "effects": [
             {
               "type": "responsiveness",
@@ -433,7 +433,7 @@
               "weeks": 2
             }
           ],
-          "outcome": "Jordan asks what you've tried and what you recommend.",
+          "outcome": "{sup} asks what you've tried and what you recommend.",
           "why": "Escalating without options hands the thinking upward."
         },
         {
@@ -441,7 +441,7 @@
           "tier": "ignore",
           "credit": 0.1,
           "reaction": "sad",
-          "label": "Wait. She's probably just busy with midterms.",
+          "label": "Wait. {Fsub}'s probably just busy with midterms.",
           "effects": [
             {
               "type": "responsiveness",
@@ -462,7 +462,7 @@
     },
     {
       "id": "faculty-overwhelmed",
-      "title": "Dr. Ward Is Drowning",
+      "title": "{faculty} Is Drowning",
       "who": "faculty",
       "mood": "sad",
       "trigger": {
@@ -475,14 +475,14 @@
         },
         "chance": 0.4
       },
-      "text": "Dr. Ward emails late at night: \"Scripts, quiz questions and reading lists are all due the same week as my midterms. I can't do all of this.\"",
+      "text": "{faculty} emails late at night: \"Scripts, quiz questions and reading lists are all due the same week as my midterms. I can't do all of this.\"",
       "choices": [
         {
           "id": "repace",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Re-pace with Priya and Marcus: stagger the deadlines, and have Priya draft quiz questions from the course map for her to edit.",
+          "label": "Re-pace with {ld} and {mp}: stagger the deadlines, and have {ld} draft quiz questions from the course map for {fobj} to edit.",
           "effects": [
             {
               "type": "trust",
@@ -500,7 +500,7 @@
               "weeks": 2
             }
           ],
-          "outcome": "\"This I can do.\" Her drafts start arriving again.",
+          "outcome": "\"This I can do.\" {Fpos} drafts start arriving again.",
           "why": "The SOP asks the PM to watch faculty pacing, and to work offline on drafts the faculty can react to."
         },
         {
@@ -508,7 +508,7 @@
           "tier": "resolve",
           "credit": 0.4,
           "reaction": "neutral",
-          "label": "Push all her deadlines back two weeks.",
+          "label": "Push all {fpos} deadlines back two weeks.",
           "effects": [
             {
               "type": "responsiveness",
@@ -520,7 +520,7 @@
               "value": 3
             }
           ],
-          "outcome": "She's relieved, but production and the build now start late.",
+          "outcome": "{Fsub}'s relieved, but production and the build now start late.",
           "why": "Moving everything ignores the knock-on effects on media and design, and skips approval."
         },
         {
@@ -528,14 +528,14 @@
           "tier": "resolve",
           "credit": 0.2,
           "reaction": "sad",
-          "label": "Remind her the charter set these dates.",
+          "label": "Remind {fobj} the charter set these dates.",
           "effects": [
             {
               "type": "trust",
               "value": -8
             }
           ],
-          "outcome": "She goes quiet.",
+          "outcome": "{Fsub} goes quiet.",
           "why": "The charter matters, but this is a pacing problem the team can solve together."
         },
         {
@@ -543,7 +543,7 @@
           "tier": "escalate_plan",
           "credit": 0.6,
           "reaction": "neutral",
-          "label": "Ask Jordan for approval to re-sequence her deliverables, with a proposed staggered schedule.",
+          "label": "Ask {sup} for approval to re-sequence {fpos} deliverables, with a proposed staggered schedule.",
           "effects": [
             {
               "type": "trust",
@@ -555,7 +555,7 @@
               "value": -2
             }
           ],
-          "outcome": "Jordan approves. The new schedule helps, a few days later than it could have.",
+          "outcome": "{sup} approves. The new schedule helps, a few days later than it could have.",
           "why": "Fine if the re-pace changes milestone dates; otherwise you can rearrange within the window yourself."
         }
       ],
@@ -582,14 +582,14 @@
         },
         "chance": 0.45
       },
-      "text": "Marcus is reviewing scripts: \"Module 3 reads at about 14 minutes. The charter says 5-minute videos. She's attached to every word.\"",
+      "text": "{mp} is reviewing scripts: \"Module 3 reads at about 14 minutes. The charter says 5-minute videos. {Fsub}'s attached to every word.\"",
       "choices": [
         {
           "id": "charter-trim",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Remind Dr. Ward the charter commits to 5-minute videos and make trimming a priority, with Marcus marking which parts could move to a reading.",
+          "label": "Remind {faculty} the charter commits to 5-minute videos and make trimming a priority, with {mp} marking which parts could move to a reading.",
           "effects": [
             {
               "type": "trust",
@@ -601,7 +601,7 @@
               "value": 2
             }
           ],
-          "outcome": "She trims to 6 minutes and moves the rest to a reading. Marcus can live with 6.",
+          "outcome": "{Fsub} trims to 6 minutes and moves the rest to a reading. {mp} can live with 6.",
           "why": "This is the SOP's own example: point to the charter, prioritize the trim, and offer an in-scope alternative."
         },
         {
@@ -646,7 +646,7 @@
           "tier": "resolve",
           "credit": 0.3,
           "reaction": "worried",
-          "label": "Ask Marcus to rewrite it shorter himself.",
+          "label": "Ask {mp} to rewrite it shorter himself.",
           "effects": [
             {
               "type": "trust",
@@ -659,7 +659,7 @@
               "weeks": 1
             }
           ],
-          "outcome": "Dr. Ward rejects the rewrite as \"not my voice.\"",
+          "outcome": "{faculty} rejects the rewrite as \"not my voice.\"",
           "why": "Producers review scripts, but the content belongs to the faculty member."
         },
         {
@@ -667,7 +667,7 @@
           "tier": "escalate_plan",
           "credit": 0.5,
           "reaction": "neutral",
-          "label": "Ask Jordan to talk to Dr. Ward about the length.",
+          "label": "Ask {sup} to talk to {faculty} about the length.",
           "effects": [
             {
               "type": "addEffort",
@@ -675,7 +675,7 @@
               "value": 2
             }
           ],
-          "outcome": "Jordan points back to the charter, just as you could have.",
+          "outcome": "{sup} points back to the charter, just as you could have.",
           "why": "Scope reminders are the PM's job first. Escalate if creep keeps coming back."
         }
       ],
@@ -701,14 +701,14 @@
         },
         "chance": 0.4
       },
-      "text": "Dr. Ward saw a colleague's custom interactive brain simulation. \"Can we build one for Module 5? It would be perfect.\" It isn't in the charter.",
+      "text": "{faculty} saw a colleague's custom interactive simulation. \"Can we build one for Module 5? It would be perfect.\" It isn't in the charter.",
       "choices": [
         {
           "id": "lms-alternative",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "neutral",
-          "label": "Ask what she wants students to learn from it, then have Priya propose a way to meet that goal directly in Canvas.",
+          "label": "Ask what {fsub} wants students to learn from it, then have {ld} propose a way to meet that goal directly in Canvas.",
           "effects": [
             {
               "type": "addEffort",
@@ -716,7 +716,7 @@
               "value": 2
             }
           ],
-          "outcome": "Priya designs a labelled-diagram activity in Canvas. Dr. Ward likes it, and nothing new goes into scope.",
+          "outcome": "{ld} designs a scenario-based activity in Canvas. {faculty} likes it, and nothing new goes into scope.",
           "why": "The SOP suggests discussing ways to reach the goal directly on the LMS when an interactive isn't in scope."
         },
         {
@@ -732,16 +732,16 @@
             },
             {
               "type": "addEffort",
-              "task": "post",
+              "task": "animations",
               "value": 14
             },
             {
               "type": "morale",
-              "who": "mp",
+              "who": "gd",
               "value": -10
             }
           ],
-          "outcome": "Dr. Ward is thrilled. Marcus is now animating on top of eight videos.",
+          "outcome": "{faculty} is thrilled. {gd} is now building a custom interactive on top of every planned animation.",
           "why": "Out-of-scope work with no trade-off lands on the team and the schedule."
         },
         {
@@ -749,14 +749,14 @@
           "tier": "resolve",
           "credit": 0.4,
           "reaction": "sad",
-          "label": "Tell her it's out of scope.",
+          "label": "Tell {fobj} it's out of scope.",
           "effects": [
             {
               "type": "trust",
               "value": -6
             }
           ],
-          "outcome": "Correct, but she feels shut down.",
+          "outcome": "Correct, but {fsub} feels shut down.",
           "why": "Scope holds, but without an alternative it costs trust."
         },
         {
@@ -771,7 +771,7 @@
               "value": -1
             }
           ],
-          "outcome": "She agrees to revisit after launch.",
+          "outcome": "{Fsub} agrees to revisit after launch.",
           "why": "Good scope control; even better is meeting the learning goal now within scope."
         },
         {
@@ -779,9 +779,9 @@
           "tier": "escalate_plan",
           "credit": 0.5,
           "reaction": "neutral",
-          "label": "Ask Jordan whether ODL can take on the extra work.",
+          "label": "Ask {sup} whether ODL can take on the extra work.",
           "effects": [],
-          "outcome": "Jordan asks whether you explored an in-scope option first.",
+          "outcome": "{sup} asks whether you explored an in-scope option first.",
           "why": "Explore in-scope options before asking for more resources."
         }
       ],
@@ -808,14 +808,14 @@
         },
         "chance": 0.45
       },
-      "text": "Marcus: \"The studio and two of our crew are booked for another project on our shoot days. Our dates were never blocked on the media calendar.\"",
+      "text": "{mp}: \"The studio and two of our crew are booked for another project on our shoot days. Our dates were never blocked on the media calendar.\"",
       "choices": [
         {
           "id": "rebook-block-resequence",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Book the next open dates and block every remaining production day on the media calendar now. Have Priya build the master site with video placeholders meanwhile.",
+          "label": "Book the next open dates and block every remaining production day on the media calendar now. Have {ld} build the master site with video placeholders meanwhile.",
           "effects": [
             {
               "type": "capacity",
@@ -854,7 +854,7 @@
           "tier": "resolve",
           "credit": 0.3,
           "reaction": "frustrated",
-          "label": "Ask Marcus to shoot on a Saturday.",
+          "label": "Ask {mp} to shoot on a Saturday.",
           "effects": [
             {
               "type": "morale",
@@ -875,7 +875,7 @@
           "tier": "escalate_plan",
           "credit": 0.7,
           "reaction": "neutral",
-          "label": "Ask Jordan and the directors whether the other project can swap a day, with the impact on our launch.",
+          "label": "Ask {sup} and the directors whether the other project can swap a day, with the impact on our launch.",
           "effects": [
             {
               "type": "capacity",
@@ -920,7 +920,7 @@
       "trigger": {
         "weeks": [
           9,
-          14
+          16
         ],
         "requires": {
           "taskStarted": "post",
@@ -928,14 +928,14 @@
         },
         "chance": 0.45
       },
-      "text": "Marcus: \"Modules 7 and 8 will be a week late. The audio from the shoot needs more cleanup than I planned.\"",
+      "text": "{mp}: \"Modules 7 and 8 will be a week late. The audio from the shoot needs more cleanup than I planned.\"",
       "choices": [
         {
           "id": "timeline-meeting",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Meet with Marcus and Priya, check that Priya still has time to place the videos before launch, have her finish the rest of the site first, then get a clear change approval and update Asana.",
+          "label": "Meet with {mp} and {ld}, check that {ld} still has time to place the videos before launch, have {ld} finish the rest of the site first, then get a clear change approval and update Asana.",
           "effects": [
             {
               "type": "addEffort",
@@ -948,7 +948,7 @@
               "value": -1
             }
           ],
-          "outcome": "Priya reorders her build. The late videos slot in with days to spare.",
+          "outcome": "{ld} reorders the build. The late videos slot in with days to spare.",
           "why": "This is the SOP's worked example: surface knock-on effects, let design prioritize the rest of the LMS, document the change."
         },
         {
@@ -969,7 +969,7 @@
               "value": 2
             }
           ],
-          "outcome": "Priya notices the new dates a week later.",
+          "outcome": "{ld} notices the new dates a week later.",
           "why": "Silent date changes skip the conversation about knock-on effects."
         },
         {
@@ -977,7 +977,7 @@
           "tier": "resolve",
           "credit": 0.3,
           "reaction": "frustrated",
-          "label": "Ask Marcus to hit the original date anyway.",
+          "label": "Ask {mp} to hit the original date anyway.",
           "effects": [
             {
               "type": "morale",
@@ -1026,7 +1026,7 @@
       "trigger": {
         "weeks": [
           9,
-          14
+          16
         ],
         "requires": {
           "taskStarted": "post",
@@ -1034,14 +1034,14 @@
         },
         "chance": 0.4
       },
-      "text": "Dr. Ward sent 40 notes on Rough Cut 2. About half are fixes; the other half rewrite content she approved in the script.",
+      "text": "{faculty} sent 40 notes on Rough Cut 2. About half are fixes; the other half rewrite content {fsub} approved in the script.",
       "choices": [
         {
           "id": "sort-notes",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Meet with Dr. Ward and Marcus to sort fixes from new content. Schedule one more rough cut for fixes; move new content to a reading or after launch.",
+          "label": "Meet with {faculty} and {mp} to sort fixes from new content. Schedule one more rough cut for fixes; move new content to a reading or after launch.",
           "effects": [
             {
               "type": "addEffort",
@@ -1078,7 +1078,7 @@
               "value": 3
             }
           ],
-          "outcome": "Marcus starts re-editing whole sections.",
+          "outcome": "{mp} starts re-editing whole sections.",
           "why": "Treating new content as fixes is scope creep at the most expensive stage."
         },
         {
@@ -1086,7 +1086,7 @@
           "tier": "resolve",
           "credit": 0.5,
           "reaction": "neutral",
-          "label": "Email her that only fixes will be applied.",
+          "label": "Email {fobj} that only fixes will be applied.",
           "effects": [
             {
               "type": "addEffort",
@@ -1098,7 +1098,7 @@
               "value": -6
             }
           ],
-          "outcome": "Right call, rough delivery. She feels dismissed.",
+          "outcome": "Right call, rough delivery. {Fsub} feels dismissed.",
           "why": "The decision is right; a conversation with an alternative would have kept trust."
         },
         {
@@ -1106,7 +1106,7 @@
           "tier": "escalate",
           "credit": 0.4,
           "reaction": "neutral",
-          "label": "Send the notes to Jordan to decide.",
+          "label": "Send the notes to {sup} to decide.",
           "effects": [
             {
               "type": "addEffort",
@@ -1114,7 +1114,7 @@
               "value": 5
             }
           ],
-          "outcome": "Jordan asks you to sort them first.",
+          "outcome": "{sup} asks you to sort them first.",
           "why": "Sorting notes is PM and producer work."
         }
       ],
@@ -1140,14 +1140,14 @@
         },
         "chance": 0.4
       },
-      "text": "Dr. Ward: \"I didn't know scripts were due this week.\" The deadline was in three meeting summary emails.",
+      "text": "{faculty}: \"I didn't know scripts were due this week.\" The deadline was in three meeting summary emails.",
       "choices": [
         {
           "id": "weekly-summary",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Learn how she reads email. Move key asks and dates to the top of the Friday weekly summary, and share a one-page development timeline.",
+          "label": "Learn how {fsub} reads email. Move key asks and dates to the top of the Friday weekly summary, and share a one-page development timeline.",
           "effects": [
             {
               "type": "responsiveness",
@@ -1159,7 +1159,7 @@
               "value": 4
             }
           ],
-          "outcome": "She reads Friday summaries. Deadlines stop being surprises.",
+          "outcome": "{Fsub} reads Friday summaries. Deadlines stop being surprises.",
           "why": "The SOP: find out which emails a faculty member reads, put careful thought into the weekly summary, and use a development timeline to track progress."
         },
         {
@@ -1175,7 +1175,7 @@
             }
           ],
           "outcome": "Technically right. Relationship worse.",
-          "why": "Proving you sent it doesn't fix how she receives information."
+          "why": "Proving you sent it doesn't fix how {fsub} receives information."
         },
         {
           "id": "more-emails",
@@ -1190,7 +1190,7 @@
               "weeks": 3
             }
           ],
-          "outcome": "More emails, some of which she reads.",
+          "outcome": "More emails, some of which {fsub} reads.",
           "why": "Adding email volume works against busy faculty."
         },
         {
@@ -1198,14 +1198,14 @@
           "tier": "escalate",
           "credit": 0.1,
           "reaction": "sad",
-          "label": "Copy her department chair on future reminders.",
+          "label": "Copy {fpos} department chair on future reminders.",
           "effects": [
             {
               "type": "trust",
               "value": -12
             }
           ],
-          "outcome": "She feels policed.",
+          "outcome": "{Fsub} feels policed.",
           "why": "Going around a partner damages trust and isn't how ODL escalates."
         }
       ],
@@ -1218,7 +1218,7 @@
     },
     {
       "id": "overloaded-ld",
-      "title": "Priya Is Stretched Thin",
+      "title": "{ld} Is Stretched Thin",
       "who": "ld",
       "mood": "sad",
       "trigger": {
@@ -1231,14 +1231,14 @@
         },
         "chance": 0.35
       },
-      "text": "Priya mentions she's lead designer on four other courses. Her milestone check-ins have gotten shorter, and the master site is behind.",
+      "text": "{ld} mentions being lead designer on four other courses. {ld}'s milestone check-ins have gotten shorter, and the master site is behind.",
       "choices": [
         {
           "id": "one-on-one",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Hold a 1:1, agree what this course needs from her each week, and simplify the module template to cut non-essential build work.",
+          "label": "Hold a 1:1, agree what this course needs from {ld} each week, and simplify the module template to cut non-essential build work.",
           "effects": [
             {
               "type": "morale",
@@ -1251,7 +1251,7 @@
               "value": -4
             }
           ],
-          "outcome": "Priya is relieved. A simpler template saves hours.",
+          "outcome": "{ld} is relieved. A simpler template saves hours.",
           "why": "Early, direct conversations and small scope trims protect both quality and morale."
         },
         {
@@ -1259,7 +1259,7 @@
           "tier": "escalate_plan",
           "credit": 0.8,
           "reaction": "neutral",
-          "label": "Bring Jordan Priya's workload and ask whether a supporting designer can help for a month.",
+          "label": "Bring {sup} {ld}'s workload and ask whether a supporting designer can help for a month.",
           "effects": [
             {
               "type": "capacity",
@@ -1274,14 +1274,14 @@
             }
           ],
           "outcome": "A supporting designer takes two modules.",
-          "why": "Good: cross-project workload is a leadership decision. Talking to Priya first would have been better."
+          "why": "Good: cross-project workload is a leadership decision. Talking to {ld} first would have been better."
         },
         {
           "id": "push-through",
           "tier": "ignore",
           "credit": 0.1,
           "reaction": "sad",
-          "label": "Remind her of the deadline and ask her to push through.",
+          "label": "Remind {ld} of the deadline and ask for a push.",
           "effects": [
             {
               "type": "morale",
@@ -1294,7 +1294,7 @@
               "value": 6
             }
           ],
-          "outcome": "She works late. Mistakes pile up quietly.",
+          "outcome": "{ld} works late. Mistakes pile up quietly.",
           "why": "Overload shows up as errors before it shows up as missed dates."
         },
         {
@@ -1315,7 +1315,7 @@
               "value": 3
             }
           ],
-          "outcome": "Kind, but Priya now has to check your pages against the design.",
+          "outcome": "Kind, but {ld} now has to check your pages against the design.",
           "why": "Doing team members' work pulls the PM off coordination and often adds rework."
         }
       ],
@@ -1334,21 +1334,21 @@
       "trigger": {
         "weeks": [
           10,
-          15
+          17
         ],
         "requires": {
           "taskStarted": "distribution"
         },
         "chance": 0.5
       },
-      "text": "Priya: \"The first videos are in Panopto, but no captions were ordered. I can't embed them until they're accessible.\"",
+      "text": "{ld}: \"The first videos are in Panopto, but no captions were ordered. I can't embed them until they're accessible.\"",
       "choices": [
         {
           "id": "order-and-checklist",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Have Marcus order and QA captions now, and add the distribution checklist (upload, captions, thumbnails, embed codes) to every video's task in Asana.",
+          "label": "Have {mp} order and QA captions now, and add the distribution checklist (upload, captions, thumbnails, embed codes) to every video's task in Asana.",
           "effects": [
             {
               "type": "addEffort",
@@ -1372,7 +1372,7 @@
               "value": 4
             }
           ],
-          "outcome": "Fast, but psychology terms come out garbled.",
+          "outcome": "Fast, but technical terms come out garbled.",
           "why": "Captions must be QA'd, not just generated."
         },
         {
@@ -1396,7 +1396,7 @@
           "tier": "resolve",
           "credit": 0.3,
           "reaction": "frustrated",
-          "label": "Ask Priya to post transcripts instead.",
+          "label": "Ask {ld} to post transcripts instead.",
           "effects": [
             {
               "type": "capacity",
@@ -1410,7 +1410,7 @@
               "value": -5
             }
           ],
-          "outcome": "Priya loses a day doing media work.",
+          "outcome": "{ld} loses a day doing media work.",
           "why": "Transcripts are part of distribution, which belongs to media."
         }
       ],
@@ -1436,14 +1436,14 @@
         },
         "chance": 0.5
       },
-      "text": "Priya has been hunting through Slack and Panopto for an hour: the embed codes and in-video quiz timestamps were never shared.",
+      "text": "{ld} has been hunting through Slack and Panopto for an hour: the embed codes and in-video quiz timestamps were never shared.",
       "choices": [
         {
           "id": "asset-list",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Ask Marcus to document every embed code and quiz timestamp in the shared learning asset list, and make that the handoff point from now on.",
+          "label": "Ask {mp} to document every embed code and quiz timestamp in the shared learning asset list, and make that the handoff point from now on.",
           "effects": [
             {
               "type": "capacity",
@@ -1457,7 +1457,7 @@
               "value": -1
             }
           ],
-          "outcome": "One list, one place. Priya embeds the rest in an afternoon.",
+          "outcome": "One list, one place. {ld} embeds the rest in an afternoon.",
           "why": "The media SOP has producers document embed codes and share them with the designer; the LD SOP's asset list is the natural home."
         },
         {
@@ -1465,7 +1465,7 @@
           "tier": "ignore",
           "credit": 0.3,
           "reaction": "frustrated",
-          "label": "Let Priya keep looking; she'll find them.",
+          "label": "Let {ld} keep looking; the codes will turn up.",
           "effects": [
             {
               "type": "capacity",
@@ -1479,7 +1479,7 @@
               "value": -5
             }
           ],
-          "outcome": "She finds most of them.",
+          "outcome": "{ld} finds most of them.",
           "why": "Handoffs that depend on hunting cost the downstream person time."
         },
         {
@@ -1487,7 +1487,7 @@
           "tier": "resolve",
           "credit": 0.6,
           "reaction": "neutral",
-          "label": "Ask Marcus to Slack Priya the codes.",
+          "label": "Ask {mp} to Slack {ld} the codes.",
           "effects": [
             {
               "type": "capacity",
@@ -1522,7 +1522,7 @@
         },
         "chance": 0.45
       },
-      "text": "Dr. Ward brought a graduate student on camera for a demonstration. Marcus just realized there's no signed release form.",
+      "text": "{faculty} brought a graduate student on camera for a demonstration. {mp} just realized there's no signed release form.",
       "choices": [
         {
           "id": "get-release",
@@ -1582,7 +1582,7 @@
           "tier": "escalate_plan",
           "credit": 0.6,
           "reaction": "neutral",
-          "label": "Ask Jordan how to handle it.",
+          "label": "Ask {sup} how to handle it.",
           "effects": [
             {
               "type": "capacity",
@@ -1591,7 +1591,7 @@
               "weeks": 1
             }
           ],
-          "outcome": "Jordan says: get it signed.",
+          "outcome": "{sup} says: get it signed.",
           "why": "The process is documented; you can follow it."
         }
       ],
@@ -1617,7 +1617,7 @@
         },
         "chance": 0.4
       },
-      "text": "Dr. Ward asks whether she can reuse the lecture videos if she moves to another university. No IP agreement has been drafted.",
+      "text": "{faculty} asks whether {fsub} can reuse the lecture videos after moving to another university. No IP agreement has been drafted.",
       "choices": [
         {
           "id": "draft-ip",
@@ -1631,7 +1631,7 @@
               "value": 5
             }
           ],
-          "outcome": "She gets a clear answer in writing within two weeks.",
+          "outcome": "{Fsub} gets a clear answer in writing within two weeks.",
           "why": "Drafting IP agreements during development is a PM responsibility in the SOP, finalized with the director."
         },
         {
@@ -1639,14 +1639,14 @@
           "tier": "resolve",
           "credit": 0.1,
           "reaction": "frustrated",
-          "label": "Tell her the university owns everything.",
+          "label": "Tell {fobj} the university owns everything.",
           "effects": [
             {
               "type": "trust",
               "value": -10
             }
           ],
-          "outcome": "That's not necessarily what the policy says, and now she's upset.",
+          "outcome": "That's not necessarily what the policy says, and now {fsub}'s upset.",
           "why": "Never answer legal-ish questions from memory."
         },
         {
@@ -1654,7 +1654,7 @@
           "tier": "escalate",
           "credit": 0.5,
           "reaction": "neutral",
-          "label": "Tell her you'll ask the director.",
+          "label": "Tell {fobj} you'll ask the director.",
           "effects": [
             {
               "type": "trust",
@@ -1676,7 +1676,7 @@
               "value": -6
             }
           ],
-          "outcome": "She hesitates to approve the final cuts.",
+          "outcome": "{Fsub} hesitates to approve the final cuts.",
           "why": "Unresolved rights questions stall approvals."
         }
       ],
@@ -1702,14 +1702,14 @@
         },
         "chance": 0.35
       },
-      "text": "A textbook chapter and two figures Dr. Ward relies on can't be posted in the online course as files.",
+      "text": "A textbook chapter and two figures {faculty} relies on can't be posted in the online course as files.",
       "choices": [
         {
           "id": "library-options",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Ask the library about library reserves or linking, have Priya add a placeholder, and bring Dr. Ward open alternatives for the figures.",
+          "label": "Ask the library about library reserves or linking, have {ld} add a placeholder, and bring {faculty} open alternatives for the figures.",
           "effects": [
             {
               "type": "capacity",
@@ -1753,7 +1753,7 @@
               "value": -5
             }
           ],
-          "outcome": "Clean, but Dr. Ward has to rework the module.",
+          "outcome": "Clean, but {faculty} has to rework the module.",
           "why": "Removing content without alternatives hurts the course."
         },
         {
@@ -1761,7 +1761,7 @@
           "tier": "escalate",
           "credit": 0.5,
           "reaction": "neutral",
-          "label": "Ask Jordan what to do.",
+          "label": "Ask {sup} what to do.",
           "effects": [
             {
               "type": "capacity",
@@ -1770,7 +1770,7 @@
               "weeks": 1
             }
           ],
-          "outcome": "Jordan points you to the library.",
+          "outcome": "{sup} points you to the library.",
           "why": "Know your campus experts and go to them directly."
         }
       ],
@@ -1789,14 +1789,14 @@
       "trigger": {
         "weeks": [
           9,
-          15
+          17
         ],
         "requires": {
           "taskStarted": "mastersite"
         },
         "chance": 0.4
       },
-      "text": "Dr. Ward wants Priya to configure the textbook publisher's homework tool in the master site this week.",
+      "text": "{faculty} wants {ld} to configure the textbook publisher's homework tool in the master site this week.",
       "choices": [
         {
           "id": "placeholder",
@@ -1811,7 +1811,7 @@
               "value": 1
             }
           ],
-          "outcome": "Layout complete; setup steps are written for her term.",
+          "outcome": "Layout complete; setup steps are written for {fpos} term.",
           "why": "The LD SOP: external tools get placeholders and are configured by the instructor of record on the live site."
         },
         {
@@ -1819,7 +1819,7 @@
           "tier": "resolve",
           "credit": 0.2,
           "reaction": "frustrated",
-          "label": "Have Priya configure it now.",
+          "label": "Have {ld} configure it now.",
           "effects": [
             {
               "type": "capacity",
@@ -1841,7 +1841,7 @@
           "tier": "resolve",
           "credit": 0.4,
           "reaction": "sad",
-          "label": "Tell her that's her job.",
+          "label": "Tell {fobj} that's {fpos} job.",
           "effects": [
             {
               "type": "trust",
@@ -1849,7 +1849,7 @@
             }
           ],
           "outcome": "True, unhelpfully put.",
-          "why": "Explain the process and support her with hand-off documentation."
+          "why": "Explain the process and support {fobj} with hand-off documentation."
         }
       ],
       "debrief": {
@@ -1874,14 +1874,14 @@
         },
         "chance": 0.5
       },
-      "text": "Jordan asks: \"When's the hand-off meeting with Dr. Ward? Is the hand-off document started?\" Neither is.",
+      "text": "{sup} asks: \"When's the hand-off meeting with {faculty}? Is the hand-off document started?\" Neither is.",
       "choices": [
         {
           "id": "schedule-prep",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Schedule the hand-off meeting now, and start the hand-off document with Priya (deliverables, maintenance instructions, resources), with the design document and links to every deliverable.",
+          "label": "Schedule the hand-off meeting now, and start the hand-off document with {ld} (deliverables, maintenance instructions, resources), with the design document and links to every deliverable.",
           "effects": [
             {
               "type": "addEffort",
@@ -1893,7 +1893,7 @@
               "value": 4
             }
           ],
-          "outcome": "Dr. Ward blocks the time. The document is ready before the meeting.",
+          "outcome": "{faculty} blocks the time. The document is ready before the meeting.",
           "why": "The PM SOP's delivery checklist: hand-off document with the lead designer, all deliverables compiled, PM runs the meeting."
         },
         {
@@ -1901,14 +1901,14 @@
           "tier": "resolve",
           "credit": 0.3,
           "reaction": "neutral",
-          "label": "Email Dr. Ward the course link on launch day.",
+          "label": "Email {faculty} the course link on launch day.",
           "effects": [
             {
               "type": "trust",
               "value": -4
             }
           ],
-          "outcome": "She has a course but no idea how to maintain it.",
+          "outcome": "{Fsub} has a course but no idea how to maintain it.",
           "why": "A link isn't a hand-off."
         },
         {
@@ -1916,7 +1916,7 @@
           "tier": "resolve",
           "credit": 0.4,
           "reaction": "frustrated",
-          "label": "Ask Priya to handle the hand-off.",
+          "label": "Ask {ld} to handle the hand-off.",
           "effects": [
             {
               "type": "capacity",
@@ -1925,7 +1925,7 @@
               "weeks": 1
             }
           ],
-          "outcome": "Priya does it on top of QA.",
+          "outcome": "{ld} does it on top of QA.",
           "why": "The designer drafts with you, but the PM owns the hand-off meeting."
         }
       ],
@@ -1944,19 +1944,19 @@
       "trigger": {
         "weeks": [
           11,
-          14
+          17
         ],
         "requires": {},
         "chance": 0.45
       },
-      "text": "Priya's first QA pass on the live course found broken links, two quizzes with wrong settings, and a module unpublished. Launch is days away.",
+      "text": "{ld}'s first QA pass on the live course found broken links, two quizzes with wrong settings, and a module unpublished. Launch is days away.",
       "choices": [
         {
           "id": "triage",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Triage with Priya: fix launch-blocking issues first (settings, publishing, links in Module 1), log the rest with owners, and re-run the QA checklist before launch.",
+          "label": "Triage with {ld}: fix launch-blocking issues first (settings, publishing, links in Module 1), log the rest with owners, and re-run the QA checklist before launch.",
           "effects": [
             {
               "type": "addEffort",
@@ -1972,7 +1972,7 @@
           "tier": "resolve",
           "credit": 0.5,
           "reaction": "frustrated",
-          "label": "Ask Priya to fix everything before doing anything else.",
+          "label": "Ask {ld} to fix everything before doing anything else.",
           "effects": [
             {
               "type": "addEffort",
@@ -2009,7 +2009,7 @@
           "tier": "escalate_plan",
           "credit": 0.6,
           "reaction": "neutral",
-          "label": "Tell Jordan and ask whether launch should move.",
+          "label": "Tell {sup} and ask whether launch should move.",
           "effects": [
             {
               "type": "addEffort",
@@ -2017,7 +2017,7 @@
               "value": 3
             }
           ],
-          "outcome": "Jordan asks which issues actually block launch.",
+          "outcome": "{sup} asks which issues actually block launch.",
           "why": "Moving a term launch is rarely an option; triage first, then escalate if blockers remain."
         }
       ],
@@ -2036,12 +2036,12 @@
       "trigger": {
         "weeks": [
           10,
-          13
+          15
         ],
         "requires": {},
         "chance": 0.4
       },
-      "text": "Dr. Ward: \"I just got back from a conference. I want to add a module on a new study everyone's talking about. Just one short video and a reading?\"",
+      "text": "{faculty}: \"I just got back from a conference. I want to add a module on a new study everyone's talking about. Just one short video and a reading?\"",
       "choices": [
         {
           "id": "after-launch",
@@ -2060,7 +2060,7 @@
               "value": -1
             }
           ],
-          "outcome": "She posts it as a discussion prompt and adds the module to her wish list.",
+          "outcome": "{Fsub} posts it as a discussion prompt and adds the module to {fpos} wish list.",
           "why": "Hold scope with the charter and offer an in-scope way to include the idea now."
         },
         {
@@ -2086,7 +2086,7 @@
               "value": -8
             }
           ],
-          "outcome": "Marcus books an extra shoot two weeks before launch.",
+          "outcome": "{mp} books an extra shoot two weeks before launch.",
           "why": "A small yes late in development costs the most."
         },
         {
@@ -2102,7 +2102,7 @@
               "value": 2
             }
           ],
-          "outcome": "A reading gets added; she's mostly satisfied.",
+          "outcome": "A reading gets added; {fsub}'s mostly satisfied.",
           "why": "A good compromise, but it still changes scope without referencing the charter or the team."
         },
         {
@@ -2110,9 +2110,9 @@
           "tier": "escalate",
           "credit": 0.4,
           "reaction": "neutral",
-          "label": "Tell her you'll check with Jordan.",
+          "label": "Tell {fobj} you'll check with {sup}.",
           "effects": [],
-          "outcome": "Jordan points back to the charter.",
+          "outcome": "{sup} points back to the charter.",
           "why": "You have the charter; use it first."
         }
       ],
@@ -2122,6 +2122,828 @@
         "escalateWhen": "Escalate if the faculty member insists and the change threatens launch.",
         "sop": "PM SOP: Change of Scope; Drafting a Charter"
       }
+    },
+    {
+      "id": "animate-before-final",
+      "title": "Animate Before Scripts Are Final?",
+      "who": "gd",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          4,
+          10
+        ],
+        "requires": {
+          "taskStarted": "scripts",
+          "taskNotDone": "scriptreview"
+        },
+        "chance": 0.45
+      },
+      "text": "{gd}: \"{mp} asked me to start the animations now to save time, but the scripts aren't final. If the narration changes, I redo the timing.\"",
+      "choices": [
+        {
+          "id": "style-frames",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Have {gd} create design frames for sign-off now, and start animating each segment once its script is final.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "gd",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Style is approved early, and animation starts on locked scripts.",
+          "why": "The media SOP confirms art style with design frames before animating; locking scripts first prevents rework."
+        },
+        {
+          "id": "start-now",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Start animating now; changes will be small.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "animations",
+              "value": 6
+            }
+          ],
+          "outcome": "Two segments are re-timed when narration changes.",
+          "why": "Animating against draft scripts builds in rework."
+        },
+        {
+          "id": "wait-idle",
+          "tier": "resolve",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Have {gd} wait until all scripts are final.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "gd",
+              "value": -3,
+              "weeks": 2
+            }
+          ],
+          "outcome": "{gd} waits two weeks with little to do.",
+          "why": "Safe, but design frames and branding could have used the time."
+        },
+        {
+          "id": "ask-sup",
+          "tier": "escalate",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Ask {sup} to decide.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "gd",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "{sup} asks what you'd recommend.",
+          "why": "This is a sequencing call you can make with the team."
+        }
+      ],
+      "debrief": {
+        "concept": "Sequencing: start the work that won't change.",
+        "independent": "Do the stable work first (design frames, branding, templates) and start dependent work when its inputs are locked.",
+        "escalateWhen": "Not an escalation issue unless the schedule truly can't wait for final scripts.",
+        "sop": "Media SOP: 2M Design Frame, 5M Animations"
+      }
+    },
+    {
+      "id": "style-rejected",
+      "title": "The Director Rejects the Animation Style",
+      "who": "gd",
+      "mood": "sad",
+      "trigger": {
+        "weeks": [
+          6,
+          12
+        ],
+        "requires": {
+          "taskStarted": "animations",
+          "taskNotDone": "animations"
+        },
+        "chance": 0.4
+      },
+      "text": "The media director saw {gd}'s rough animations and wants a different visual style. Nobody had signed off on the design frames.",
+      "choices": [
+        {
+          "id": "salvage-plan",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "neutral",
+          "label": "Meet with {gd}, {mp} and the director: agree the style on one design frame, reuse what fits, re-plan the remaining segments and their knock-on effects, and add director sign-off to the checklist.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "animations",
+              "value": 5
+            },
+            {
+              "type": "morale",
+              "who": "gd",
+              "value": 3
+            }
+          ],
+          "outcome": "One afternoon settles the style; most assets carry over.",
+          "why": "Get the right sign-off at the design-frame stage, and when it's missed, re-plan visibly with the people affected."
+        },
+        {
+          "id": "redo-all",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "sad",
+          "label": "Ask {gd} to redo everything in the new style.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "animations",
+              "value": 12
+            },
+            {
+              "type": "morale",
+              "who": "gd",
+              "value": -8
+            }
+          ],
+          "outcome": "{gd} starts over, quietly discouraged.",
+          "why": "Redoing everything ignores what can be reused and the schedule impact."
+        },
+        {
+          "id": "push-back",
+          "tier": "resolve",
+          "credit": 0.2,
+          "reaction": "frustrated",
+          "label": "Tell the director it's too late to change.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -2
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "post",
+              "value": 4
+            }
+          ],
+          "outcome": "The director approves nothing until the style changes.",
+          "why": "The director signs off on media; you need that sign-off."
+        },
+        {
+          "id": "escalate-plan",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Bring {sup} the impact on launch and a proposed compromise style.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "animations",
+              "value": 7
+            }
+          ],
+          "outcome": "{sup} helps broker the compromise.",
+          "why": "Reasonable, but the team can meet the director directly first."
+        }
+      ],
+      "debrief": {
+        "concept": "Approvals belong early: get sign-off where change is cheap.",
+        "independent": "Build sign-off points into the plan (design frames, rough cuts). When one is missed, meet, salvage and re-plan openly.",
+        "escalateWhen": "Escalate if the style change would move the launch date.",
+        "sop": "Media SOP: 1M Director sign-off, 2M Design Frame"
+      }
+    },
+    {
+      "id": "lower-third-typo",
+      "title": "A Typo on Every Lower Third",
+      "who": "gd",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          8,
+          17
+        ],
+        "requires": {
+          "taskStarted": "post"
+        },
+        "chance": 0.4
+      },
+      "text": "{faculty} spotted that {fpos} title is wrong on the lower thirds in every final cut.",
+      "choices": [
+        {
+          "id": "template-fix",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Have {gd} fix the template once, {mp} re-export affected videos, and add a name-and-title check to the final-cut last looks.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 2
+            }
+          ],
+          "outcome": "Fixed everywhere in a day, and the checklist catches the next one.",
+          "why": "Fix at the source, then add the check that would have caught it."
+        },
+        {
+          "id": "fix-one",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Fix the video {faculty} mentioned.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "distribution",
+              "value": 3
+            }
+          ],
+          "outcome": "The other videos still have the typo.",
+          "why": "Fixing one instance leaves the rest."
+        },
+        {
+          "id": "leave-it",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "It's minor; leave it.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -8
+            }
+          ],
+          "outcome": "{faculty} feels it's careless.",
+          "why": "Names and titles matter to faculty and students."
+        }
+      ],
+      "debrief": {
+        "concept": "Quality: fix the template, not just the instance.",
+        "independent": "Correct the shared asset, re-check every place it's used, and add the missing check to the review step.",
+        "escalateWhen": "Not an escalation issue.",
+        "sop": "Media SOP: 4M Final Cut last looks, 6M Lower Thirds"
+      }
+    },
+    {
+      "id": "stock-image-license",
+      "title": "Where Did These Images Come From?",
+      "who": "gd",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          3,
+          10
+        ],
+        "requires": {
+          "taskStarted": "branding"
+        },
+        "chance": 0.35
+      },
+      "text": "The Canvas banners look great, but {gd} isn't sure two of the stock images are licensed for university use.",
+      "choices": [
+        {
+          "id": "verify-replace",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "neutral",
+          "label": "Check the licenses; replace anything unclear with licensed or university-provided images, and record sources in the asset list.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "branding",
+              "value": 2
+            }
+          ],
+          "outcome": "Two images are swapped; every source is documented.",
+          "why": "Unclear rights are a risk; documenting sources makes the hand-off clean."
+        },
+        {
+          "id": "keep",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "worried",
+          "label": "Keep them; nobody checks banners.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "qa",
+              "value": 4
+            }
+          ],
+          "outcome": "QA flags them right before launch.",
+          "why": "Unlicensed images are a real risk to the university."
+        },
+        {
+          "id": "ask-sup",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask {sup} whether the images are OK.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "branding",
+              "value": 1
+            }
+          ],
+          "outcome": "{sup} suggests checking the licenses.",
+          "why": "You can verify this yourselves."
+        }
+      ],
+      "debrief": {
+        "concept": "Rights and licensing apply to every asset, not just readings.",
+        "independent": "Verify licenses, replace what's unclear, and keep sources in the asset list.",
+        "escalateWhen": "Escalate if a required asset can't be licensed.",
+        "sop": "Media SOP: 6M Branding; LD SOP: Milestone 3 asset list"
+      }
+    },
+    {
+      "id": "graphics-requests",
+      "title": "Two Producers, One Designer",
+      "who": "gd",
+      "mood": "frustrated",
+      "trigger": {
+        "weeks": [
+          5,
+          12
+        ],
+        "requires": {
+          "taskStarted": "animations"
+        },
+        "chance": 0.35
+      },
+      "text": "{gd} is getting requests directly from {mp} and from a producer on another project, each saying theirs is urgent.",
+      "choices": [
+        {
+          "id": "intake",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Route graphics requests for your project through Asana with dates, agree priorities with {gd}, and talk to the other project's PM about overlap.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "gd",
+              "value": 8
+            },
+            {
+              "type": "capacity",
+              "who": "gd",
+              "value": 1,
+              "weeks": 3
+            }
+          ],
+          "outcome": "{gd} has one list and clear priorities.",
+          "why": "A single, visible intake makes priorities explicit and protects focus."
+        },
+        {
+          "id": "our-first",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "worried",
+          "label": "Tell {gd} your project comes first.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "gd",
+              "value": -4
+            }
+          ],
+          "outcome": "The other producer escalates.",
+          "why": "Claiming priority without coordinating just moves the conflict."
+        },
+        {
+          "id": "escalate-plan",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Ask {sup} to set priorities across the two projects, with both deadlines laid out.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "gd",
+              "value": 4
+            }
+          ],
+          "outcome": "{sup} sets an order; it takes a few days.",
+          "why": "Cross-project priorities are a leadership call, but organizing your own intake comes first."
+        },
+        {
+          "id": "ignore",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Let {gd} sort it out.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "gd",
+              "value": -10
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "animations",
+              "value": 4
+            }
+          ],
+          "outcome": "{gd} juggles both and rushes.",
+          "why": "Leaving a shared resource to absorb conflicting asks causes errors."
+        }
+      ],
+      "debrief": {
+        "concept": "Shared people need one queue and clear priorities.",
+        "independent": "Make requests visible in one place with dates, and coordinate with other PMs who share the person.",
+        "escalateWhen": "Escalate when two projects' priorities genuinely conflict and the PMs can't agree.",
+        "sop": "PM SOP: With Timelines (shifting work between team members)"
+      }
+    },
+    {
+      "id": "stale-asana",
+      "title": "The Asana Board Is Fiction",
+      "who": "ld",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          6,
+          8
+        ],
+        "requires": {},
+        "chance": 0.8
+      },
+      "text": "Your first week on the rescue project: the Asana board shows tasks done that aren't, and dates from a plan nobody follows. {ld}: \"Honestly, we stopped looking at it.\"",
+      "choices": [
+        {
+          "id": "reset",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Hold a timeline reset with {ld}, {mp} and {gd}: rebuild the board from real status working back from launch, get the revised timeline approved by the directors, then send {faculty} a clear summary.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": 6
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": 6
+            },
+            {
+              "type": "trust",
+              "value": 4
+            }
+          ],
+          "outcome": "Everyone sees the same, real plan for the first time in weeks.",
+          "why": "The PM SOP: work backwards from delivery, align design and media timelines, and get director review before changes go into Asana."
+        },
+        {
+          "id": "patch",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Quietly update the dates in Asana yourself.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 3
+            }
+          ],
+          "outcome": "The board looks better; the team still doesn't trust it.",
+          "why": "A board nobody helped build won't be used."
+        },
+        {
+          "id": "ignore-board",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Skip Asana and track it in your head.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -5
+            }
+          ],
+          "outcome": "Nobody knows what's due.",
+          "why": "A shared, current plan is the PM's main tool."
+        },
+        {
+          "id": "escalate-bare",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Tell {sup} the board is a mess.",
+          "effects": [],
+          "outcome": "{sup} agrees and asks for your reset plan.",
+          "why": "Bring the plan, not just the problem."
+        }
+      ],
+      "debrief": {
+        "concept": "Taking over a project: re-baseline before you manage it.",
+        "independent": "Find out real status from the people doing the work, rebuild the timeline backwards from launch, and get it approved.",
+        "escalateWhen": "Revised timelines need director review; bring the analysis.",
+        "sop": "PM SOP: Design phase (timeline), Building an Asana board"
+      },
+      "projects": [
+        "rescue-sustainable-business"
+      ]
+    },
+    {
+      "id": "broken-promises",
+      "title": "\"The Last PM Promised Me...\"",
+      "who": "faculty",
+      "mood": "frustrated",
+      "trigger": {
+        "weeks": [
+          6,
+          10
+        ],
+        "requires": {},
+        "chance": 0.6
+      },
+      "text": "{faculty}: \"Your predecessor promised me twelve videos and a custom case-study tool. I want to know that still happens.\" The charter lists eight videos.",
+      "choices": [
+        {
+          "id": "listen-reset",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "neutral",
+          "label": "Meet 1:1 to listen, acknowledge the frustration, walk through the charter together, and offer an in-scope plan for the case studies in Canvas.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 10
+            }
+          ],
+          "outcome": "{Fsub} is still cautious, but feels heard and agrees to the charter.",
+          "why": "Rebuild trust first, then anchor scope in the signed charter with an alternative."
+        },
+        {
+          "id": "honor-all",
+          "tier": "resolve",
+          "credit": 0.1,
+          "reaction": "happy",
+          "label": "Honor the promises to rebuild trust.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 8
+            },
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 10
+            },
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 6
+            }
+          ],
+          "outcome": "{faculty} is happy; the team is now far behind.",
+          "why": "Undocumented promises aren't scope; agreeing adds work you can't deliver."
+        },
+        {
+          "id": "charter-only",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "sad",
+          "label": "Email {fobj} the charter and say that's the scope.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -8
+            }
+          ],
+          "outcome": "Correct, and it lands badly.",
+          "why": "Right scope, wrong delivery for a frustrated partner."
+        },
+        {
+          "id": "escalate-plan",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Bring {sup} the promise gap and propose a joint meeting to reset scope.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 5
+            }
+          ],
+          "outcome": "{sup} joins; scope is reset to the charter.",
+          "why": "Good when the gap is large, but a 1:1 first shows ownership."
+        }
+      ],
+      "debrief": {
+        "concept": "Inherited relationships: listen, then reset against the charter.",
+        "independent": "Start with a 1:1 to understand what was promised, then anchor to the charter and offer in-scope alternatives.",
+        "escalateWhen": "Bring in ODL leadership if the faculty member won't accept the charter scope.",
+        "sop": "PM SOP: Challenging Faculty; Change of Scope; Drafting a Charter"
+      },
+      "projects": [
+        "rescue-sustainable-business"
+      ]
+    },
+    {
+      "id": "location-permits",
+      "title": "The Location Needs a Permit",
+      "who": "mp",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          2,
+          7
+        ],
+        "requires": {
+          "taskStarted": "logistics",
+          "taskNotDone": "production"
+        },
+        "chance": 0.5
+      },
+      "text": "{mp}: \"The lab we're filming in needs a facilities permit, and we'll have bystanders in the background. Shoot is in three weeks.\"",
+      "choices": [
+        {
+          "id": "support-logistics",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Have {mp} file the permit today, prepare release forms for anyone on camera, and you handle booking and blocking the shoot dates on the media calendar.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Permit approved, releases signed on the day.",
+          "why": "The media SOP lists scouting, permits and release forms in pre-production; the PM supports booking and calendars."
+        },
+        {
+          "id": "film-anyway",
+          "tier": "ignore",
+          "credit": 0.0,
+          "reaction": "sad",
+          "label": "Film without the permit; it's on campus.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "post",
+              "value": 6
+            }
+          ],
+          "outcome": "Facilities stops the shoot halfway.",
+          "why": "Skipping permits risks the shoot and the relationship with the location."
+        },
+        {
+          "id": "move-studio",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Move the shoot to the studio instead.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -5
+            }
+          ],
+          "outcome": "Easier, but {faculty} loses the documentary look {fsub} wanted.",
+          "why": "Changes the creative direction the charter agreed to."
+        },
+        {
+          "id": "escalate",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask {sup} to sort out the permit.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "{sup} points you to facilities.",
+          "why": "This is routine pre-production."
+        }
+      ],
+      "debrief": {
+        "concept": "Pre-production protects production days.",
+        "independent": "Work the logistics checklist early: scouting, permits, release forms, booking, calendars.",
+        "escalateWhen": "Escalate if a permit is denied and the location is essential.",
+        "sop": "Media SOP: 2M Scouting, Booking/Permits/Travel, Release Forms"
+      },
+      "projects": [
+        "ai-ethics-documentary"
+      ]
+    },
+    {
+      "id": "faculty-traveling",
+      "title": "{faculty} Will Be Abroad on Shoot Day",
+      "who": "faculty",
+      "mood": "worried",
+      "trigger": {
+        "weeks": [
+          3,
+          8
+        ],
+        "requires": {
+          "taskNotDone": "production"
+        },
+        "chance": 0.5
+      },
+      "text": "{faculty} just accepted a keynote overseas. It overlaps the shoot dates, which were never put on {fpos} calendar.",
+      "choices": [
+        {
+          "id": "lock-dates",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "neutral",
+          "label": "Find new dates with {faculty}, {mp} and the crew in one meeting, block them on everyone's calendar, and move review windows so post-production isn't squeezed.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -3,
+              "weeks": 1
+            },
+            {
+              "type": "trust",
+              "value": 3
+            }
+          ],
+          "outcome": "New dates are locked on every calendar.",
+          "why": "The PM SOP: schedule with everyone present and block production days on calendars."
+        },
+        {
+          "id": "remote",
+          "tier": "resolve",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Record {fpos} interview remotely from the hotel.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "post",
+              "value": 5
+            }
+          ],
+          "outcome": "The footage doesn't match the documentary look.",
+          "why": "Workable, but changes quality agreed in the brief."
+        },
+        {
+          "id": "cancel-trip",
+          "tier": "resolve",
+          "credit": 0.1,
+          "reaction": "frustrated",
+          "label": "Ask {fobj} to skip the keynote.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -12
+            }
+          ],
+          "outcome": "{Fsub} declines, annoyed.",
+          "why": "Faculty commitments come first; plan around them."
+        },
+        {
+          "id": "escalate",
+          "tier": "escalate_plan",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Ask {sup} to approve moving the shoot, with the impact.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -3,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Approved; you schedule it.",
+          "why": "Fine if milestones move, but you can schedule first."
+        }
+      ],
+      "debrief": {
+        "concept": "Calendars are commitments: block them early with everyone.",
+        "independent": "Get production dates on the faculty member's and media team's calendars as soon as they're known.",
+        "escalateWhen": "Escalate if a date change moves an approved milestone.",
+        "sop": "PM SOP: Scheduling meetings; Design phase (block media calendars)"
+      },
+      "projects": [
+        "ai-ethics-documentary"
+      ]
     }
   ]
 }

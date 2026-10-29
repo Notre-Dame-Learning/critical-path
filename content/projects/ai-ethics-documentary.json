@@ -1,0 +1,181 @@
+{
+  "_note": "Documentary-style micro-course: on-location production (Media SOP 2M scouting, permits, release forms) and heavy animation (5M).",
+  "id": "ai-ethics-documentary",
+  "title": "AI Ethics documentary micro-course",
+  "difficulty": "Media-heavy",
+  "facultyId": "fac2",
+  "tagline": "A short course built around an on-location documentary and animated explainers.",
+  "brief": "The charter is signed: build a 4-week, non-credit micro-course on AI ethics with {faculty}. It centers on a 20-minute documentary shot on location, six animated explainers and a short Canvas site. Launch is fixed to an alumni event.",
+  "team": {
+    "ld": "ld1",
+    "mp": "mp1",
+    "gd": "gd1",
+    "faculty": "fac2"
+  },
+  "launchWeek": 15,
+  "actionPointsPerWeek": 2,
+  "tasks": [
+    {
+      "id": "analysis",
+      "name": "Front-end analysis (LD Milestone 1)",
+      "phase": "Design",
+      "owner": "ld",
+      "effort": 6,
+      "dependsOn": []
+    },
+    {
+      "id": "brief",
+      "name": "Creative brief and lookbook",
+      "phase": "Design",
+      "owner": "mp",
+      "effort": 6,
+      "dependsOn": []
+    },
+    {
+      "id": "coursemap",
+      "name": "Course map and activity plan (LD Milestone 2)",
+      "phase": "Design",
+      "owner": "ld",
+      "effort": 10,
+      "dependsOn": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "branding",
+      "name": "Course branding and graphics templates",
+      "phase": "Design",
+      "owner": "gd",
+      "effort": 6,
+      "dependsOn": [
+        "brief"
+      ]
+    },
+    {
+      "id": "scripts",
+      "name": "Faculty drafts interview questions and narration",
+      "phase": "Development",
+      "owner": "faculty",
+      "effort": 10,
+      "dependsOn": [
+        "coursemap",
+        "brief"
+      ]
+    },
+    {
+      "id": "content",
+      "name": "Faculty selects readings and discussion prompts",
+      "phase": "Development",
+      "owner": "faculty",
+      "effort": 8,
+      "dependsOn": [
+        "coursemap"
+      ]
+    },
+    {
+      "id": "logistics",
+      "name": "Scouting, booking, permits and release forms",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 6,
+      "dependsOn": [
+        "brief"
+      ]
+    },
+    {
+      "id": "scriptreview",
+      "name": "Script review and shot list",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 5,
+      "dependsOn": [
+        "scripts"
+      ]
+    },
+    {
+      "id": "production",
+      "name": "On-location shoot",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 14,
+      "dependsOn": [
+        "scriptreview",
+        "logistics"
+      ]
+    },
+    {
+      "id": "animations",
+      "name": "Animated explainers: art, test, rough, final",
+      "phase": "Development",
+      "owner": "gd",
+      "effort": 22,
+      "dependsOn": [
+        "scriptreview"
+      ]
+    },
+    {
+      "id": "post",
+      "name": "Post-production: assembly, rough cuts, final cut",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 26,
+      "dependsOn": [
+        "production",
+        "animations"
+      ]
+    },
+    {
+      "id": "distribution",
+      "name": "Distribution: Panopto, captions, embed codes",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 4,
+      "dependsOn": [
+        "post"
+      ]
+    },
+    {
+      "id": "mastersite",
+      "name": "Master site build in Canvas",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 12,
+      "dependsOn": [
+        "content",
+        "branding"
+      ]
+    },
+    {
+      "id": "embed",
+      "name": "Embed media in the master site",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 3,
+      "dependsOn": [
+        "mastersite",
+        "distribution"
+      ]
+    },
+    {
+      "id": "qa",
+      "name": "Migrate to live course and QA",
+      "phase": "Delivery",
+      "owner": "ld",
+      "effort": 6,
+      "dependsOn": [
+        "embed"
+      ],
+      "isQA": true
+    },
+    {
+      "id": "handoff",
+      "name": "Hand-off document and meeting",
+      "phase": "Delivery",
+      "owner": "ld",
+      "effort": 2,
+      "dependsOn": [
+        "qa"
+      ]
+    }
+  ]
+}

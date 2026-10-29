@@ -8,6 +8,7 @@ const INK = '#2b2622';
 export function avatarSVG(spec, mood = 'neutral', { size = 64, label = '' } = {}) {
   const s = spec ?? { skin: '#d8a982', hair: '#3a2c24', style: 'short', shirt: '#55657a' };
   const m = MOODS.includes(mood) ? mood : 'neutral';
+  if (s.species === 'retriever') return retrieverSVG(s, m, size, label);
   return `<svg class="avatar mood-${m}" width="${size}" height="${size}" viewBox="0 0 120 120" role="img" aria-label="${esc(label || 'Team member')}, ${m}">
   <circle cx="60" cy="60" r="60" class="avatar-bg"/>
   <clipPath id="clip-${uid}"><circle cx="60" cy="60" r="60"/></clipPath>
@@ -29,6 +30,49 @@ export function avatarSVG(spec, mood = 'neutral', { size = 64, label = '' } = {}
 }
 
 let uid = 0;
+
+// A golden retriever in a shirt and tie, with the same five moods.
+function retrieverSVG(s, m, size, label) {
+  const fur = s.fur ?? '#d9a24e', dark = shade(fur, 0.72), light = shade(fur, 1.18);
+  const id = uid++;
+  const brows = {
+    happy: ['M44 46 Q49 42 54 45', 'M66 45 Q71 42 76 46'],
+    neutral: ['M44 46 L54 45', 'M66 45 L76 46'],
+    worried: ['M44 48 L54 43', 'M66 43 L76 48'],
+    sad: ['M44 49 Q49 44 54 43', 'M66 43 Q71 44 76 49'],
+    frustrated: ['M44 43 L54 48', 'M66 48 L76 43'],
+  }[m];
+  const mouth = {
+    happy: `<path d="M50 74 Q60 84 70 74" fill="#7a2e2a" stroke="${INK}" stroke-width="2"/><path d="M56 79 Q60 88 64 79 Z" fill="#e8737a"/>`,
+    neutral: `<path d="M52 75 Q60 79 68 75" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`,
+    worried: `<path d="M52 77 Q56 73 60 76 Q64 79 68 75" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`,
+    sad: `<path d="M52 79 Q60 72 68 79" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`,
+    frustrated: `<path d="M52 77 L68 75" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>`,
+  }[m];
+  const eyes = m === 'happy'
+    ? `<g fill="none" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"><path d="M45 55 Q49 50 53 55"/><path d="M67 55 Q71 50 75 55"/></g>`
+    : `<g fill="${INK}"><ellipse cx="49" cy="55" rx="3.2" ry="3.6"/><ellipse cx="71" cy="55" rx="3.2" ry="3.6"/></g><g fill="#fff"><circle cx="50" cy="54" r="1"/><circle cx="72" cy="54" r="1"/></g>`;
+  const earDrop = m === 'sad' || m === 'worried' ? 6 : 0;
+  return `<svg class="avatar mood-${m}" width="${size}" height="${size}" viewBox="0 0 120 120" role="img" aria-label="${esc(label || 'Supervisor')}, ${m}">
+  <circle cx="60" cy="60" r="60" class="avatar-bg"/>
+  <clipPath id="clip-${id}"><circle cx="60" cy="60" r="60"/></clipPath>
+  <g clip-path="url(#clip-${id})">
+    <path d="M18 124 Q18 92 60 90 Q102 92 102 124 Z" fill="${s.shirt}"/>
+    <path d="M48 90 L60 100 L72 90 Z" fill="#f4f1ea"/>
+    <path d="M57 98 L63 98 L65 122 L60 126 L55 122 Z" fill="${s.tie}"/>
+    <path d="M32 ${40 + earDrop} Q20 ${56 + earDrop} 26 ${80 + earDrop} Q34 ${86 + earDrop} 40 ${70 + earDrop} Z" fill="${dark}"/>
+    <path d="M88 ${40 + earDrop} Q100 ${56 + earDrop} 94 ${80 + earDrop} Q86 ${86 + earDrop} 80 ${70 + earDrop} Z" fill="${dark}"/>
+    <ellipse cx="60" cy="54" rx="27" ry="29" fill="${fur}"/>
+    <ellipse cx="60" cy="73" rx="16" ry="13" fill="${light}"/>
+    <ellipse cx="60" cy="66" rx="6" ry="4.5" fill="${INK}"/>
+    <path d="M60 70 L60 74" stroke="${INK}" stroke-width="2"/>
+    ${mouth}
+    ${eyes}
+    ${brows.map((d) => `<path d="${d}" fill="none" stroke="${dark}" stroke-width="2.8" stroke-linecap="round"/>`).join('')}
+    ${extras(m)}
+  </g>
+</svg>`;
+}
 
 function hairBack(s) {
   if (s.style === 'long') return `<path d="M33 52 Q31 18 60 17 Q89 18 87 52 L92 104 Q60 112 28 104 Z" fill="${s.hair}"/>`;

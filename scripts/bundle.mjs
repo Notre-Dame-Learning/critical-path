@@ -8,10 +8,11 @@ const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 
 const js = execFileSync('npx', ['--yes', 'esbuild@0.24.0', 'app/app.js', '--bundle', '--format=esm', '--minify'], { cwd: root, encoding: 'utf8' });
+const manifest = JSON.parse(read('content/projects.json'));
 const content = {
   world: JSON.parse(read('content/world.json')),
-  project: JSON.parse(read('content/projects/intro-psych-online.json')),
   deck: JSON.parse(read('content/scenarios/core-deck.json')),
+  projects: manifest.projects.map((id) => JSON.parse(read(`content/projects/${id}.json`))),
 };
 
 const html = read('app/index.html');

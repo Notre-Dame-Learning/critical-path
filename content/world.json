@@ -1,49 +1,84 @@
 {
-  "_note": "Fictional ODL team. Roles and process follow the ODL Project Management, Learning Design and Media Development SOPs. Avatar fields drive the drawn portraits.",
+  "_note": "ODL team (names from the ODL owner) and fictional faculty. Roles follow the ODL PM, Learning Design and Media Development SOPs. 'avatar' drives the drawn portraits; 'pronouns' fill {fsub}/{fobj}/{fpos} in situation text.",
   "org": "Office of Digital Learning (simulated)",
   "supervisor": {
     "id": "sup",
-    "name": "Jordan Reyes",
-    "role": "Supervisor PM",
-    "avatar": { "skin": "#8d5a3b", "hair": "#1f1a17", "style": "curly", "shirt": "#3c6e71", "glasses": false }
-  },
-  "directors": {
-    "id": "dir",
-    "name": "ODL directors",
-    "role": "Practice area directors; approve timeline and process changes"
+    "name": "Dwayneah the Retriever Johnson",
+    "short": "Dwayneah",
+    "role": "Project Manager Supervisor",
+    "avatar": { "species": "retriever", "fur": "#d9a24e", "shirt": "#0c2340", "tie": "#c99700" }
   },
   "people": [
     {
       "id": "ld1",
-      "name": "Priya Nair",
+      "name": "Li Yu",
+      "short": "Li",
       "role": "Lead Learning Designer",
       "skill": 4,
       "hoursPerWeek": 10,
       "morale": 75,
       "traits": ["thorough", "stretched across many courses"],
-      "avatar": { "skin": "#a5714b", "hair": "#2a1d17", "style": "long", "shirt": "#6b4c9a", "glasses": false }
+      "avatar": { "skin": "#e8c2a0", "hair": "#16120f", "style": "bob", "shirt": "#6b4c9a", "glasses": true }
     },
     {
       "id": "mp1",
-      "name": "Marcus Boyle",
-      "role": "Lead Producer",
+      "name": "Perrick Datrick",
+      "short": "Perrick",
+      "role": "Lead Media Producer",
       "skill": 3,
       "hoursPerWeek": 9,
       "morale": 70,
       "traits": ["creative", "optimistic estimator"],
-      "avatar": { "skin": "#e0b48e", "hair": "#8a4b2a", "style": "short", "shirt": "#2f5d8a", "glasses": false, "beard": true }
+      "avatar": { "skin": "#c68e64", "hair": "#2d2019", "style": "short", "shirt": "#2f5d8a", "glasses": false, "beard": true }
+    },
+    {
+      "id": "gd1",
+      "name": "Sam Rivera",
+      "short": "Sam",
+      "role": "Graphic Designer",
+      "skill": 4,
+      "hoursPerWeek": 7,
+      "morale": 72,
+      "traits": ["detail-oriented", "needs final scripts before animating"],
+      "avatar": { "skin": "#9a6844", "hair": "#4a2a5e", "style": "long", "shirt": "#2e7d6b", "glasses": false }
     }
   ],
   "faculty": [
     {
       "id": "fac1",
       "name": "Dr. Helen Ward",
+      "short": "Dr. Ward",
       "dept": "Department of Psychology",
+      "pronouns": { "sub": "she", "obj": "her", "pos": "her" },
       "responsiveness": 0.75,
       "trust": 60,
       "hoursPerWeek": 6,
       "traits": ["busy during midterms", "reads weekly summaries, skips meeting recaps", "loves video"],
       "avatar": { "skin": "#f1c9a5", "hair": "#b9b4ad", "style": "bob", "shirt": "#9a3b3b", "glasses": true }
+    },
+    {
+      "id": "fac2",
+      "name": "Prof. Daniel Osei",
+      "short": "Prof. Osei",
+      "dept": "Department of Computer Science and Engineering",
+      "pronouns": { "sub": "he", "obj": "him", "pos": "his" },
+      "responsiveness": 0.6,
+      "trust": 65,
+      "hoursPerWeek": 5,
+      "traits": ["travels for conferences", "wants a polished documentary look"],
+      "avatar": { "skin": "#6b4430", "hair": "#141110", "style": "short", "shirt": "#4b5563", "glasses": false }
+    },
+    {
+      "id": "fac3",
+      "name": "Dr. Ana Kowalczyk",
+      "short": "Dr. Kowalczyk",
+      "dept": "Mendoza College of Business",
+      "pronouns": { "sub": "she", "obj": "her", "pos": "her" },
+      "responsiveness": 0.7,
+      "trust": 45,
+      "hoursPerWeek": 6,
+      "traits": ["frustrated by the project's rocky start", "direct communicator"],
+      "avatar": { "skin": "#f3d2b8", "hair": "#a0522d", "style": "long", "shirt": "#1f4e5f", "glasses": false }
     }
   ]
 }

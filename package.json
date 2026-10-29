@@ -1,6 +1,6 @@
 {
   "name": "critical-path",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A project management simulator for Notre Dame ODL's PM Student Fellow.",
   "type": "module",
   "private": true,

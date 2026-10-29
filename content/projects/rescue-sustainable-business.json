@@ -1,0 +1,200 @@
+{
+  "_note": "Rescue scenario: the player inherits a project mid-stream from a PM who left. Starts in week 6 with partial progress, hidden rework and strained relationships.",
+  "id": "rescue-sustainable-business",
+  "title": "Rescue: Sustainable Business certificate",
+  "difficulty": "Hard",
+  "facultyId": "fac3",
+  "tagline": "Take over a struggling project in week 6 after the previous PM left.",
+  "brief": "The previous PM left ODL suddenly. You inherit {faculty}'s online Sustainable Business course in week 6: the Asana board is out of date, morale is low and {faculty} is frustrated. The course still opens on the first day of term.",
+  "team": {
+    "ld": "ld1",
+    "mp": "mp1",
+    "gd": "gd1",
+    "faculty": "fac3"
+  },
+  "launchWeek": 16,
+  "actionPointsPerWeek": 2,
+  "tasks": [
+    {
+      "id": "analysis",
+      "name": "Front-end analysis (LD Milestone 1)",
+      "phase": "Design",
+      "owner": "ld",
+      "effort": 8,
+      "dependsOn": []
+    },
+    {
+      "id": "brief",
+      "name": "Creative brief and lookbook",
+      "phase": "Design",
+      "owner": "mp",
+      "effort": 6,
+      "dependsOn": []
+    },
+    {
+      "id": "coursemap",
+      "name": "Course map and assessment plan (LD Milestone 2)",
+      "phase": "Design",
+      "owner": "ld",
+      "effort": 14,
+      "dependsOn": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "branding",
+      "name": "Course branding: title cards, lower thirds, Canvas banners",
+      "phase": "Design",
+      "owner": "gd",
+      "effort": 8,
+      "dependsOn": [
+        "brief"
+      ]
+    },
+    {
+      "id": "scripts",
+      "name": "Faculty drafts video scripts",
+      "phase": "Development",
+      "owner": "faculty",
+      "effort": 16,
+      "dependsOn": [
+        "coursemap",
+        "brief"
+      ]
+    },
+    {
+      "id": "content",
+      "name": "Faculty develops readings and assessments",
+      "phase": "Development",
+      "owner": "faculty",
+      "effort": 12,
+      "dependsOn": [
+        "coursemap"
+      ]
+    },
+    {
+      "id": "scriptreview",
+      "name": "Script review and finalize",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 6,
+      "dependsOn": [
+        "scripts"
+      ]
+    },
+    {
+      "id": "production",
+      "name": "Production days in studio",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 12,
+      "dependsOn": [
+        "scriptreview"
+      ]
+    },
+    {
+      "id": "animations",
+      "name": "Animations and lightboard overlays",
+      "phase": "Development",
+      "owner": "gd",
+      "effort": 14,
+      "dependsOn": [
+        "scriptreview"
+      ]
+    },
+    {
+      "id": "post",
+      "name": "Post-production: rough cuts and final cut",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 24,
+      "dependsOn": [
+        "production",
+        "animations"
+      ]
+    },
+    {
+      "id": "distribution",
+      "name": "Distribution: Panopto, captions, embed codes",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 5,
+      "dependsOn": [
+        "post"
+      ]
+    },
+    {
+      "id": "mastersite",
+      "name": "Master site build in Canvas",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 20,
+      "dependsOn": [
+        "content",
+        "branding"
+      ]
+    },
+    {
+      "id": "embed",
+      "name": "Embed videos in the master site",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 4,
+      "dependsOn": [
+        "mastersite",
+        "distribution"
+      ]
+    },
+    {
+      "id": "qa",
+      "name": "Migrate to live course and QA",
+      "phase": "Delivery",
+      "owner": "ld",
+      "effort": 8,
+      "dependsOn": [
+        "embed"
+      ],
+      "isQA": true
+    },
+    {
+      "id": "handoff",
+      "name": "Hand-off document and meeting",
+      "phase": "Delivery",
+      "owner": "ld",
+      "effort": 3,
+      "dependsOn": [
+        "qa"
+      ]
+    }
+  ],
+  "startWeek": 6,
+  "initial": {
+    "morale": {
+      "ld": 58,
+      "mp": 52,
+      "gd": 64
+    },
+    "trust": 45,
+    "tasks": {
+      "analysis": {
+        "done": 1
+      },
+      "brief": {
+        "done": 1
+      },
+      "coursemap": {
+        "done": 1,
+        "hidden": 4
+      },
+      "branding": {
+        "done": 0.5
+      },
+      "scripts": {
+        "done": 0.35
+      },
+      "content": {
+        "done": 0.25
+      }
+    }
+  }
+}

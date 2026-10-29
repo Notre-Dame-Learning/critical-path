@@ -20,37 +20,45 @@
 
   <main id="main">
     <section class="intro card" id="intro" hidden>
-      <h2>Your first project</h2>
-      <p id="brief"></p>
+      <h2>Pick your project</h2>
+      <div class="projects" id="projects" role="radiogroup" aria-label="Project"></div>
+
+      <h2>Pick your mode</h2>
+      <div class="modes" role="radiogroup" aria-label="Mode">
+        <label class="mode"><input type="radio" name="mode" id="mode-standard" value="standard" checked>
+          <span><strong>Standard</strong><small>Choose from several options when a situation comes up. One is best; others are partly right.</small></span></label>
+        <label class="mode"><input type="radio" name="mode" id="mode-hard" value="hard">
+          <span><strong>Hard</strong><small>Write what you would do in your own words. Claude grades your answer against ODL practice.</small></span></label>
+      </div>
+      <p class="muted small" id="ai-note"></p>
+
+      <h2>Your team</h2>
       <div class="cast" id="cast"></div>
       <ul class="how">
         <li>Each turn is one week. Spend <strong>Action Points</strong> on moves, then end the week.</li>
-        <li>Situations come up at least every other week. Several answers are partly right; one is best. Escalating to your supervisor PM is always allowed, and the debrief shows what you could have done yourself.</li>
-        <li>Mistakes hide. Rework you don't find early shows up late.</li>
-        <li>The course opens on launch day whether it's ready or not.</li>
+        <li>The schedule bar shows whether you're ahead, on track or behind the pace needed to launch on time. When you're behind, asking someone for extra hours helps, at a cost to morale and quality.</li>
+        <li>A situation comes up at least every other week. Escalating to Dwayneah is always allowed, and the debrief shows what you could have done yourself.</li>
+        <li>Mistakes hide. Rework you don't find early shows up late. The course opens on launch day whether it's ready or not.</li>
       </ul>
-      <button class="primary" id="start">Start week 1</button>
+      <button class="primary" id="start">Start the project</button>
     </section>
 
-    <div class="grid" id="game" hidden>
-      <section class="card" aria-labelledby="board-h">
-        <h2 id="board-h">Project plan</h2>
-        <ol class="tasks" id="tasks"></ol>
-      </section>
-
-      <section class="card turn" aria-labelledby="turn-h">
-        <h2 id="turn-h">This week</h2>
-        <div id="report"></div>
-        <div id="event"></div>
-        <div id="actions"></div>
-        <ul class="feed" id="feed"></ul>
-        <button class="primary" id="end-week">End week</button>
-      </section>
-
-      <section class="card" aria-labelledby="team-h">
-        <h2 id="team-h">People</h2>
-        <div id="team"></div>
-      </section>
+    <div id="game" hidden>
+      <section class="card status" id="status" aria-label="Where the project stands"></section>
+      <div class="grid">
+        <section class="card turn" aria-labelledby="turn-h">
+          <h2 id="turn-h">This week</h2>
+          <div id="report"></div>
+          <div id="event"></div>
+          <div id="actions"></div>
+          <ul class="feed" id="feed"></ul>
+          <button class="primary" id="end-week">End week</button>
+        </section>
+        <section class="card" aria-labelledby="team-h">
+          <h2 id="team-h">People</h2>
+          <div id="team"></div>
+        </section>
+      </div>
     </div>
 
     <section class="card end" id="end" hidden></section>

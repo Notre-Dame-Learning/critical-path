@@ -10,7 +10,16 @@ Design source of truth: the "Project Management Simulator — Research & Game Fr
 npm start          # serves the repo at http://localhost:8080
 ```
 
-Then open `http://localhost:8080/app/`. Add `?seed=anything` to the URL to replay a specific run. The game also works on GitHub Pages with no build step.
+Then open `http://localhost:8080/app/`. Add `?seed=anything` to the URL to replay a specific run. The game also works on GitHub Pages with no build step: the root `index.html` opens the game.
+
+`npm run bundle` builds `dist/critical-path.html`, a single self-contained page (used for the version hosted in Claude).
+
+## Projects and modes
+
+- **Intro to Psychology online** (Standard, 14 weeks), **AI Ethics documentary micro-course** (media-heavy, 15 weeks) and **Rescue: Sustainable Business certificate** (hard; you take over in week 6). Projects live in `content/projects/` and are listed in `content/projects.json`.
+- **Standard mode:** pick from 3-6 options; one is best.
+- **Hard mode:** write your answer. When the game runs inside Claude, Claude grades it against the situation's options (the rubric); elsewhere, such as GitHub Pages, you pick the option closest to what you wrote.
+- **Schedule gauge:** compares finished work with the pace needed to launch on time (earned schedule), in weeks ahead or behind.
 
 ## How it works
 
@@ -38,10 +47,12 @@ Add an event to `content/scenarios/core-deck.json`:
 - `choices`: each with a `tier` (`resolve`, `escalate_plan`, `escalate`, `ignore`), optional `credit` (0–1), `effects`, and an `outcome` line.
 - `debrief`: `concept`, `independent` (how to handle it without escalating) and `escalateWhen`.
 
+Text can use `{ld}`, `{mp}`, `{gd}`, `{sup}`, `{faculty}` and faculty pronouns `{fsub}`, `{fobj}`, `{fpos}` (`{Fsub}` capitalized). Add `projects: ["id"]` to limit a situation to certain projects.
+
 Effects: `trust`, `morale` (`who`), `responsiveness` (`weeks`), `capacity` (`who`, `weeks`), `addEffort` (`task`), `addHiddenRework` (`task`), `removeDependency` (`task`, `dep`).
 
 `npm test` checks that every event has a full-credit independent answer and both debrief explanations.
 
 ## Status
 
-v0.2: Run a Project is playable with one course built on the ODL PM, Learning Design and Media SOPs, 21 situations (3–6 choices each, one best answer, SOP references), drawn portraits with five expressions, and a situation at least every other week. Build the Plan and Critique the Plan come next.
+v0.3: three projects, 30 situations grounded in the ODL SOPs, a team of five (Li Yu, Perrick Datrick, Sam Rivera, the faculty partner, and supervisor Dwayneah the Retriever Johnson), a schedule gauge, a compact phase view, targeted overtime, and an AI-graded hard mode. Build the Plan and Critique the Plan come next.
