@@ -209,16 +209,17 @@ export function applyVerdict(state, conv, verdict, transcript) {
   if (conv.meter === 'trust') state.team.faculty.trust = clamp(before + target, 0, 100);
   if (conv.meter === 'morale') state.team[who].morale = clamp(before + target, 0, 100);
   let slipped = false;
+  let slipHours = 0;
   const p = SLIP[verdict.outcome];
   const task = state.tasks.find((t) => t.id === conv.commitTask);
   if (p && task) {
     const rng = makeRng(`${state.seed}:${conv.eventId}:slip`);
-    if (rng.next() < p) { task.effort += rng.next() < 0.5 ? 2 : 3; slipped = true; }
+    if (rng.next() < p) { slipHours = rng.next() < 0.5 ? 2 : 3; task.effort += slipHours; slipped = true; }
   }
   const record = {
     week: state.week, eventId: conv.eventId, title: S.say(state, ev.title), talkTo: who, outcome: verdict.outcome, rubric: verdict.rubric,
     total: rubricTotal(verdict.rubric), credit, choiceId, meter: conv.meter, change: conv.meter ? Math.round(read() - before) : null,
-    revealed: verdict.hidden_concern_revealed, hiddenConcern: conv.hidden_concern, commitments: verdict.commitments, slipped,
+    revealed: verdict.hidden_concern_revealed, hiddenConcern: conv.hidden_concern, commitments: verdict.commitments, slipped, slipHours, commitTask: conv.commitTask, meterAfter: read(),
     best: verdict.best_player_line, weakest: verdict.weakest_player_line, concept: verdict.concept, noEscalationPath: verdict.no_escalation_path,
     transcript: transcript.map((m) => ({ from: m.from, text: String(m.text).slice(0, 1200) })),
   };
