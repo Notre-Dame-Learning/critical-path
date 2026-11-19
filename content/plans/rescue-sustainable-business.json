@@ -1,0 +1,41 @@
+{
+  "project": "rescue-sustainable-business",
+  "launchWeek": 16,
+  "joinWeek": 6,
+  "gate": 6,
+  "tasks": {
+    "analysis": {"start":1,"end":5,"est":[0,0,0],"deps":[],"backup":null,"locked":true},
+    "brief": {"start":1,"end":5,"est":[0,0,0],"deps":[],"backup":null,"locked":true},
+    "coursemap": {"start":1,"end":5,"est":[0,0,0],"deps":["analysis"],"backup":null,"locked":true},
+    "branding": {"start":5,"end":6,"est":[3,4,6],"deps":["brief"],"backup":null,"locked":false},
+    "scripts": {"start":5,"end":7,"est":[8,10,14],"deps":["coursemap","brief"],"backup":null,"locked":false},
+    "content": {"start":5,"end":8,"est":[8,9,12],"deps":["coursemap"],"backup":null,"locked":false},
+    "scriptreview": {"start":8,"end":8,"est":[5,6,8],"deps":["scripts"],"backup":null,"locked":false},
+    "production": {"start":8,"end":10,"est":[10,12,16],"deps":["scriptreview"],"backup":null,"locked":false},
+    "animations": {"start":8,"end":10,"est":[11,14,19],"deps":["scriptreview"],"backup":null,"locked":false},
+    "post": {"start":11,"end":13,"est":[19,24,32],"deps":["production","animations"],"backup":null,"locked":false},
+    "distribution": {"start":13,"end":13,"est":[4,5,7],"deps":["post"],"backup":"ld","locked":false},
+    "mastersite": {"start":9,"end":11,"est":[16,20,27],"deps":["content","branding"],"backup":null,"locked":false},
+    "embed": {"start":14,"end":14,"est":[3,4,5],"deps":["mastersite","distribution"],"backup":"mp","locked":false},
+    "qa": {"start":14,"end":15,"est":[6,8,11],"deps":["embed"],"backup":null,"locked":false},
+    "handoff": {"start":15,"end":16,"est":[2,3,4],"deps":["qa"],"backup":null,"locked":false}
+  },
+  "touchpoints": {
+    "6": ["working-session","qa-review"],
+    "7": ["working-session","faculty-update"],
+    "8": ["working-session","faculty-update"],
+    "9": ["checkin","qa-review"],
+    "10": ["checkin","faculty-update"],
+    "11": ["overtime:mp","faculty-update"],
+    "12": ["overtime:mp","qa-review"],
+    "13": ["checkin","faculty-update"],
+    "14": ["checkin","faculty-update"],
+    "15": ["checkin","faculty-update"],
+    "16": ["checkin","faculty-update"]
+  },
+  "risks": [
+    {"id":"faculty-trust","text":"Dr. Kowalczyk stays frustrated and slow to respond","owner":"PM","mitigation":"Re-baseline meeting in week 6, then weekly working sessions and Friday summaries","trigger":"Scripts not finished by the end of week 8","contingency":"Li drafts the remaining scripts from the course map for faculty to edit"},
+    {"id":"hidden-rework","text":"The previous PM left hidden rework in the course map","owner":"Li","mitigation":"Internal review in week 6 before building on the course map","trigger":"Any reopened course-map item after week 7","contingency":"Fix it before the master site build starts; move content later if needed"},
+    {"id":"post-crunch","text":"Post-production is the long pole into launch","owner":"Perrick","mitigation":"Targeted overtime for Perrick in weeks 11–12 only","trigger":"Post not half done by the end of week 11","contingency":"Cut the last module to a lecture capture and edit it after launch"}
+  ]
+}

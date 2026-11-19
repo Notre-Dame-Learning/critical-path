@@ -1,0 +1,44 @@
+{
+  "project": "intro-psych-online",
+  "launchWeek": 14,
+  "joinWeek": 1,
+  "gate": 10,
+  "tasks": {
+    "analysis": {"start":1,"end":1,"est":[6,8,11],"deps":[],"backup":null,"locked":false},
+    "brief": {"start":1,"end":1,"est":[5,6,8],"deps":[],"backup":null,"locked":false},
+    "coursemap": {"start":1,"end":3,"est":[11,14,19],"deps":["analysis"],"backup":null,"locked":false},
+    "branding": {"start":1,"end":2,"est":[6,8,11],"deps":["brief"],"backup":null,"locked":false},
+    "scripts": {"start":3,"end":5,"est":[13,16,22],"deps":["coursemap","brief"],"backup":null,"locked":false},
+    "content": {"start":4,"end":6,"est":[10,12,16],"deps":["coursemap"],"backup":null,"locked":false},
+    "scriptreview": {"start":5,"end":5,"est":[5,6,8],"deps":["scripts"],"backup":null,"locked":false},
+    "production": {"start":5,"end":7,"est":[10,12,16],"deps":["scriptreview"],"backup":null,"locked":false},
+    "animations": {"start":5,"end":7,"est":[11,14,19],"deps":["scriptreview"],"backup":null,"locked":false},
+    "post": {"start":8,"end":10,"est":[19,24,32],"deps":["production","animations"],"backup":null,"locked":false},
+    "distribution": {"start":10,"end":11,"est":[4,5,7],"deps":["post"],"backup":"ld","locked":false},
+    "mastersite": {"start":7,"end":9,"est":[16,20,27],"deps":["content","branding"],"backup":null,"locked":false},
+    "embed": {"start":12,"end":12,"est":[3,4,5],"deps":["mastersite","distribution"],"backup":"mp","locked":false},
+    "qa": {"start":12,"end":13,"est":[6,8,11],"deps":["embed"],"backup":null,"locked":false},
+    "handoff": {"start":13,"end":13,"est":[2,3,4],"deps":["qa"],"backup":null,"locked":false}
+  },
+  "touchpoints": {
+    "1": ["checkin","faculty-update"],
+    "2": ["checkin","faculty-update"],
+    "3": ["working-session","qa-review"],
+    "4": ["working-session","faculty-update"],
+    "5": ["working-session","faculty-update"],
+    "6": ["working-session","qa-review"],
+    "7": ["checkin","faculty-update"],
+    "8": ["checkin","faculty-update"],
+    "9": ["checkin","qa-review"],
+    "10": ["checkin","faculty-update"],
+    "11": ["checkin","faculty-update"],
+    "12": ["checkin","faculty-update"],
+    "13": ["checkin","faculty-update"],
+    "14": ["checkin","faculty-update"]
+  },
+  "risks": [
+    {"id":"faculty-availability","text":"Faculty partner falls behind on scripts during midterms","owner":"PM","mitigation":"Weekly 15-minute working sessions while faculty owns open work","trigger":"Scripts not started by the end of week 3","contingency":"Li drafts scripts from the course map for faculty to edit"},
+    {"id":"studio-dates","text":"Studio days lost to another project","owner":"Perrick","mitigation":"Block production days on the media calendar as soon as scripts are scheduled","trigger":"Production days not blocked by week 4","contingency":"Shoot the remaining modules as lightboard sessions"},
+    {"id":"late-video","text":"Post-production runs long and squeezes embedding and QA","owner":"PM","mitigation":"Li builds the master site with placeholders while post runs","trigger":"Post not finished by the end of week 10","contingency":"Embed and QA module by module as videos arrive; Perrick backs up embedding"}
+  ]
+}

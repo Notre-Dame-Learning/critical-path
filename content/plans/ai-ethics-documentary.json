@@ -1,0 +1,46 @@
+{
+  "project": "ai-ethics-documentary",
+  "launchWeek": 15,
+  "joinWeek": 1,
+  "gate": 11,
+  "tasks": {
+    "analysis": {"start":1,"end":1,"est":[5,6,8],"deps":[],"backup":null,"locked":false},
+    "brief": {"start":1,"end":1,"est":[5,6,8],"deps":[],"backup":null,"locked":false},
+    "coursemap": {"start":1,"end":2,"est":[8,10,14],"deps":["analysis"],"backup":null,"locked":false},
+    "branding": {"start":1,"end":1,"est":[5,6,8],"deps":["brief"],"backup":null,"locked":false},
+    "scripts": {"start":2,"end":3,"est":[8,10,14],"deps":["coursemap","brief"],"backup":null,"locked":false},
+    "content": {"start":3,"end":4,"est":[6,8,11],"deps":["coursemap"],"backup":null,"locked":false},
+    "logistics": {"start":1,"end":2,"est":[5,6,8],"deps":["brief"],"backup":null,"locked":false},
+    "scriptreview": {"start":4,"end":4,"est":[4,5,7],"deps":["scripts"],"backup":null,"locked":false},
+    "production": {"start":4,"end":6,"est":[11,14,19],"deps":["scriptreview","logistics"],"backup":null,"locked":false},
+    "animations": {"start":4,"end":7,"est":[18,22,30],"deps":["scriptreview"],"backup":null,"locked":false},
+    "post": {"start":8,"end":11,"est":[21,26,35],"deps":["production","animations"],"backup":null,"locked":false},
+    "distribution": {"start":11,"end":11,"est":[3,4,5],"deps":["post"],"backup":"ld","locked":false},
+    "mastersite": {"start":5,"end":6,"est":[10,12,16],"deps":["content","branding"],"backup":null,"locked":false},
+    "embed": {"start":12,"end":13,"est":[2,3,4],"deps":["mastersite","distribution"],"backup":"mp","locked":false},
+    "qa": {"start":13,"end":14,"est":[5,6,8],"deps":["embed"],"backup":null,"locked":false},
+    "handoff": {"start":14,"end":15,"est":[2,2,3],"deps":["qa"],"backup":null,"locked":false}
+  },
+  "touchpoints": {
+    "1": ["checkin","faculty-update"],
+    "2": ["working-session","faculty-update"],
+    "3": ["working-session","qa-review"],
+    "4": ["working-session","faculty-update"],
+    "5": ["checkin","faculty-update"],
+    "6": ["checkin","qa-review"],
+    "7": ["checkin","faculty-update"],
+    "8": ["checkin","faculty-update"],
+    "9": ["checkin","qa-review"],
+    "10": ["checkin","faculty-update"],
+    "11": ["checkin","faculty-update"],
+    "12": ["checkin","qa-review"],
+    "13": ["checkin","faculty-update"],
+    "14": ["checkin","faculty-update"],
+    "15": ["checkin","faculty-update"]
+  },
+  "risks": [
+    {"id":"guest-cancels","text":"An interview guest cancels","owner":"Perrick","mitigation":"Book a standby guest during logistics","trigger":"Any guest unconfirmed one week before the shoot","contingency":"Faculty-led host segment in place of the interview"},
+    {"id":"releases","text":"Location permits or release forms not signed","owner":"Perrick","mitigation":"Send release forms with the booking confirmation","trigger":"Any release unsigned by the week before the shoot","contingency":"Reshoot that scene as narration over animation"},
+    {"id":"faculty-travel","text":"Prof. Osei travels during script work","owner":"PM","mitigation":"Working sessions every week faculty owns open work, plus doc comments","trigger":"No narration draft by the end of week 5","contingency":"Li drafts narration from the course map for faculty to edit"}
+  ]
+}
