@@ -1,5 +1,7 @@
 import * as S from '../engine/sim.js';
 import { avatarSVG } from './avatars.js';
+import { createGameAt } from '../engine/difficulty.js';
+import { defaultDifficulty, rememberDifficulty, difficultyHtml, pickedDifficulty } from './difficulty-picker.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -73,6 +75,7 @@ function showIntro() {
   renderClock();
   renderProjects();
   renderAiNote();
+  $('difficulty').innerHTML = difficultyHtml(defaultDifficulty(localStore()), esc);
   const w = content.world;
   const cast = [...w.people.map((p) => [p, p.role]), [w.supervisor, w.supervisor.role]];
   $('cast').innerHTML = cast.map(([p, role]) => `<figure class="cast-member">${avatarSVG(p.avatar, 'happy', { size: 64, label: p.name })}<figcaption><strong>${esc(p.name)}</strong><span>${esc(role)}</span></figcaption></figure>`).join('');
@@ -98,7 +101,9 @@ function startGame() {
   const project = content.projects.find((p) => p.id === selectedProject);
   const mode = $('mode-hard').checked ? 'hard' : 'standard';
   const seed = new URLSearchParams(location.search).get('seed') ?? randomSeed();
-  game = S.createGame({ world: content.world, project, deck: content.deck, seed, mode });
+  const difficulty = pickedDifficulty($('difficulty'));
+  rememberDifficulty(localStore(), difficulty);
+  game = createGameAt(S, { world: content.world, project, deck: content.deck, seed, mode, difficulty });
   game.projectRef = project.id;
   lastOutcome = null;
   feed = [];
@@ -290,7 +295,7 @@ function renderEnd() {
   const lessons = S.debrief(game);
   $('end').hidden = false;
   $('end').innerHTML = `
-    <div class="kicker">${esc(game.project.title)}${game.mode === 'hard' ? ' · Hard mode' : ''}</div>
+    <div class="kicker">${esc(game.project.title)}${game.mode === 'hard' ? ' · Hard mode' : ''}${game.difficulty === 'story' ? ' · Story' : ''}</div>
     <div class="grade">${r.grade}</div>
     <h2>${r.launchedOnTime ? `Launched on time in week ${r.finishedWeek}` : 'Launch day arrived before the course was finished'}</h2>
     <p>Overall score ${r.overall}. ${r.launchedOnTime ? 'Students open a finished course.' : `About ${100 - s.scope}% of the planned work wasn't done by launch.`}</p>
@@ -304,10 +309,10 @@ function renderEnd() {
     </div>`;
   $('again').onclick = () => { clearSave(); showIntro(); };
   $('replay').onclick = () => {
-    const { seed, mode, projectRef } = game;
+    const { seed, mode, projectRef, difficulty } = game;
     clearSave();
     const project = content.projects.find((p) => p.id === projectRef);
-    game = S.createGame({ world: content.world, project, deck: content.deck, seed, mode });
+    game = createGameAt(S, { world: content.world, project, deck: content.deck, seed, mode, difficulty });
     game.projectRef = projectRef;
     lastOutcome = null;
     feed = [];
@@ -441,6 +446,9 @@ function readSave() {
 }
 function clearSave() {
   try { localStorage.removeItem(SAVE_KEY); } catch { /* ignore */ }
+}
+function localStore() {
+  try { return localStorage; } catch { return null; }
 }
 function randomSeed() {
   return Math.random().toString(36).slice(2, 8);
