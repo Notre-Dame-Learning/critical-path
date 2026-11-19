@@ -271,3 +271,14 @@ label.prompt { display: block; }
 .runs { padding-left: 1.1rem; font-size: .88rem; }
 .rank-big { font-size: 1.15rem; }
 .project.locked { opacity: .6; cursor: default; }
+
+/* AI end-of-run debrief */
+.coach-debrief { margin: 1rem 0 1.5rem; }
+.coach-debrief .headline { font-size: 1.05rem; }
+.move-card { border: 1px solid var(--rule); border-left: 4px solid var(--navy); border-radius: 8px; padding: .6rem .8rem; margin: .5rem 0; }
+.move-card.kept { border-left-color: var(--good); }
+.move-card.missed { border-left-color: var(--warn); }
+.move-card.habit { border-left-color: var(--gold); }
+.move-card p { margin: .3rem 0; }
+.counterfactual { background: var(--accent-bg); border-radius: 8px; padding: .7rem .9rem; margin: .8rem 0; }
+.takeaway { margin-top: .8rem; }

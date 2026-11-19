@@ -7,6 +7,8 @@ import * as C from '../engine/conversation.js';
 import { nextTip, seenTips, markSeen, tipsEnabled, setTipsEnabled } from './coach.js';
 import * as P from '../engine/progression.js';
 import { loadProfile, saveProfile, rankLineHtml, xpPanelHtml, profileHtml } from './profile-view.js';
+import * as I from '../engine/impact.js';
+import * as G from '../engine/debrief-gm.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -361,7 +363,8 @@ function renderEnd() {
     <p>Overall score ${r.overall}. ${r.launchedOnTime ? 'Students open a finished course.' : `About ${100 - s.scope}% of the planned work wasn't done by launch.`}</p>
     <div class="scores">${Object.entries(s).filter(([, v]) => v !== null).map(([k, v]) => `<div class="score"><div class="k">${label[k]}</div><div class="v">${v}</div></div>`).join('')}</div>
     ${xpPanel}
-    <h2>Debrief</h2>
+    <section class="coach-debrief" id="coach-debrief" aria-live="polite"></section>
+    <h2>Situation by situation</h2>
     <p class="muted small">Situations you handled with the best move are folded; open any of them to review.</p>
     ${lessons.length ? lessons.map(renderLesson).join('') : '<p>No situations came up this run.</p>'}
     <p class="muted small">Run code: <strong>${esc(game.seed)}</strong>. Type it on the start screen to replay these situations.</p>
@@ -369,6 +372,7 @@ function renderEnd() {
       <button class="primary" id="again">Play another project</button>
       <button id="replay">Replay this run (same events)</button>
     </div>`;
+  renderCoachDebrief();
   $('again').onclick = () => { clearSave(); showIntro(); };
   $('replay').onclick = () => {
     const { seed, mode, projectRef, difficulty } = game;
@@ -381,6 +385,86 @@ function renderEnd() {
     feed = [];
     showGame();
   };
+}
+
+// ---------- AI end-of-run debrief (engine/impact.js + engine/debrief-gm.js) ----------
+
+// The engine finds the moves that mattered by replaying the run; the template text shows at once and
+// Claude's wording replaces it when it passes the checks. Cached on the game so re-renders are instant.
+function renderCoachDebrief() {
+  const box = $('coach-debrief');
+  if (!box) return;
+  if (game.coach) { paintCoachDebrief(); return; }
+  box.innerHTML = '<p class="muted small">Working out which of your moves mattered most…</p>';
+  setTimeout(() => {
+    if (!game?.over || game.coach) return;
+    const project = content.projects.find((p) => p.id === game.projectRef);
+    let report;
+    try { report = I.impactReport({ world: content.world, project, deck: content.deck }, game); } catch { report = null; }
+    if (!report?.exact) { game.coach = { none: true }; paintCoachDebrief(); return; }
+    const packet = G.debriefPacket(game, report);
+    game.coach = { packet, debrief: G.fallbackDebrief(packet), source: 'engine' };
+    save();
+    paintCoachDebrief();
+    if (aiState === 'ready') askCoach();
+  }, 30);
+}
+
+async function askCoach() {
+  const run = game;
+  let problems = [];
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const reply = await sample.json(G.debriefPrompt(run.coach.packet, problems));
+      const checked = G.checkDebrief(reply, run.coach.packet);
+      if (checked.ok) {
+        run.coach.debrief = checked.debrief;
+        run.coach.source = 'claude';
+        if (run === game) { save(); paintCoachDebrief(); }
+        return;
+      }
+      problems = checked.problems;
+    } catch { return; } // Claude unavailable: the engine's text stays
+  }
+}
+
+function paintCoachDebrief() {
+  const box = $('coach-debrief');
+  if (!box || !game.coach) return;
+  if (game.coach.none) { box.innerHTML = ''; return; }
+  const { packet, debrief, source } = game.coach;
+  const card = (m, i) => {
+    const p = packet.moves.find((x) => x.ref === m.ref) ?? {};
+    const label = p.kind === 'kept' ? 'Good call' : p.kind === 'missed' ? 'Missed chance' : 'Habit';
+    return `<div class="move-card ${esc(p.kind ?? '')}">
+      <div class="kicker">${i + 1}. ${label}${p.week ? ` · week ${p.week}` : ''} · ${esc(p.title ?? '')}</div>
+      <p>${esc(m.what_happened)}</p>
+      <p class="small"><strong>${esc(String(m.concept ?? '').replace(/[.\s]+$/, ''))}.</strong> ${esc(m.why)}</p>
+      ${p.sop ? `<p class="small muted">${esc(p.sop)}</p>` : ''}
+    </div>`;
+  };
+  const cf = debrief.counterfactual;
+  box.innerHTML = `<h2>What mattered most</h2>
+    <p class="headline">${esc(debrief.headline)}</p>
+    ${debrief.moves.map(card).join('')}
+    ${cf ? `<div class="counterfactual"><p>${esc(cf.text)}</p><button class="primary" id="replay-from" data-week="${packet.replay_offer.week}">Replay from week ${packet.replay_offer.week}</button></div>` : ''}
+    <p class="takeaway"><strong>Takeaway:</strong> ${esc(debrief.takeaway)}</p>
+    <p class="muted small">${source === 'claude' ? 'Written by Claude from the simulation\'s numbers.' : 'From the simulation\'s numbers'}; points are averages over ${packet.futures} replays with different luck.</p>`;
+  const btn = $('replay-from');
+  if (btn) btn.onclick = () => replayFrom(Number(btn.dataset.week));
+}
+
+// Go back to the start of a week with its situation waiting, and play on from there.
+function replayFrom(week) {
+  const project = content.projects.find((p) => p.id === game.projectRef);
+  const back = I.replay({ world: content.world, project, deck: content.deck }, I.recordOf(game), { untilWeek: week });
+  back.runId = `${back.seed}:${Date.now().toString(36)}:w${week}`;
+  game = back;
+  lastOutcome = null;
+  feed = [];
+  hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
+  talk = null;
+  showGame();
 }
 
 function renderLesson(l) {
