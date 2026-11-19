@@ -1,0 +1,25 @@
+{
+  "project": "a11y-sprint-ochem",
+  "launchWeek": 4,
+  "joinWeek": 1,
+  "gate": 2,
+  "tasks": {
+    "audit": {"start":1,"end":1,"est":[4,5,7],"deps":[],"backup":null,"locked":false},
+    "captions": {"start":1,"end":2,"est":[12,15,20],"deps":["audit"],"backup":null,"locked":false},
+    "alttext": {"start":1,"end":2,"est":[9,11,15],"deps":["audit"],"backup":null,"locked":false},
+    "docs": {"start":1,"end":2,"est":[8,10,14],"deps":["audit"],"backup":"gd","locked":false},
+    "facultyreview": {"start":2,"end":2,"est":[3,4,5],"deps":["alttext","docs"],"backup":null,"locked":false},
+    "qa": {"start":3,"end":3,"est":[4,5,7],"deps":["captions","facultyreview"],"backup":"mp","locked":false},
+    "handoff": {"start":4,"end":4,"est":[2,2,3],"deps":["qa"],"backup":null,"locked":false}
+  },
+  "touchpoints": {
+    "1": ["checkin","faculty-update"],
+    "2": ["working-session","faculty-update"],
+    "3": ["checkin","faculty-update"],
+    "4": ["checkin","faculty-update"]
+  },
+  "risks": [
+    {"id":"audit-size","text":"The audit finds more than the request listed","owner":"Li","mitigation":"Audit in week 1 and re-plan from it","trigger":"Audit shows more than 24 videos or 10 documents","contingency":"Fix first-month materials first; agree dates for the rest with the accessibility office"},
+    {"id":"faculty-time","text":"Prof. Ortiz has little time to check descriptions","owner":"PM","mitigation":"Batch the descriptions into one short review","trigger":"Descriptions not reviewed two days after sending","contingency":"Ask a teaching assistant to check the chemistry"}
+  ]
+}

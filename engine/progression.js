@@ -8,16 +8,19 @@ export { TRACKS, TRACK_LABEL, LEVELS, levelOf };
 export const HABIT_TRACK = { checkin: 'leadership', 'faculty-update': 'communication', 'qa-review': 'risk', 'working-session': 'stakeholders' };
 export const HABIT_CAP = 8; // XP per action per run
 
-const PROJECT = { intro: 'intro-psych-online', documentary: 'ai-ethics-documentary', rescue: 'rescue-sustainable-business' };
+const PROJECT = {
+  intro: 'intro-psych-online', documentary: 'ai-ethics-documentary', rescue: 'rescue-sustainable-business',
+  a11y: 'a11y-sprint-ochem', ai: 'teaching-ai-microcourse', stats: 'stats-refresh-sprint', globalHealth: 'global-health-cases',
+};
 const onTimeIn = (profile, project, grade = null) => (profile.runs ?? []).some((r) => r.project === project && r.onTime && (!grade || 'AB'.includes(r.grade)));
 const tracksAt = (profile, level) => TRACKS.filter((t) => levelOf(profile.xp?.[t] ?? 0) >= level).length;
 
 // The career ladder: a rank needs its total XP and its gate. Unlocks apply only when locks are on.
 export const RANKS = [
   { id: 'coordinator', label: 'Project Coordinator', xp: 0, gate: null, gateMet: () => true,
-    unlocks: { projects: [PROJECT.intro], modes: ['standard'], plan: [] } },
+    unlocks: { projects: [PROJECT.intro, PROJECT.a11y, PROJECT.ai], modes: ['standard'], plan: [] } },
   { id: 'pm', label: 'Project Manager', xp: 200, gate: 'Launch Intro to Psychology on time with a B or better', gateMet: (p) => onTimeIn(p, PROJECT.intro, 'B'),
-    unlocks: { projects: [PROJECT.documentary], modes: [], plan: ['build'] } },
+    unlocks: { projects: [PROJECT.documentary, PROJECT.stats, PROJECT.globalHealth], modes: [], plan: ['build'] } },
   { id: 'senior', label: 'Senior PM', xp: 600, gate: 'Launch the AI Ethics documentary on time; six of eight tracks at L2+', gateMet: (p) => onTimeIn(p, PROJECT.documentary) && tracksAt(p, 2) >= 6,
     unlocks: { projects: [PROJECT.rescue], modes: ['hard'], plan: ['critique'] } },
   { id: 'program', label: 'Program Manager', xp: 1200, gate: 'Launch the Rescue on time; pass a Critique round at Senior difficulty', gateMet: (p) => onTimeIn(p, PROJECT.rescue) && Boolean(p.critiquePassedAtSenior),

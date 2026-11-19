@@ -1,0 +1,32 @@
+{
+  "project": "teaching-ai-microcourse",
+  "launchWeek": 5,
+  "joinWeek": 1,
+  "gate": 3,
+  "tasks": {
+    "analysis": {"start":1,"end":1,"est":[2,3,4],"deps":[],"backup":null,"locked":false},
+    "coursemap": {"start":1,"end":1,"est":[4,5,7],"deps":["analysis"],"backup":null,"locked":false},
+    "branding": {"start":1,"end":1,"est":[2,3,4],"deps":[],"backup":null,"locked":false},
+    "scripts": {"start":1,"end":1,"est":[5,6,8],"deps":["coursemap"],"backup":null,"locked":false},
+    "content": {"start":1,"end":2,"est":[3,4,5],"deps":["coursemap"],"backup":null,"locked":false},
+    "scriptreview": {"start":2,"end":2,"est":[2,2,3],"deps":["scripts"],"backup":null,"locked":false},
+    "production": {"start":2,"end":2,"est":[2,3,4],"deps":["scriptreview"],"backup":null,"locked":false},
+    "post": {"start":2,"end":3,"est":[7,9,12],"deps":["production"],"backup":null,"locked":false},
+    "distribution": {"start":3,"end":3,"est":[2,2,3],"deps":["post"],"backup":"ld","locked":false},
+    "mastersite": {"start":3,"end":4,"est":[9,11,15],"deps":["content","branding"],"backup":null,"locked":false},
+    "embed": {"start":4,"end":4,"est":[2,2,3],"deps":["mastersite","distribution"],"backup":"mp","locked":false},
+    "qa": {"start":4,"end":4,"est":[2,3,4],"deps":["embed"],"backup":null,"locked":false},
+    "handoff": {"start":4,"end":5,"est":[1,1,1],"deps":["qa"],"backup":null,"locked":false}
+  },
+  "touchpoints": {
+    "1": ["working-session","faculty-update"],
+    "2": ["working-session","faculty-update"],
+    "3": ["checkin","qa-review"],
+    "4": ["checkin","faculty-update"],
+    "5": ["checkin","faculty-update"]
+  },
+  "risks": [
+    {"id":"workshop-date","text":"The workshop date is fixed and can't slip","owner":"PM","mitigation":"Plan a minimum course that is ready a week early","trigger":"Videos not edited by the end of week 4","contingency":"Launch with the activity and captions; add the last video after the workshop"},
+    {"id":"late-ideas","text":"Dr. Raman adds ideas late","owner":"Li","mitigation":"Agree the three-module outline in week 1","trigger":"A new module is requested after week 2","contingency":"Log it for a second release"}
+  ]
+}

@@ -70,9 +70,9 @@ test('ranks need XP and the gate: best play reaches PM in 1 run and Senior PM in
   for (let i = 0; i < 2; i++) q = P.applyRun(q, run(intro, `rand${i}`, 'random')).profile;
   assert.equal(P.rankOf(q).id, 'coordinator');
   // Locks are off by default; with ?locks=1 a Coordinator only has Intro in standard mode.
-  assert.equal(P.unlocked(q).projects.length, 3);
-  assert.deepEqual(P.unlocked(q, { locks: true }), { projects: [intro.id], modes: ['standard'], plan: [] });
-  assert.deepEqual(P.unlocked(r2.profile, { locks: true }).projects, [intro.id, documentary.id, rescue.id]);
+  assert.equal(P.unlocked(q).projects.length, projects.length);
+  assert.deepEqual(P.unlocked(q, { locks: true }), { projects: [intro.id, 'a11y-sprint-ochem', 'teaching-ai-microcourse'], modes: ['standard'], plan: [] });
+  assert.deepEqual([...P.unlocked(r2.profile, { locks: true }).projects].sort(), projects.map((p) => p.id).sort());
 });
 
 test('achievements: best play earns the habit badges; heavy overtime and a missed launch earns Brooks Was Right', () => {

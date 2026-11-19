@@ -6,7 +6,12 @@
     "name": "Dwayneah the Retriever Johnson",
     "short": "Dwayneah",
     "role": "Project Manager Supervisor",
-    "avatar": { "species": "retriever", "fur": "#d9a24e", "shirt": "#0c2340", "tie": "#c99700" }
+    "avatar": {
+      "species": "retriever",
+      "fur": "#d9a24e",
+      "shirt": "#0c2340",
+      "tie": "#c99700"
+    }
   },
   "people": [
     {
@@ -17,8 +22,17 @@
       "skill": 4,
       "hoursPerWeek": 10,
       "morale": 75,
-      "traits": ["thorough", "stretched across many courses"],
-      "avatar": { "skin": "#e8c2a0", "hair": "#16120f", "style": "bob", "shirt": "#6b4c9a", "glasses": true }
+      "traits": [
+        "thorough",
+        "stretched across many courses"
+      ],
+      "avatar": {
+        "skin": "#e8c2a0",
+        "hair": "#16120f",
+        "style": "bob",
+        "shirt": "#6b4c9a",
+        "glasses": true
+      }
     },
     {
       "id": "mp1",
@@ -28,8 +42,18 @@
       "skill": 3,
       "hoursPerWeek": 9,
       "morale": 70,
-      "traits": ["creative", "optimistic estimator"],
-      "avatar": { "skin": "#c68e64", "hair": "#2d2019", "style": "short", "shirt": "#2f5d8a", "glasses": false, "beard": true }
+      "traits": [
+        "creative",
+        "optimistic estimator"
+      ],
+      "avatar": {
+        "skin": "#c68e64",
+        "hair": "#2d2019",
+        "style": "short",
+        "shirt": "#2f5d8a",
+        "glasses": false,
+        "beard": true
+      }
     },
     {
       "id": "gd1",
@@ -39,8 +63,17 @@
       "skill": 4,
       "hoursPerWeek": 7,
       "morale": 72,
-      "traits": ["detail-oriented", "needs final scripts before animating"],
-      "avatar": { "skin": "#9a6844", "hair": "#4a2a5e", "style": "long", "shirt": "#2e7d6b", "glasses": false }
+      "traits": [
+        "detail-oriented",
+        "needs final scripts before animating"
+      ],
+      "avatar": {
+        "skin": "#9a6844",
+        "hair": "#4a2a5e",
+        "style": "long",
+        "shirt": "#2e7d6b",
+        "glasses": false
+      }
     }
   ],
   "faculty": [
@@ -49,36 +82,178 @@
       "name": "Dr. Helen Ward",
       "short": "Dr. Ward",
       "dept": "Department of Psychology",
-      "pronouns": { "sub": "she", "obj": "her", "pos": "her" },
+      "pronouns": {
+        "sub": "she",
+        "obj": "her",
+        "pos": "her"
+      },
       "responsiveness": 0.75,
       "trust": 60,
       "hoursPerWeek": 6,
-      "traits": ["busy during midterms", "reads weekly summaries, skips meeting recaps", "loves video"],
-      "avatar": { "skin": "#f1c9a5", "hair": "#b9b4ad", "style": "bob", "shirt": "#9a3b3b", "glasses": true }
+      "traits": [
+        "busy during midterms",
+        "reads weekly summaries, skips meeting recaps",
+        "loves video"
+      ],
+      "avatar": {
+        "skin": "#f1c9a5",
+        "hair": "#b9b4ad",
+        "style": "bob",
+        "shirt": "#9a3b3b",
+        "glasses": true
+      }
     },
     {
       "id": "fac2",
       "name": "Prof. Daniel Osei",
       "short": "Prof. Osei",
       "dept": "Department of Computer Science and Engineering",
-      "pronouns": { "sub": "he", "obj": "him", "pos": "his" },
+      "pronouns": {
+        "sub": "he",
+        "obj": "him",
+        "pos": "his"
+      },
       "responsiveness": 0.6,
       "trust": 65,
       "hoursPerWeek": 5,
-      "traits": ["travels for conferences", "wants a polished documentary look"],
-      "avatar": { "skin": "#6b4430", "hair": "#141110", "style": "short", "shirt": "#4b5563", "glasses": false }
+      "traits": [
+        "travels for conferences",
+        "wants a polished documentary look"
+      ],
+      "avatar": {
+        "skin": "#6b4430",
+        "hair": "#141110",
+        "style": "short",
+        "shirt": "#4b5563",
+        "glasses": false
+      }
     },
     {
       "id": "fac3",
       "name": "Dr. Ana Kowalczyk",
       "short": "Dr. Kowalczyk",
       "dept": "Mendoza College of Business",
-      "pronouns": { "sub": "she", "obj": "her", "pos": "her" },
+      "pronouns": {
+        "sub": "she",
+        "obj": "her",
+        "pos": "her"
+      },
       "responsiveness": 0.7,
       "trust": 45,
       "hoursPerWeek": 6,
-      "traits": ["frustrated by the project's rocky start", "direct communicator"],
-      "avatar": { "skin": "#f3d2b8", "hair": "#a0522d", "style": "long", "shirt": "#1f4e5f", "glasses": false }
+      "traits": [
+        "frustrated by the project's rocky start",
+        "direct communicator"
+      ],
+      "avatar": {
+        "skin": "#f3d2b8",
+        "hair": "#a0522d",
+        "style": "long",
+        "shirt": "#1f4e5f",
+        "glasses": false
+      }
+    },
+    {
+      "id": "fac4",
+      "name": "Dr. Amara Okafor",
+      "short": "Dr. Okafor",
+      "dept": "Keough School of Global Affairs",
+      "pronouns": {
+        "sub": "she",
+        "obj": "her",
+        "pos": "her"
+      },
+      "responsiveness": 0.7,
+      "trust": 60,
+      "hoursPerWeek": 6,
+      "traits": [
+        "passionate about authentic cases",
+        "travels for fieldwork",
+        "exacting about cultural accuracy"
+      ],
+      "avatar": {
+        "skin": "#7a4a2e",
+        "hair": "#141110",
+        "style": "long",
+        "shirt": "#2e7d6b",
+        "glasses": false
+      }
+    },
+    {
+      "id": "fac5",
+      "name": "Prof. Rafael Ortiz",
+      "short": "Prof. Ortiz",
+      "dept": "Department of Chemistry and Biochemistry",
+      "pronouns": {
+        "sub": "he",
+        "obj": "him",
+        "pos": "his"
+      },
+      "responsiveness": 0.65,
+      "trust": 55,
+      "hoursPerWeek": 3,
+      "traits": [
+        "teaches 300 students a term",
+        "wants his lectures left alone"
+      ],
+      "avatar": {
+        "skin": "#c68e64",
+        "hair": "#3b2a20",
+        "style": "short",
+        "shirt": "#5a4a8a",
+        "glasses": true,
+        "beard": true
+      }
+    },
+    {
+      "id": "fac6",
+      "name": "Dr. Priya Raman",
+      "short": "Dr. Raman",
+      "dept": "Kaneb Center for Teaching Excellence",
+      "pronouns": {
+        "sub": "she",
+        "obj": "her",
+        "pos": "her"
+      },
+      "responsiveness": 0.8,
+      "trust": 70,
+      "hoursPerWeek": 5,
+      "traits": [
+        "enthusiastic early adopter",
+        "adds ideas late"
+      ],
+      "avatar": {
+        "skin": "#a86f4c",
+        "hair": "#1d1512",
+        "style": "bob",
+        "shirt": "#b5651d",
+        "glasses": true
+      }
+    },
+    {
+      "id": "fac7",
+      "name": "Dr. Thomas Byrne",
+      "short": "Dr. Byrne",
+      "dept": "Department of Applied and Computational Mathematics and Statistics",
+      "pronouns": {
+        "sub": "he",
+        "obj": "him",
+        "pos": "his"
+      },
+      "responsiveness": 0.6,
+      "trust": 50,
+      "hoursPerWeek": 4,
+      "traits": [
+        "the new textbook edition arrived late",
+        "prefers email to meetings"
+      ],
+      "avatar": {
+        "skin": "#f0cfb0",
+        "hair": "#8a8178",
+        "style": "short",
+        "shirt": "#3d5a80",
+        "glasses": false
+      }
     }
   ]
 }

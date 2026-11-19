@@ -30,5 +30,11 @@
   "concept": "Stakeholder management: steady contact and a clear approval gate",
   "sop_ref": "PM SOP: weekly summaries; timelines reviewed by the directors",
   "explanation": "Faculty who hear nothing for weeks lose trust and respond slower, and bad news found late costs more. A director gate before QA catches problems while the date can still hold.",
-  "plant_by_project": {}
+  "plant_by_project": {},
+  "projects": [
+    "intro-psych-online",
+    "ai-ethics-documentary",
+    "rescue-sustainable-business"
+  ],
+  "note": "Planted on the three original projects; the plants name tasks the newer projects do not have."
 }

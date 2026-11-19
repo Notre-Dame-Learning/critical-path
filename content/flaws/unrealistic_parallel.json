@@ -33,5 +33,11 @@
   ],
   "concept": "Sequencing: a window that ignores its own dependency is a hidden delay",
   "sop_ref": "LD SOP: course map approved before development; PM SOP: Design phase",
-  "explanation": "Planning work to start before its input is ready makes the schedule look shorter than it is. When the input arrives late, the downstream work is squeezed or redone."
+  "explanation": "Planning work to start before its input is ready makes the schedule look shorter than it is. When the input arrives late, the downstream work is squeezed or redone.",
+  "projects": [
+    "intro-psych-online",
+    "ai-ethics-documentary",
+    "rescue-sustainable-business"
+  ],
+  "note": "Planted on the three original projects; the plants name tasks the newer projects do not have."
 }

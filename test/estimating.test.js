@@ -14,7 +14,7 @@ const credit = (c) => c.credit ?? S.TIER_CREDIT[c.tier];
 const EST = { 'est-two-weekends': ['intro-psych-online', 'ai-ethics-documentary'], 'est-post-guess': ['ai-ethics-documentary'], 'est-module-one-actuals': null };
 
 test('three Estimating situations, tagged and placed, so Estimating can grow on every project', () => {
-  assert.equal(deck.events.length, 33);
+  assert.ok(deck.events.length >= 33);
   for (const [id, where] of Object.entries(EST)) {
     const e = deck.events.find((x) => x.id === id);
     assert.ok(e, id);

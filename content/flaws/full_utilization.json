@@ -35,5 +35,10 @@
       "start": 12
     }
   },
-  "note": "On Rescue, post already has two weeks of overtime (11-12), so the plant moves post to weeks 12-13 where only one week has overtime."
+  "note": "On Rescue, post already has two weeks of overtime (11-12), so the plant moves post to weeks 12-13 where only one week has overtime. Planted on the three original projects; the plants name tasks the newer projects do not have.",
+  "projects": [
+    "intro-psych-online",
+    "ai-ethics-documentary",
+    "rescue-sustainable-business"
+  ]
 }

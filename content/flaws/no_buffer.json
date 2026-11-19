@@ -31,5 +31,11 @@
   "concept": "Buffer: protect the launch date with slack on the critical path",
   "sop_ref": "PM SOP: Delivery phase; QA and migration finish before the course opens",
   "explanation": "With QA in launch week, any slip of a week misses the first day of term. A week of buffer before launch absorbs the slips every project has.",
-  "plant_by_project": {}
+  "plant_by_project": {},
+  "projects": [
+    "intro-psych-online",
+    "ai-ethics-documentary",
+    "rescue-sustainable-business"
+  ],
+  "note": "Planted on the three original projects; the plants name tasks the newer projects do not have."
 }

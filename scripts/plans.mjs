@@ -1,6 +1,7 @@
 // Re-derives the Build the Plan baselines in content/plans/ and reports their checks and odds.
 //   npm run plans            check the committed plan files: 8 checks, peak load, on-time odds
 //   npm run plans -- --write rebuild the files from the engine, then check them
+//   npm run plans -- --write --only a,b   rebuild only those projects
 // Windows are the median start and finish weeks of 60 engine runs with every link in place and the
 // standard touchpoints; gate, risks, backups, overtime and a few windows are hand-written below.
 // See the "Build the Plan baselines" tab of the framework doc (v2).
@@ -33,6 +34,42 @@ const HAND = {
       { id: 'guest-cancels', text: 'An interview guest cancels', owner: 'Perrick', mitigation: 'Book a standby guest during logistics', trigger: 'Any guest unconfirmed one week before the shoot', contingency: 'Faculty-led host segment in place of the interview' },
       { id: 'releases', text: 'Location permits or release forms not signed', owner: 'Perrick', mitigation: 'Send release forms with the booking confirmation', trigger: 'Any release unsigned by the week before the shoot', contingency: 'Reshoot that scene as narration over animation' },
       { id: 'faculty-travel', text: 'Prof. Osei travels during script work', owner: 'PM', mitigation: 'Working sessions every week faculty owns open work, plus doc comments', trigger: 'No narration draft by the end of week 5', contingency: 'Li drafts narration from the course map for faculty to edit' },
+    ],
+  },
+  'global-health-cases': {
+    gate: 9,
+    windows: { coursemap: [1, 3], content: [3, 5], scripts: [4, 5] },
+    backups: { distribution: 'ld', embed: 'mp' },
+    risks: [
+      { id: 'case-accuracy', text: 'Case details or illustrations are culturally inaccurate', owner: 'Sam', mitigation: 'Dr. Okafor reviews style frames and the first case\'s art before the rest is drawn', trigger: 'Any accuracy concern raised on a case', contingency: 'Pause that case\'s art and fix from reference material before continuing' },
+      { id: 'branching-scope', text: 'Branching grows beyond the blueprint', owner: 'Li', mitigation: 'Agree the path count per case in the case blueprint', trigger: 'More than 12 paths requested', contingency: 'Use feedback screens instead of new paths; log extras for a later release' },
+      { id: 'pilot-findings', text: 'The student pilot finds blocking problems late', owner: 'PM', mitigation: 'Pilot two cases as soon as they are built', trigger: 'Any student can\'t finish a case in the pilot', contingency: 'Fix blockers first; move polish after launch' },
+    ],
+  },
+  'a11y-sprint-ochem': {
+    gate: 2,
+    windows: { qa: [3, 3], handoff: [4, 4] },
+    backups: { docs: 'gd', qa: 'mp' },
+    risks: [
+      { id: 'audit-size', text: 'The audit finds more than the request listed', owner: 'Li', mitigation: 'Audit in week 1 and re-plan from it', trigger: 'Audit shows more than 24 videos or 10 documents', contingency: 'Fix first-month materials first; agree dates for the rest with the accessibility office' },
+      { id: 'faculty-time', text: 'Prof. Ortiz has little time to check descriptions', owner: 'PM', mitigation: 'Batch the descriptions into one short review', trigger: 'Descriptions not reviewed two days after sending', contingency: 'Ask a teaching assistant to check the chemistry' },
+    ],
+  },
+  'teaching-ai-microcourse': {
+    gate: 3,
+    windows: { qa: [4, 4], handoff: [4, 5] },
+    backups: { distribution: 'ld', embed: 'mp' },
+    risks: [
+      { id: 'workshop-date', text: 'The workshop date is fixed and can\'t slip', owner: 'PM', mitigation: 'Plan a minimum course that is ready a week early', trigger: 'Videos not edited by the end of week 4', contingency: 'Launch with the activity and captions; add the last video after the workshop' },
+      { id: 'late-ideas', text: 'Dr. Raman adds ideas late', owner: 'Li', mitigation: 'Agree the three-module outline in week 1', trigger: 'A new module is requested after week 2', contingency: 'Log it for a second release' },
+    ],
+  },
+  'stats-refresh-sprint': {
+    gate: 3,
+    backups: { distribution: 'ld', embed: 'mp' },
+    risks: [
+      { id: 'quiz-bank', text: 'The quiz bank doesn\'t match the new edition', owner: 'Li', mitigation: 'Triage items into keep, edit and replace in week 2', trigger: 'More than half the items need replacing', contingency: 'Replace the first three weeks\' quizzes first; the rest by mid-term' },
+      { id: 'faculty-email', text: 'Dr. Byrne answers slowly by email', owner: 'PM', mitigation: 'Send one batched list of questions a week', trigger: 'No reply to a batch within three days', contingency: 'Use a 15-minute call instead' },
     ],
   },
   'rescue-sustainable-business': {
@@ -80,6 +117,13 @@ function derive(project) {
       Object.assign(p, { start, end: Math.max(start, med[t.id].end) });
     }
     for (const [id, [s, e]] of Object.entries(hand.windows ?? {})) Object.assign(plan.tasks[id], { start: s, end: e });
+    // Hand-written windows can push later tasks: keep every task starting no earlier than its inputs end.
+    for (const t of project.tasks) {
+      const p = plan.tasks[t.id];
+      if (p.locked || hand.windows?.[t.id]) continue;
+      const floor = Math.max(0, ...t.dependsOn.map((d) => plan.tasks[d].end));
+      if (p.start < floor) Object.assign(p, { start: floor, end: Math.max(p.end, floor) });
+    }
   }
   plan.touchpoints = P.standardTouchpoints(plan, project, { overtime: hand.overtime });
   for (const [id, who] of Object.entries(hand.backups)) plan.tasks[id].backup = who;
@@ -128,11 +172,14 @@ ${plan.risks.map((r) => `    ${JSON.stringify(r)}`).join(',\n')}
 }
 
 const write = process.argv.includes('--write');
+// --only id,id rebuilds just those projects (the others keep their committed files).
+const onlyArg = process.argv.indexOf('--only');
+const only = onlyArg > 0 ? process.argv[onlyArg + 1].split(',') : null;
 let bad = 0;
 for (const project of projects) {
   const file = new URL(`content/plans/${project.id}.json`, root);
   let plan;
-  if (write) {
+  if (write && (!only || only.includes(project.id))) {
     plan = derive(project);
     fs.mkdirSync(new URL('content/plans/', root), { recursive: true });
     fs.writeFileSync(file, format(plan));

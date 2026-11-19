@@ -3275,6 +3275,950 @@
         "escalateWhen": "When the re-estimate moves an approved milestone. Changes to established timelines need director approval.",
         "sop": "LD SOP: master site build; PM SOP: When Things Go Wrong, With Timelines"
       }
+    },
+    {
+      "id": "every-choice-branches",
+      "title": "Every Choice Branches",
+      "who": "ld",
+      "mood": "worried",
+      "track": "change",
+      "track2": "planning",
+      "projects": [
+        "global-health-cases"
+      ],
+      "trigger": {
+        "weeks": [
+          4,
+          10
+        ],
+        "requires": {
+          "taskStarted": "interactives",
+          "taskNotDone": "interactives"
+        },
+        "chance": 0.5
+      },
+      "text": "{ld}: \"{faculty} wants every decision in the cases to open its own path. That's about 40 paths instead of the 12 in the blueprint, and each one needs its own feedback and art.\"",
+      "choices": [
+        {
+          "id": "goal-per-decision",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Go through the cases with {faculty} and {ld}: keep separate paths where the consequences really differ, use feedback screens for the rest, and confirm the path count in writing.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 2
+            },
+            {
+              "type": "addEffort",
+              "task": "interactives",
+              "value": 2
+            }
+          ],
+          "outcome": "{faculty} keeps branching where it teaches something. The build grows by a few paths, not thirty.",
+          "why": "Tying each branch to a learning goal keeps the design honest and the scope agreed; the charter and the blueprint are the reference."
+        },
+        {
+          "id": "build-all",
+          "tier": "resolve",
+          "credit": 0.2,
+          "reaction": "frustrated",
+          "label": "Build every path {fsub} asked for.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "interactives",
+              "value": 12
+            },
+            {
+              "type": "addEffort",
+              "task": "animations",
+              "value": 4
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -8
+            }
+          ],
+          "outcome": "{ld} and {gd} start building and illustrating 40 paths.",
+          "why": "Unbounded branching is scope creep that lands on the designer and the illustrator."
+        },
+        {
+          "id": "refuse",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "sad",
+          "label": "Say no: the blueprint has 12 paths.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -6
+            }
+          ],
+          "outcome": "The scope holds, but {faculty} feels {fpos} expertise was dismissed.",
+          "why": "Right to hold scope, but without asking what each branch was for it costs trust."
+        },
+        {
+          "id": "ask-sup",
+          "tier": "escalate_plan",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Ask {sup} to agree a branching limit with {faculty}, with the blueprint and the cost of 40 paths attached.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "interactives",
+              "value": 2
+            }
+          ],
+          "outcome": "{sup} backs a limit and asks you to work out which branches matter with {faculty}.",
+          "why": "A reasonable escalation, but the design conversation is yours and {ld}'s to lead."
+        }
+      ],
+      "debrief": {
+        "concept": "Scope control in design: every branch should earn its place.",
+        "independent": "Ask what each decision is meant to teach, keep branches where consequences differ, use feedback for the rest, and write down the agreed count against the blueprint.",
+        "escalateWhen": "If the faculty member insists on scope the timeline can't absorb after you've offered a design that meets the goals.",
+        "sop": "LD SOP: course map and assessment plan; PM SOP: Change of Scope"
+      }
+    },
+    {
+      "id": "pilot-students-lost",
+      "title": "The Pilot Students Got Lost",
+      "who": "ld",
+      "mood": "worried",
+      "track": "risk",
+      "track2": "planning",
+      "projects": [
+        "global-health-cases"
+      ],
+      "trigger": {
+        "weeks": [
+          7,
+          12
+        ],
+        "requires": {
+          "taskStarted": "pilot"
+        },
+        "chance": 0.6
+      },
+      "text": "Five students tried two of the cases. {ld}: \"Three of them got lost in the navigation and never reached the debrief screen. They also left 30 small comments about wording and colors.\"",
+      "choices": [
+        {
+          "id": "sort-findings",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Sort the findings with {ld}: fix the navigation problems that stopped students now, log the polish items for after launch, and tell {faculty} what changed and why.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "pilot",
+              "value": 2
+            },
+            {
+              "type": "trust",
+              "value": 2
+            }
+          ],
+          "outcome": "Navigation is fixed in two days. The polish list goes into the hand-off.",
+          "why": "A pilot is for finding the problems that block learning. Fixing those first and scheduling the rest is the point of piloting early."
+        },
+        {
+          "id": "fix-everything",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "frustrated",
+          "label": "Fix every comment from the pilot before launch.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "pilot",
+              "value": 8
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -5
+            }
+          ],
+          "outcome": "{ld} works through all 30 comments. The navigation fix lands late.",
+          "why": "Treating every comment as equal spends the time you need for the ones that matter."
+        },
+        {
+          "id": "ship-it",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Launch as is; students will figure it out.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "interactives",
+              "value": 6
+            },
+            {
+              "type": "trust",
+              "value": -3
+            }
+          ],
+          "outcome": "In week one of term, students email {faculty} that they can't find the debriefs.",
+          "why": "Known blocking problems shipped on purpose come back as support requests and lost trust."
+        },
+        {
+          "id": "delay-launch",
+          "tier": "escalate",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Ask {sup} whether launch can move to fix everything.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "pilot",
+              "value": 3
+            }
+          ],
+          "outcome": "{sup} says the date holds and asks which problems actually block students.",
+          "why": "Sorting the findings is the PM's job; the launch date is fixed by the term."
+        }
+      ],
+      "debrief": {
+        "concept": "Usability testing: fix what blocks learning first.",
+        "independent": "Sort pilot findings by impact, fix the blockers now, schedule the polish, and close the loop with the faculty member.",
+        "escalateWhen": "If a blocking problem can't be fixed before launch, bring options (a workaround, a later release) to your supervisor.",
+        "sop": "LD SOP: QA and student testing"
+      }
+    },
+    {
+      "id": "case-accuracy",
+      "title": "Is This Case Accurate?",
+      "who": "gd",
+      "mood": "worried",
+      "track": "risk",
+      "track2": "stakeholders",
+      "projects": [
+        "global-health-cases"
+      ],
+      "trigger": {
+        "weeks": [
+          5,
+          11
+        ],
+        "requires": {
+          "taskStarted": "animations",
+          "taskNotDone": "animations"
+        },
+        "chance": 0.5
+      },
+      "text": "{gd}: \"A colleague of {faculty}'s from the region saw the art for case 3. The clinic signage and clothing are from the wrong country. I've already drawn four scenes that way.\"",
+      "choices": [
+        {
+          "id": "pause-and-check",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Pause case 3's art, ask {faculty} to connect {gd} with the reviewer, and fix the details before the same mistakes spread to the other cases.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "gd",
+              "value": -2,
+              "weeks": 1
+            },
+            {
+              "type": "trust",
+              "value": 3
+            }
+          ],
+          "outcome": "The reviewer sends reference photos. Four scenes are fixed, and the rest are drawn right the first time.",
+          "why": "Catching an accuracy problem early and putting the illustrator in touch with an expert protects the course and {faculty}'s reputation."
+        },
+        {
+          "id": "after-launch",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Fix it after launch.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "animations",
+              "value": 6
+            },
+            {
+              "type": "trust",
+              "value": -4
+            }
+          ],
+          "outcome": "The same details appear in three more cases before anyone looks again.",
+          "why": "Inaccurate cultural detail in a global health course is a credibility risk, and it spreads."
+        },
+        {
+          "id": "redraw-neutral",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Redraw all six cases in a generic style with no setting.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "animations",
+              "value": 10
+            },
+            {
+              "type": "morale",
+              "who": "gd",
+              "value": -5
+            }
+          ],
+          "outcome": "{gd} starts over. The cases lose the specificity {faculty} wanted.",
+          "why": "Removing the setting avoids the error but throws away the work and the point of authentic cases."
+        },
+        {
+          "id": "review-process",
+          "tier": "escalate_plan",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Ask {sup} whether ODL has a cultural review step, and propose one for this course.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "gd",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "{sup} likes the idea and asks you to start with case 3.",
+          "why": "A good process question, but the fix for case 3 can start today."
+        }
+      ],
+      "debrief": {
+        "concept": "Quality risk: involve subject experts before work multiplies.",
+        "independent": "Pause the affected work, connect the creator with an expert reviewer, fix the source of the error, and check the remaining work against it.",
+        "escalateWhen": "When the review needs people or budget outside the project.",
+        "sop": "Media SOP: 2M Design Frame; PM SOP: risk and quality"
+      }
+    },
+    {
+      "id": "audit-found-more",
+      "title": "The Audit Found Twice as Much",
+      "who": "ld",
+      "mood": "worried",
+      "track": "estimating",
+      "track2": "planning",
+      "projects": [
+        "a11y-sprint-ochem"
+      ],
+      "trigger": {
+        "weeks": [
+          1,
+          3
+        ],
+        "requires": {
+          "taskDone": "audit"
+        },
+        "chance": 0.8
+      },
+      "text": "{ld}'s audit is done: \"The course has 48 videos, not 24. Last year's section recordings are still published. And 15 of the PDFs are scans.\"",
+      "choices": [
+        {
+          "id": "replan-priority",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Re-plan from the audit with the team: fix what students need in the first four weeks of term now, schedule the rest with dates, and agree the order with {faculty} and the accessibility office.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "captions",
+              "value": 2
+            },
+            {
+              "type": "trust",
+              "value": 2
+            }
+          ],
+          "outcome": "Everyone agrees on a phased fix list. The review is set for the first-month materials.",
+          "why": "An audit is new information about size. Re-estimating from it and agreeing priorities is better than heroics or pretending."
+        },
+        {
+          "id": "all-48",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Fix all 48 videos before term with overtime.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "captions",
+              "value": 10
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -8
+            }
+          ],
+          "outcome": "{mp} starts on 48 videos with three weeks left.",
+          "why": "Doubling the work without changing the plan just moves the problem into overtime and errors."
+        },
+        {
+          "id": "stick-to-24",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Stick to the 24 in the original request.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "captions",
+              "value": 5
+            },
+            {
+              "type": "trust",
+              "value": -4
+            }
+          ],
+          "outcome": "The review finds the old recordings with bad captions.",
+          "why": "Ignoring what the audit found leaves the course out of compliance."
+        },
+        {
+          "id": "second-captioner",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Ask {sup} for a second captioner for two weeks, with the audit attached.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": 3,
+              "weeks": 2
+            }
+          ],
+          "outcome": "{sup} finds a student captioner for two weeks.",
+          "why": "A sound request with evidence, though agreeing priorities first would have cost nothing."
+        }
+      ],
+      "debrief": {
+        "concept": "Re-estimating: when the facts change, change the plan.",
+        "independent": "Use the audit to re-size the work, put what students need first, and agree a dated plan for the rest with the people who must accept it.",
+        "escalateWhen": "When the must-fix work can't fit the time with the people you have.",
+        "sop": "PM SOP: When Things Go Wrong, With Timelines"
+      }
+    },
+    {
+      "id": "diagrams-no-source",
+      "title": "No Source Files for the Diagrams",
+      "who": "gd",
+      "mood": "worried",
+      "track": "risk",
+      "track2": "estimating",
+      "projects": [
+        "a11y-sprint-ochem"
+      ],
+      "trigger": {
+        "weeks": [
+          1,
+          4
+        ],
+        "requires": {
+          "taskStarted": "alttext",
+          "taskNotDone": "alttext"
+        },
+        "chance": 0.6
+      },
+      "text": "{gd}: \"The reaction diagrams are flattened images from an old textbook. I can't make accessible versions without redrawing them, and there are about 60.\"",
+      "choices": [
+        {
+          "id": "redraw-key",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Ask {faculty} which diagrams students need for exams, have {gd} redraw those, and write long descriptions for the rest.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "alttext",
+              "value": 2
+            }
+          ],
+          "outcome": "{faculty} picks 15 key mechanisms. The rest get careful text descriptions.",
+          "why": "Prioritizing with the subject expert puts the redraw effort where it matters and keeps the rest accessible."
+        },
+        {
+          "id": "redraw-all",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Redraw all 60 diagrams.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "alttext",
+              "value": 8
+            },
+            {
+              "type": "morale",
+              "who": "gd",
+              "value": -5
+            }
+          ],
+          "outcome": "{gd} is still redrawing in week four.",
+          "why": "Redrawing everything isn't needed for access and doesn't fit the sprint."
+        },
+        {
+          "id": "short-alt",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Keep the images and add one-line alt text.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "alttext",
+              "value": 5
+            }
+          ],
+          "outcome": "The review flags the diagrams as unreadable to a screen reader.",
+          "why": "A one-line label doesn't describe a reaction mechanism; it fails the students who need it."
+        },
+        {
+          "id": "tell-sup",
+          "tier": "escalate",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Tell {sup} the diagrams can't be fixed in time.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "alttext",
+              "value": 3
+            }
+          ],
+          "outcome": "{sup} asks which ones students actually need.",
+          "why": "Bring the options and a recommendation, not just the problem."
+        }
+      ],
+      "debrief": {
+        "concept": "Risk and scope: fix what matters first, describe the rest.",
+        "independent": "Ask the subject expert which items are essential, rebuild those, and make the rest accessible in a cheaper way.",
+        "escalateWhen": "If even the essential items can't be fixed before the deadline.",
+        "sop": "Media SOP: accessibility; LD SOP: QA"
+      }
+    },
+    {
+      "id": "turn-off-videos",
+      "title": "Can We Just Turn Off the Videos?",
+      "who": "faculty",
+      "mood": "frustrated",
+      "track": "stakeholders",
+      "track2": "change",
+      "projects": [
+        "a11y-sprint-ochem"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          4
+        ],
+        "requires": {
+          "taskNotDone": "captions"
+        },
+        "chance": 0.5
+      },
+      "text": "{faculty}: \"Students have the textbook. Let's just unpublish the videos until summer and save everyone the work.\"",
+      "choices": [
+        {
+          "id": "explain-and-prioritize",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Explain what students would lose and why the accommodation can't wait, then offer to caption the ten most-watched videos this week and agree dates for the rest.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 3
+            },
+            {
+              "type": "addEffort",
+              "task": "captions",
+              "value": -2
+            }
+          ],
+          "outcome": "{faculty} agrees once the work is focused. The most-used videos are fixed first.",
+          "why": "Listening to the worry behind the request and offering a smaller first step keeps both the students and the faculty member on side."
+        },
+        {
+          "id": "unpublish",
+          "tier": "resolve",
+          "credit": 0.2,
+          "reaction": "happy",
+          "label": "Agree and unpublish the videos.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 2
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "captions",
+              "value": 4
+            }
+          ],
+          "outcome": "The accessibility office asks why a whole course's lectures disappeared. They have to come back by week 3.",
+          "why": "Removing content doesn't meet the accommodation; it shifts the problem to the students and the office."
+        },
+        {
+          "id": "insist",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "sad",
+          "label": "Insist the plan stays as it is.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -5
+            }
+          ],
+          "outcome": "The plan holds; {faculty} stops answering questions about the diagrams.",
+          "why": "Right outcome, but without understanding the concern it costs the cooperation you need."
+        },
+        {
+          "id": "sup-explains",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask {sup} to explain the accessibility rules to {fobj}.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -1
+            }
+          ],
+          "outcome": "{sup} explains, and asks you to bring a smaller plan next time.",
+          "why": "The explanation and the offer were yours to make."
+        }
+      ],
+      "debrief": {
+        "concept": "Stakeholder management: find the concern behind the request.",
+        "independent": "Ask what's driving the request, explain the impact on students plainly, and offer a smaller, faster first step.",
+        "escalateWhen": "If the faculty member still refuses after the obligation and the options are clear.",
+        "sop": "PM SOP: Challenging Faculty"
+      }
+    },
+    {
+      "id": "date-moved-up",
+      "title": "The Date Moved Up a Week",
+      "who": "sup",
+      "mood": "worried",
+      "track": "change",
+      "track2": "communication",
+      "projects": [
+        "a11y-sprint-ochem",
+        "teaching-ai-microcourse",
+        "stats-refresh-sprint"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          5
+        ],
+        "requires": {},
+        "chance": 0.35
+      },
+      "text": "{sup}: \"The department wants it a week early, for an orientation session. Can we do that?\"",
+      "choices": [
+        {
+          "id": "phased",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Find out what the orientation actually needs, offer a first release with those parts a week early and the rest on the original date, and get it agreed in writing.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 2
+            }
+          ],
+          "outcome": "The orientation needs the first module only. It ships early; the rest keeps its date.",
+          "why": "Asking what the new date is for usually turns an impossible request into a small one."
+        },
+        {
+          "id": "yes-all",
+          "tier": "resolve",
+          "credit": 0.2,
+          "reaction": "frustrated",
+          "label": "Say yes to the earlier date for everything.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -8
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -6
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 3
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "captions",
+              "value": 3
+            }
+          ],
+          "outcome": "The team rushes to the new date. Corners get cut.",
+          "why": "Accepting a shorter timeline without changing scope just moves the cost into quality and morale."
+        },
+        {
+          "id": "no",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "sad",
+          "label": "Say no: the date is the date.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -4
+            }
+          ],
+          "outcome": "The department goes ahead with the orientation without the course.",
+          "why": "Holding the date protects the team, but without options it misses a real need."
+        },
+        {
+          "id": "sup-decides",
+          "tier": "escalate",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Ask {sup} to decide what's possible.",
+          "effects": [],
+          "outcome": "{sup} asks you what the team could deliver early.",
+          "why": "You know the work best; bring the options."
+        }
+      ],
+      "debrief": {
+        "concept": "Change control: understand the need behind a date change.",
+        "independent": "Ask what the new date is for, offer a phased release that meets it, and record the agreement.",
+        "escalateWhen": "When meeting the new date would need more people or a scope change only the directors can approve.",
+        "sop": "PM SOP: When Things Go Wrong, With Timelines"
+      }
+    },
+    {
+      "id": "just-use-zoom",
+      "title": "Can We Just Record It on Zoom?",
+      "who": "faculty",
+      "mood": "neutral",
+      "track": "stakeholders",
+      "track2": "risk",
+      "projects": [
+        "teaching-ai-microcourse",
+        "stats-refresh-sprint"
+      ],
+      "trigger": {
+        "weeks": [
+          1,
+          4
+        ],
+        "requires": {
+          "taskNotDone": "production"
+        },
+        "chance": 0.45
+      },
+      "text": "{faculty}: \"Booking the studio is a hassle. I'll just record myself on Zoom this weekend. Same thing, right?\"",
+      "choices": [
+        {
+          "id": "mixed",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Keep one short studio session for the on-camera parts, and let {fobj} record the screen demos on Zoom with ODL's mic kit and a test recording first.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 3
+            },
+            {
+              "type": "addEffort",
+              "task": "production",
+              "value": -1
+            }
+          ],
+          "outcome": "The test recording catches an echo. The final videos sound clean and take less studio time.",
+          "why": "Matching the tool to the shot respects the faculty member's time without giving up quality."
+        },
+        {
+          "id": "zoom-all",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "happy",
+          "label": "Fine, record it all on Zoom.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "post",
+              "value": 5
+            },
+            {
+              "type": "trust",
+              "value": 1
+            }
+          ],
+          "outcome": "The recordings arrive with room echo and a dropped frame rate. {mp} spends days cleaning them up.",
+          "why": "Untested home recordings move the work into post-production."
+        },
+        {
+          "id": "studio-only",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "sad",
+          "label": "No: studio only, those are the standards.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -5
+            }
+          ],
+          "outcome": "{faculty} grudgingly books the studio and cancels once.",
+          "why": "Standards matter, but rigid answers cost cooperation when a mixed approach would work."
+        },
+        {
+          "id": "standards",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask {sup} to explain ODL's video standards to {fobj}.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -1
+            }
+          ],
+          "outcome": "{sup} suggests the mixed approach you could have offered.",
+          "why": "A conversation you can have yourself, with an offer."
+        }
+      ],
+      "debrief": {
+        "concept": "Quality trade-offs: fit the method to the need.",
+        "independent": "Find out what the faculty member wants to avoid, then offer a mixed approach that keeps quality where it shows and saves time where it doesn't.",
+        "escalateWhen": "Not an escalation issue unless the faculty member wants to drop ODL standards entirely.",
+        "sop": "Media SOP: 3M Production"
+      }
+    },
+    {
+      "id": "quiz-bank-mismatch",
+      "title": "The Quiz Bank Doesn't Match the New Edition",
+      "who": "ld",
+      "mood": "worried",
+      "track": "risk",
+      "track2": "planning",
+      "projects": [
+        "stats-refresh-sprint"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          6
+        ],
+        "requires": {
+          "taskStarted": "quizbank",
+          "taskNotDone": "quizbank"
+        },
+        "chance": 0.6
+      },
+      "text": "{ld}: \"About half the quiz items cite old page numbers or the old datasets. I could rewrite the whole bank, but that's a lot.\"",
+      "choices": [
+        {
+          "id": "triage",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Have {ld} tag each item keep, edit or replace, ask {faculty} to approve the replace list, and build replacements in the order the term uses them.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "quizbank",
+              "value": 1
+            },
+            {
+              "type": "trust",
+              "value": 2
+            }
+          ],
+          "outcome": "Most items only need edits. The first three weeks' quizzes are ready early.",
+          "why": "Triage turns an overwhelming rewrite into a short list, and the faculty member owns the content decisions."
+        },
+        {
+          "id": "rewrite",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Rewrite the whole bank from scratch.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "quizbank",
+              "value": 8
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -6
+            }
+          ],
+          "outcome": "{ld} is still writing items in launch week.",
+          "why": "Rewriting what only needed edits spends time the sprint doesn't have."
+        },
+        {
+          "id": "keep-old",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Keep the old items; students won't notice.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "quizbank",
+              "value": 6
+            },
+            {
+              "type": "trust",
+              "value": -3
+            }
+          ],
+          "outcome": "Students notice in week one: the page numbers are wrong.",
+          "why": "Mismatched assessments undermine the course and generate support tickets."
+        },
+        {
+          "id": "another-designer",
+          "tier": "escalate_plan",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Ask {sup} to borrow another designer for a week, with the item count.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": 3,
+              "weeks": 1
+            }
+          ],
+          "outcome": "Another designer helps for a week.",
+          "why": "Reasonable, but triage first would show how much help is really needed."
+        }
+      ],
+      "debrief": {
+        "concept": "Triage: size the change before you staff it.",
+        "independent": "Sort the work into keep, edit and replace, get the content owner to approve the replace list, and do the work in the order it's needed.",
+        "escalateWhen": "If the replace list is still bigger than the time, after triage.",
+        "sop": "LD SOP: assessment plan"
+      }
     }
   ]
 }

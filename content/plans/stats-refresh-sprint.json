@@ -1,0 +1,34 @@
+{
+  "project": "stats-refresh-sprint",
+  "launchWeek": 6,
+  "joinWeek": 1,
+  "gate": 3,
+  "tasks": {
+    "analysis": {"start":1,"end":1,"est":[3,4,5],"deps":[],"backup":null,"locked":false},
+    "coursemap": {"start":1,"end":1,"est":[3,4,5],"deps":["analysis"],"backup":null,"locked":false},
+    "branding": {"start":1,"end":1,"est":[2,3,4],"deps":[],"backup":null,"locked":false},
+    "content": {"start":1,"end":2,"est":[6,7,9],"deps":["coursemap"],"backup":null,"locked":false},
+    "scripts": {"start":2,"end":2,"est":[2,3,4],"deps":["coursemap"],"backup":null,"locked":false},
+    "scriptreview": {"start":3,"end":3,"est":[1,1,1],"deps":["scripts"],"backup":null,"locked":false},
+    "production": {"start":3,"end":3,"est":[2,3,4],"deps":["scriptreview"],"backup":null,"locked":false},
+    "post": {"start":3,"end":4,"est":[4,5,7],"deps":["production"],"backup":null,"locked":false},
+    "distribution": {"start":4,"end":4,"est":[1,1,1],"deps":["post"],"backup":"ld","locked":false},
+    "quizbank": {"start":3,"end":4,"est":[7,9,12],"deps":["content"],"backup":null,"locked":false},
+    "mastersite": {"start":4,"end":5,"est":[7,9,12],"deps":["content","branding"],"backup":null,"locked":false},
+    "embed": {"start":5,"end":5,"est":[2,2,3],"deps":["mastersite","distribution","quizbank"],"backup":"mp","locked":false},
+    "qa": {"start":5,"end":5,"est":[3,4,5],"deps":["embed"],"backup":null,"locked":false},
+    "handoff": {"start":5,"end":6,"est":[1,1,1],"deps":["qa"],"backup":null,"locked":false}
+  },
+  "touchpoints": {
+    "1": ["working-session","faculty-update"],
+    "2": ["working-session","faculty-update"],
+    "3": ["checkin","qa-review"],
+    "4": ["checkin","faculty-update"],
+    "5": ["checkin","faculty-update"],
+    "6": ["checkin","faculty-update"]
+  },
+  "risks": [
+    {"id":"quiz-bank","text":"The quiz bank doesn't match the new edition","owner":"Li","mitigation":"Triage items into keep, edit and replace in week 2","trigger":"More than half the items need replacing","contingency":"Replace the first three weeks' quizzes first; the rest by mid-term"},
+    {"id":"faculty-email","text":"Dr. Byrne answers slowly by email","owner":"PM","mitigation":"Send one batched list of questions a week","trigger":"No reply to a batch within three days","contingency":"Use a 15-minute call instead"}
+  ]
+}

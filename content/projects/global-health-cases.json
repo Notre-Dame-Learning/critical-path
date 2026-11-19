@@ -1,0 +1,192 @@
+{
+  "_note": "Design-heavy: branching case scenarios built in Canvas by the learning designer, illustrated by the graphic designer; only three short studio videos.",
+  "id": "global-health-cases",
+  "title": "Global Health Ethics: case-based course",
+  "difficulty": "Design-heavy",
+  "facultyId": "fac4",
+  "tagline": "Six branching case studies with original illustrations, built mostly by design.",
+  "brief": "The charter is signed: turn {faculty}'s seminar into an online course built around six branching case studies, each with original illustrations, plus three short studio videos that introduce the cases. Students make decisions in each case and see the consequences. The course goes live on the first day of term.",
+  "team": {
+    "ld": "ld1",
+    "mp": "mp1",
+    "gd": "gd1",
+    "faculty": "fac4"
+  },
+  "launchWeek": 12,
+  "actionPointsPerWeek": 2,
+  "tasks": [
+    {
+      "id": "analysis",
+      "name": "Front-end analysis (LD Milestone 1)",
+      "phase": "Design",
+      "owner": "ld",
+      "effort": 8,
+      "dependsOn": []
+    },
+    {
+      "id": "brief",
+      "name": "Creative brief and illustration style guide",
+      "phase": "Design",
+      "owner": "mp",
+      "effort": 4,
+      "dependsOn": []
+    },
+    {
+      "id": "coursemap",
+      "name": "Course map and case blueprint (LD Milestone 2)",
+      "phase": "Design",
+      "owner": "ld",
+      "effort": 14,
+      "dependsOn": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "branding",
+      "name": "Course branding and illustration style frames",
+      "phase": "Design",
+      "owner": "gd",
+      "effort": 6,
+      "dependsOn": [
+        "brief"
+      ]
+    },
+    {
+      "id": "content",
+      "name": "Faculty writes six case narratives and readings",
+      "phase": "Development",
+      "owner": "faculty",
+      "effort": 14,
+      "dependsOn": [
+        "coursemap"
+      ]
+    },
+    {
+      "id": "scripts",
+      "name": "Faculty drafts three case intro video scripts",
+      "phase": "Development",
+      "owner": "faculty",
+      "effort": 5,
+      "dependsOn": [
+        "coursemap",
+        "brief"
+      ]
+    },
+    {
+      "id": "scriptreview",
+      "name": "Script review and finalize",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 3,
+      "dependsOn": [
+        "scripts"
+      ]
+    },
+    {
+      "id": "production",
+      "name": "Half-day studio shoot for the case intros",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 5,
+      "dependsOn": [
+        "scriptreview"
+      ]
+    },
+    {
+      "id": "animations",
+      "name": "Case illustrations and character art",
+      "phase": "Development",
+      "owner": "gd",
+      "effort": 20,
+      "dependsOn": [
+        "branding",
+        "content"
+      ]
+    },
+    {
+      "id": "post",
+      "name": "Edit the case intro videos",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 8,
+      "dependsOn": [
+        "production"
+      ]
+    },
+    {
+      "id": "distribution",
+      "name": "Distribution: Panopto, captions, embed codes",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 2,
+      "dependsOn": [
+        "post"
+      ]
+    },
+    {
+      "id": "interactives",
+      "name": "Build the branching case scenarios in Canvas",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 26,
+      "dependsOn": [
+        "content"
+      ]
+    },
+    {
+      "id": "pilot",
+      "name": "Student pilot of two cases, then fixes",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 5,
+      "dependsOn": [
+        "interactives",
+        "animations"
+      ]
+    },
+    {
+      "id": "mastersite",
+      "name": "Master site build in Canvas",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 12,
+      "dependsOn": [
+        "content",
+        "branding"
+      ]
+    },
+    {
+      "id": "embed",
+      "name": "Embed videos and cases in the master site",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 3,
+      "dependsOn": [
+        "mastersite",
+        "distribution",
+        "pilot"
+      ]
+    },
+    {
+      "id": "qa",
+      "name": "Migrate to live course and QA",
+      "phase": "Delivery",
+      "owner": "ld",
+      "effort": 6,
+      "dependsOn": [
+        "embed"
+      ],
+      "isQA": true
+    },
+    {
+      "id": "handoff",
+      "name": "Hand-off document and meeting",
+      "phase": "Delivery",
+      "owner": "ld",
+      "effort": 2,
+      "dependsOn": [
+        "qa"
+      ]
+    }
+  ]
+}

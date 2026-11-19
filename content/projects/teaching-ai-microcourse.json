@@ -1,0 +1,148 @@
+{
+  "_note": "Sprint: a short self-paced faculty development course on a fixed workshop date.",
+  "id": "teaching-ai-microcourse",
+  "title": "Teaching with AI: faculty micro-course",
+  "difficulty": "Sprint",
+  "facultyId": "fac6",
+  "tagline": "Three modules and three short videos, ready for a faculty workshop in five weeks.",
+  "brief": "The charter is signed: build a short self-paced Canvas course for faculty on teaching with generative AI with {faculty}. Three modules, three 4-minute videos and a practice activity, ready for the August faculty workshop in five weeks. The workshop date won't move.",
+  "team": {
+    "ld": "ld1",
+    "mp": "mp1",
+    "gd": "gd1",
+    "faculty": "fac6"
+  },
+  "launchWeek": 5,
+  "actionPointsPerWeek": 2,
+  "tasks": [
+    {
+      "id": "analysis",
+      "name": "Quick needs check with the Kaneb Center",
+      "phase": "Design",
+      "owner": "ld",
+      "effort": 3,
+      "dependsOn": []
+    },
+    {
+      "id": "coursemap",
+      "name": "Three-module outline",
+      "phase": "Design",
+      "owner": "ld",
+      "effort": 5,
+      "dependsOn": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "branding",
+      "name": "Banner and slides from the ODL template",
+      "phase": "Design",
+      "owner": "gd",
+      "effort": 3,
+      "dependsOn": []
+    },
+    {
+      "id": "scripts",
+      "name": "Faculty scripts three short videos",
+      "phase": "Development",
+      "owner": "faculty",
+      "effort": 6,
+      "dependsOn": [
+        "coursemap"
+      ]
+    },
+    {
+      "id": "content",
+      "name": "Faculty writes the practice activity and examples",
+      "phase": "Development",
+      "owner": "faculty",
+      "effort": 4,
+      "dependsOn": [
+        "coursemap"
+      ]
+    },
+    {
+      "id": "scriptreview",
+      "name": "Script review and finalize",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 2,
+      "dependsOn": [
+        "scripts"
+      ]
+    },
+    {
+      "id": "production",
+      "name": "One studio afternoon",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 3,
+      "dependsOn": [
+        "scriptreview"
+      ]
+    },
+    {
+      "id": "post",
+      "name": "Edit and caption three videos",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 9,
+      "dependsOn": [
+        "production"
+      ]
+    },
+    {
+      "id": "distribution",
+      "name": "Distribution: Panopto, captions, embed codes",
+      "phase": "Development",
+      "owner": "mp",
+      "effort": 2,
+      "dependsOn": [
+        "post"
+      ]
+    },
+    {
+      "id": "mastersite",
+      "name": "Build the self-paced course",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 11,
+      "dependsOn": [
+        "content",
+        "branding"
+      ]
+    },
+    {
+      "id": "embed",
+      "name": "Embed the videos",
+      "phase": "Development",
+      "owner": "ld",
+      "effort": 2,
+      "dependsOn": [
+        "mastersite",
+        "distribution"
+      ]
+    },
+    {
+      "id": "qa",
+      "name": "QA pass and test enrollment",
+      "phase": "Delivery",
+      "owner": "ld",
+      "effort": 3,
+      "dependsOn": [
+        "embed"
+      ],
+      "isQA": true
+    },
+    {
+      "id": "handoff",
+      "name": "Hand-off to the Kaneb Center",
+      "phase": "Delivery",
+      "owner": "ld",
+      "effort": 1,
+      "dependsOn": [
+        "qa"
+      ]
+    }
+  ]
+}

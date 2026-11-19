@@ -25,5 +25,11 @@
   "concept": "Rework cycle: find defects early instead of inspecting at the end",
   "sop_ref": "LD SOP: milestone reviews; PM SOP: internal touchbases",
   "explanation": "Putting all review at the end means problems stay hidden until there is no time left to fix them. Regular reviews surface rework while it is cheap.",
-  "plant_by_project": {}
+  "plant_by_project": {},
+  "projects": [
+    "intro-psych-online",
+    "ai-ethics-documentary",
+    "rescue-sustainable-business"
+  ],
+  "note": "Planted on the three original projects; the plants name tasks the newer projects do not have."
 }

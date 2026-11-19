@@ -1,0 +1,44 @@
+{
+  "project": "global-health-cases",
+  "launchWeek": 12,
+  "joinWeek": 1,
+  "gate": 9,
+  "tasks": {
+    "analysis": {"start":1,"end":1,"est":[6,8,11],"deps":[],"backup":null,"locked":false},
+    "brief": {"start":1,"end":1,"est":[3,4,5],"deps":[],"backup":null,"locked":false},
+    "coursemap": {"start":1,"end":3,"est":[11,14,19],"deps":["analysis"],"backup":null,"locked":false},
+    "branding": {"start":1,"end":1,"est":[5,6,8],"deps":["brief"],"backup":null,"locked":false},
+    "content": {"start":3,"end":5,"est":[11,14,19],"deps":["coursemap"],"backup":null,"locked":false},
+    "scripts": {"start":4,"end":5,"est":[4,5,7],"deps":["coursemap","brief"],"backup":null,"locked":false},
+    "scriptreview": {"start":5,"end":5,"est":[2,3,4],"deps":["scripts"],"backup":null,"locked":false},
+    "production": {"start":5,"end":6,"est":[4,5,7],"deps":["scriptreview"],"backup":null,"locked":false},
+    "animations": {"start":5,"end":8,"est":[16,20,27],"deps":["branding","content"],"backup":null,"locked":false},
+    "post": {"start":6,"end":6,"est":[6,8,11],"deps":["production"],"backup":null,"locked":false},
+    "distribution": {"start":6,"end":7,"est":[2,2,3],"deps":["post"],"backup":"ld","locked":false},
+    "interactives": {"start":5,"end":8,"est":[21,26,35],"deps":["content"],"backup":null,"locked":false},
+    "pilot": {"start":8,"end":9,"est":[4,5,7],"deps":["interactives","animations"],"backup":null,"locked":false},
+    "mastersite": {"start":7,"end":10,"est":[10,12,16],"deps":["content","branding"],"backup":null,"locked":false},
+    "embed": {"start":10,"end":10,"est":[2,3,4],"deps":["mastersite","distribution","pilot"],"backup":"mp","locked":false},
+    "qa": {"start":10,"end":11,"est":[5,6,8],"deps":["embed"],"backup":null,"locked":false},
+    "handoff": {"start":11,"end":11,"est":[2,2,3],"deps":["qa"],"backup":null,"locked":false}
+  },
+  "touchpoints": {
+    "1": ["checkin","faculty-update"],
+    "2": ["checkin","faculty-update"],
+    "3": ["working-session","qa-review"],
+    "4": ["working-session","faculty-update"],
+    "5": ["working-session","faculty-update"],
+    "6": ["checkin","qa-review"],
+    "7": ["checkin","faculty-update"],
+    "8": ["checkin","faculty-update"],
+    "9": ["checkin","qa-review"],
+    "10": ["checkin","faculty-update"],
+    "11": ["checkin","faculty-update"],
+    "12": ["checkin","faculty-update"]
+  },
+  "risks": [
+    {"id":"case-accuracy","text":"Case details or illustrations are culturally inaccurate","owner":"Sam","mitigation":"Dr. Okafor reviews style frames and the first case's art before the rest is drawn","trigger":"Any accuracy concern raised on a case","contingency":"Pause that case's art and fix from reference material before continuing"},
+    {"id":"branching-scope","text":"Branching grows beyond the blueprint","owner":"Li","mitigation":"Agree the path count per case in the case blueprint","trigger":"More than 12 paths requested","contingency":"Use feedback screens instead of new paths; log extras for a later release"},
+    {"id":"pilot-findings","text":"The student pilot finds blocking problems late","owner":"PM","mitigation":"Pilot two cases as soon as they are built","trigger":"Any student can't finish a case in the pilot","contingency":"Fix blockers first; move polish after launch"}
+  ]
+}

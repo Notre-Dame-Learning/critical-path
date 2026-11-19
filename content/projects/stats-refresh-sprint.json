@@ -1,0 +1,159 @@
+{
+  "_note": "Sprint: refresh a running online course for a new textbook edition and the new Canvas template.",
+  "id": "stats-refresh-sprint",
+  "title": "Course refresh: Intro to Statistics",
+  "difficulty": "Sprint",
+  "facultyId": "fac7",
+  "tagline": "A new textbook edition, two re-recorded videos and a new template, before term.",
+  "brief": "{faculty}'s online Intro to Statistics runs every term, and the new textbook edition changes chapter numbers, datasets and examples. Before term starts: update readings and examples, rebuild the quiz bank, re-record two outdated videos, and move the course into the new ODL Canvas template.",
+  "team": {
+    "ld": "ld1",
+    "mp": "mp1",
+    "gd": "gd1",
+    "faculty": "fac7"
+  },
+  "launchWeek": 6,
+  "actionPointsPerWeek": 2,
+  "tasks": [
+    {
+      "id": "analysis",
+      "name": "Change list from the new edition",
+      "phase": "Plan",
+      "owner": "ld",
+      "effort": 4,
+      "dependsOn": []
+    },
+    {
+      "id": "coursemap",
+      "name": "Updated course map and alignment",
+      "phase": "Plan",
+      "owner": "ld",
+      "effort": 4,
+      "dependsOn": [
+        "analysis"
+      ]
+    },
+    {
+      "id": "branding",
+      "name": "Set up the new Canvas template",
+      "phase": "Plan",
+      "owner": "gd",
+      "effort": 3,
+      "dependsOn": []
+    },
+    {
+      "id": "content",
+      "name": "Faculty updates readings and examples",
+      "phase": "Update",
+      "owner": "faculty",
+      "effort": 7,
+      "dependsOn": [
+        "coursemap"
+      ]
+    },
+    {
+      "id": "scripts",
+      "name": "Faculty rewrites two video scripts",
+      "phase": "Update",
+      "owner": "faculty",
+      "effort": 3,
+      "dependsOn": [
+        "coursemap"
+      ]
+    },
+    {
+      "id": "scriptreview",
+      "name": "Script review and finalize",
+      "phase": "Update",
+      "owner": "mp",
+      "effort": 1,
+      "dependsOn": [
+        "scripts"
+      ]
+    },
+    {
+      "id": "production",
+      "name": "Re-record two videos",
+      "phase": "Update",
+      "owner": "mp",
+      "effort": 3,
+      "dependsOn": [
+        "scriptreview"
+      ]
+    },
+    {
+      "id": "post",
+      "name": "Edit and caption the new videos",
+      "phase": "Update",
+      "owner": "mp",
+      "effort": 5,
+      "dependsOn": [
+        "production"
+      ]
+    },
+    {
+      "id": "distribution",
+      "name": "Distribution: Panopto, captions, embed codes",
+      "phase": "Update",
+      "owner": "mp",
+      "effort": 1,
+      "dependsOn": [
+        "post"
+      ]
+    },
+    {
+      "id": "quizbank",
+      "name": "Rebuild the quiz bank for the new edition",
+      "phase": "Update",
+      "owner": "ld",
+      "effort": 9,
+      "dependsOn": [
+        "content"
+      ]
+    },
+    {
+      "id": "mastersite",
+      "name": "Migrate the course into the new template",
+      "phase": "Update",
+      "owner": "ld",
+      "effort": 9,
+      "dependsOn": [
+        "content",
+        "branding"
+      ]
+    },
+    {
+      "id": "embed",
+      "name": "Embed the new videos and quizzes",
+      "phase": "Update",
+      "owner": "ld",
+      "effort": 2,
+      "dependsOn": [
+        "mastersite",
+        "distribution",
+        "quizbank"
+      ]
+    },
+    {
+      "id": "qa",
+      "name": "QA pass on the refreshed course",
+      "phase": "Verify",
+      "owner": "ld",
+      "effort": 4,
+      "dependsOn": [
+        "embed"
+      ],
+      "isQA": true
+    },
+    {
+      "id": "handoff",
+      "name": "Hand-off notes for next term",
+      "phase": "Verify",
+      "owner": "ld",
+      "effort": 1,
+      "dependsOn": [
+        "qa"
+      ]
+    }
+  ]
+}

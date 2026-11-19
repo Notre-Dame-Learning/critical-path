@@ -16,7 +16,9 @@ Then open `http://localhost:8080/app/`. Type a **run code** (for example `fellow
 
 ## Projects and modes
 
-- **Intro to Psychology online** (Standard, 14 weeks), **AI Ethics documentary micro-course** (media-heavy, 15 weeks) and **Rescue: Sustainable Business certificate** (hard; you take over in week 6). Projects live in `content/projects/` and are listed in `content/projects.json`.
+- **Full projects:** Intro to Psychology online (Standard, 14 weeks), AI Ethics documentary micro-course (media-heavy, 15 weeks), Global Health Ethics: case-based course (design-heavy, 12 weeks: branching cases and illustrations) and Rescue: Sustainable Business certificate (hard; you take over in week 6).
+- **Sprints:** Accessibility sprint: Organic Chemistry I (4 weeks), Teaching with AI: faculty micro-course (5 weeks) and Course refresh: Intro to Statistics (6 weeks).
+- Projects live in `content/projects/` and are listed in `content/projects.json`; each has a Build the Plan baseline in `content/plans/` (`npm run plans`).
 - **Standard mode:** pick from 3-6 options; one is best.
 - **Hard mode:** write your answer. When the game runs inside Claude, Claude grades it against the situation's options (the rubric); elsewhere, such as GitHub Pages, you pick the option closest to what you wrote. Six situations are talked through instead: Claude plays the stakeholder for up to four replies, then returns a verdict the engine checks and maps to one of the situation's options (`engine/conversation.js`, `content/conversations.json`, `content/stakeholders.json`).
 - **Pace:** Story (one more Action Point a week, a week of buffer, a rested team) for a first run, or Standard, the real ODL pace. Set in `engine/difficulty.js`.
@@ -62,4 +64,4 @@ Effects: `trust`, `morale` (`who`), `responsiveness` (`weeks`), `capacity` (`who
 
 ## Status
 
-v0.3 plus Story pace, run codes and Critique scoring (Nov 19): three projects, 33 situations grounded in the ODL SOPs, a team of five (Li Yu, Perrick Datrick, Sam Rivera, the faculty partner, and supervisor Dwayneah the Retriever Johnson), a schedule gauge, a compact phase view, targeted overtime, and an AI-graded hard mode. Build the Plan and Critique the Plan come next.
+v0.3 plus Story pace, run codes and Critique scoring (Nov 19): seven projects, 42 situations grounded in the ODL SOPs, a team of five (Li Yu, Perrick Datrick, Sam Rivera, the faculty partner, and supervisor Dwayneah the Retriever Johnson), a schedule gauge, a compact phase view, targeted overtime, and an AI-graded hard mode. Build the Plan and Critique the Plan come next.

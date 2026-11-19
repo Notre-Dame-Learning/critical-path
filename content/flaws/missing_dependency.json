@@ -27,5 +27,11 @@
   "concept": "Dependencies: work that consumes an approval must wait for it",
   "sop_ref": "Media SOP 3M: scripts are reviewed and finalized before production days",
   "explanation": "Filming scripts that haven't been reviewed means reshoots once the review changes them. The link keeps the shoot behind the review, and if the dates then clash, move the shoot, not the review.",
-  "plant_by_project": {}
+  "plant_by_project": {},
+  "projects": [
+    "intro-psych-online",
+    "ai-ethics-documentary",
+    "rescue-sustainable-business"
+  ],
+  "note": "Planted on the three original projects; the plants name tasks the newer projects do not have."
 }

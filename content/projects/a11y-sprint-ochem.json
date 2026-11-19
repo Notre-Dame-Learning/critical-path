@@ -1,0 +1,90 @@
+{
+  "_note": "Sprint: remediate an existing online course for accessibility before term. No new content; captions, alt text and documents.",
+  "id": "a11y-sprint-ochem",
+  "title": "Accessibility sprint: Organic Chemistry I",
+  "difficulty": "Sprint",
+  "facultyId": "fac5",
+  "tagline": "Four weeks to fix captions, diagrams and PDFs before an accessibility review.",
+  "brief": "A student accommodation request found problems in {faculty}'s online Organic Chemistry I: auto-captions on 24 lecture videos, chemical diagrams with no alt text, and scanned PDFs a screen reader can't read. The course has to pass an accessibility review before term starts in four weeks.",
+  "team": {
+    "ld": "ld1",
+    "mp": "mp1",
+    "gd": "gd1",
+    "faculty": "fac5"
+  },
+  "launchWeek": 4,
+  "actionPointsPerWeek": 2,
+  "tasks": [
+    {
+      "id": "audit",
+      "name": "Accessibility audit and fix list",
+      "phase": "Plan",
+      "owner": "ld",
+      "effort": 5,
+      "dependsOn": []
+    },
+    {
+      "id": "captions",
+      "name": "Correct captions on 24 lecture videos",
+      "phase": "Fix",
+      "owner": "mp",
+      "effort": 15,
+      "dependsOn": [
+        "audit"
+      ]
+    },
+    {
+      "id": "alttext",
+      "name": "Alt text and accessible versions of chemical diagrams",
+      "phase": "Fix",
+      "owner": "gd",
+      "effort": 11,
+      "dependsOn": [
+        "audit"
+      ]
+    },
+    {
+      "id": "docs",
+      "name": "Remediate scanned PDFs and slide decks",
+      "phase": "Fix",
+      "owner": "ld",
+      "effort": 10,
+      "dependsOn": [
+        "audit"
+      ]
+    },
+    {
+      "id": "facultyreview",
+      "name": "Faculty checks the chemistry in the new descriptions",
+      "phase": "Fix",
+      "owner": "faculty",
+      "effort": 4,
+      "dependsOn": [
+        "alttext",
+        "docs"
+      ]
+    },
+    {
+      "id": "qa",
+      "name": "Accessibility QA pass",
+      "phase": "Verify",
+      "owner": "ld",
+      "effort": 5,
+      "dependsOn": [
+        "captions",
+        "facultyreview"
+      ],
+      "isQA": true
+    },
+    {
+      "id": "handoff",
+      "name": "Report to the accessibility office",
+      "phase": "Verify",
+      "owner": "ld",
+      "effort": 2,
+      "dependsOn": [
+        "qa"
+      ]
+    }
+  ]
+}
