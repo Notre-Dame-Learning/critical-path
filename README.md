@@ -10,7 +10,7 @@ Design source of truth: the "Project Management Simulator — Research & Game Fr
 npm start          # serves the repo at http://localhost:8080
 ```
 
-Then open `http://localhost:8080/app/`. Add `?seed=anything` to the URL to replay a specific run. The game also works on GitHub Pages with no build step: the root `index.html` opens the game.
+Then open `http://localhost:8080/app/`. Type a **run code** (for example `fellow-1`) on the start screen, or add `?seed=anything` to the URL, to replay a specific run; the end screen shows the run's code. The game also works on GitHub Pages with no build step: the root `index.html` opens the game.
 
 `npm run bundle` builds `dist/critical-path.html`, a single self-contained page (used for the version hosted in Claude).
 
@@ -19,6 +19,7 @@ Then open `http://localhost:8080/app/`. Add `?seed=anything` to the URL to repla
 - **Intro to Psychology online** (Standard, 14 weeks), **AI Ethics documentary micro-course** (media-heavy, 15 weeks) and **Rescue: Sustainable Business certificate** (hard; you take over in week 6). Projects live in `content/projects/` and are listed in `content/projects.json`.
 - **Standard mode:** pick from 3-6 options; one is best.
 - **Hard mode:** write your answer. When the game runs inside Claude, Claude grades it against the situation's options (the rubric); elsewhere, such as GitHub Pages, you pick the option closest to what you wrote.
+- **Pace:** Story (one more Action Point a week, a week of buffer, a rested team) for a first run, or Standard, the real ODL pace. Set in `engine/difficulty.js`.
 - **Schedule gauge:** compares finished work with the pace needed to launch on time (earned schedule), in weeks ahead or behind.
 
 ## How it works
@@ -32,10 +33,12 @@ Then open `http://localhost:8080/app/`. Add `?seed=anything` to the URL to repla
 ## Layout
 
 ```
-engine/    simulation rules (sim.js) and seeded random numbers (rng.js)
+engine/    simulation rules (sim.js), seeded random numbers (rng.js), Story pace (difficulty.js),
+           Critique the Plan scoring (critique.js)
 content/   world.json (people), projects/, scenarios/  — plain JSON, edit freely
 app/       the browser game (no build step)
 test/      engine tests: npm test
+scripts/   bundle.mjs, grade-testset.mjs (hard-mode grading test set), pending.mjs (upload queue)
 docs/      build notes
 ```
 
@@ -55,4 +58,4 @@ Effects: `trust`, `morale` (`who`), `responsiveness` (`weeks`), `capacity` (`who
 
 ## Status
 
-v0.3: three projects, 30 situations grounded in the ODL SOPs, a team of five (Li Yu, Perrick Datrick, Sam Rivera, the faculty partner, and supervisor Dwayneah the Retriever Johnson), a schedule gauge, a compact phase view, targeted overtime, and an AI-graded hard mode. Build the Plan and Critique the Plan come next.
+v0.3 plus Story pace, run codes and Critique scoring (Nov 19): three projects, 30 situations grounded in the ODL SOPs, a team of five (Li Yu, Perrick Datrick, Sam Rivera, the faculty partner, and supervisor Dwayneah the Retriever Johnson), a schedule gauge, a compact phase view, targeted overtime, and an AI-graded hard mode. Build the Plan and Critique the Plan come next.
