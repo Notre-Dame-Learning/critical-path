@@ -248,3 +248,10 @@ label.prompt { display: block; }
 .bubble.them { background: var(--card); border: 1px solid var(--rule); justify-self: start; }
 .bubble.me { background: var(--navy); color: var(--card); justify-self: end; }
 .bubble.me strong { color: var(--card); opacity: .8; }
+
+/* First-run coach */
+.coach { display: flex; gap: .75rem; align-items: flex-start; background: var(--best-bg); border-radius: 10px; padding: .7rem .85rem; margin-bottom: .9rem; }
+.coach p { margin: .2rem 0 .3rem; font-size: .9rem; }
+.coach .row { margin-top: .3rem; }
+.tips-toggle { display: flex; gap: .5rem; align-items: center; margin-top: .8rem; font-size: .9rem; }
+.tips-toggle small { color: var(--quiet); }

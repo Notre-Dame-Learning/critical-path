@@ -4,6 +4,7 @@ import { createGameAt } from '../engine/difficulty.js';
 import { defaultDifficulty, rememberDifficulty, difficultyHtml, pickedDifficulty } from './difficulty-picker.js';
 import { pickSeed, runCodeHtml } from './run-code.js';
 import * as C from '../engine/conversation.js';
+import { nextTip, seenTips, markSeen, tipsEnabled, setTipsEnabled } from './coach.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -84,6 +85,7 @@ function showIntro() {
   renderAiNote();
   $('difficulty').innerHTML = difficultyHtml(defaultDifficulty(localStore()), esc);
   $('run-code-box').innerHTML = runCodeHtml('', esc);
+  $('tips-on').checked = tipsEnabled(localStore());
   const w = content.world;
   const cast = [...w.people.map((p) => [p, p.role]), [w.supervisor, w.supervisor.role]];
   $('cast').innerHTML = cast.map(([p, role]) => `<figure class="cast-member">${avatarSVG(p.avatar, 'happy', { size: 64, label: p.name })}<figcaption><strong>${esc(p.name)}</strong><span>${esc(role)}</span></figcaption></figure>`).join('');
@@ -111,6 +113,7 @@ function startGame() {
   const seed = pickSeed({ typed: $('run-code')?.value, search: location.search, random: randomSeed });
   const difficulty = pickedDifficulty($('difficulty'));
   rememberDifficulty(localStore(), difficulty);
+  setTipsEnabled(localStore(), $('tips-on').checked);
   game = createGameAt(S, { world: content.world, project, deck: content.deck, seed, mode, difficulty });
   game.projectRef = project.id;
   lastOutcome = null;
@@ -222,7 +225,17 @@ function renderTeam() {
   ].join('');
 }
 
+function renderCoach() {
+  const tip = tipsEnabled(localStore()) ? nextTip(game, seenTips(localStore())) : null;
+  $('coach').innerHTML = tip ? `<div class="coach" role="note">
+      ${face('sup', 'happy', 48)}
+      <div><div class="kicker">${esc(game.supervisor.short)}'s tip</div><p>${esc(tip.text)}</p>
+      <div class="row"><button class="primary" data-tip-ok="${esc(tip.id)}">Got it</button><button data-tip-off>Turn tips off</button></div></div>
+    </div>` : '';
+}
+
 function renderTurn() {
+  renderCoach();
   const last = game.log.at(-1);
   $('report').innerHTML = last && last.week === game.week - 1
     ? `<div class="report"><strong>Week ${last.week} recap.</strong> ${weekSummary(last)}</div>`
@@ -571,6 +584,9 @@ document.addEventListener('change', (e) => {
 });
 
 document.addEventListener('click', (e) => {
+  const tipOk = e.target.closest('[data-tip-ok]');
+  if (tipOk) { markSeen(localStore(), tipOk.dataset.tipOk); renderCoach(); return; }
+  if (e.target.closest('[data-tip-off]')) { setTipsEnabled(localStore(), false); renderCoach(); return; }
   if (e.target.closest('#submit-answer')) { submitAnswer(); return; }
   if (e.target.closest('#talk-send')) { sendLine(); return; }
   if (e.target.closest('#talk-end')) { endTalk(false); return; }
