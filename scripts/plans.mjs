@@ -62,10 +62,23 @@ function derive(project) {
   plan.gate = hand.gate;
   plan.risks = hand.risks;
   // Two passes: touchpoints depend on the windows (faculty working sessions, reviews until QA), and back.
+  // Planned starts bind in the engine (a task can't start before its week), so windows are measured on an
+  // unbound copy: start = the early-quartile start, never before the tasks it waits for end; end = median finish.
+  const unbound = () => {
+    const u = structuredClone(plan);
+    for (const [id, t] of Object.entries(u.tasks)) if (!t.locked && !(project.initial?.tasks?.[id]?.done > 0)) t.start = plan.joinWeek;
+    return u;
+  };
   for (let pass = 0; pass < 2; pass++) {
     plan.touchpoints = P.standardTouchpoints(plan, project, { overtime: hand.overtime });
-    const med = P.medianWindows(plan, ctx);
-    for (const [id, w] of Object.entries(med)) if (!plan.tasks[id].locked) Object.assign(plan.tasks[id], { start: w.start, end: Math.max(w.start, w.end) });
+    const med = P.medianWindows(unbound(), ctx, { startQuantile: 0.25 });
+    for (const t of project.tasks) {
+      const p = plan.tasks[t.id];
+      if (p.locked) continue;
+      const floor = Math.max(0, ...t.dependsOn.map((d) => plan.tasks[d].end));
+      const start = Math.max(med[t.id].start, floor);
+      Object.assign(p, { start, end: Math.max(start, med[t.id].end) });
+    }
     for (const [id, [s, e]] of Object.entries(hand.windows ?? {})) Object.assign(plan.tasks[id], { start: s, end: e });
   }
   plan.touchpoints = P.standardTouchpoints(plan, project, { overtime: hand.overtime });

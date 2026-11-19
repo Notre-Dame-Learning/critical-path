@@ -95,6 +95,7 @@ test('a plan plays on the real engine: deterministic, and a missing link plants 
   assert.ok(a.actionsTaken.some((x) => x.actionId === 'working-session') && a.actionsTaken.some((x) => x.actionId === 'qa-review'));
   const cut = clone(plan);
   cut.tasks.production.deps = cut.tasks.production.deps.filter((d) => d !== 'scriptreview');
+  cut.tasks.production.start = 2; // with the link gone, the shoot is planned early
   const g = P.playPlan(cut, { ...ctx(documentary), seed: 'p1', situations: false });
   const prod = g.tasks.find((t) => t.id === 'production');
   assert.ok(prod.startedWeek < g.tasks.find((t) => t.id === 'scriptreview').finishedWeek, 'the shoot starts before script review is done');
@@ -106,11 +107,32 @@ test('a plan plays on the real engine: deterministic, and a missing link plants 
   assert.ok(odds(icut) < odds(i) - 0.1, 'shooting unapproved scripts costs Intro to Psychology its margin');
 });
 
+test('a task never starts before its planned week, and work hands over within the week', () => {
+  const plan = baseline(intro);
+  const late = clone(plan);
+  Object.assign(late.tasks.mastersite, { start: 11, end: 12 });
+  for (let i = 0; i < 20; i++) {
+    const g = P.playPlan(late, { ...ctx(intro), seed: `w${i}` });
+    for (const t of g.tasks) if (t.startedWeek !== null && !late.tasks[t.id].locked) assert.ok(t.startedWeek >= late.tasks[t.id].start, `${t.id} started week ${t.startedWeek}`);
+    const embed = g.tasks.find((t) => t.id === 'embed');
+    const qa = g.tasks.find((t) => t.id === 'qa');
+    if (embed.finishedWeek && qa.startedWeek) assert.ok(qa.startedWeek <= embed.finishedWeek + 1);
+  }
+  // Work order follows the links even when a successor is planned earlier than its input.
+  const early = clone(plan);
+  early.tasks.qa.start = 11;
+  const order = P.workOrder(early, intro).map((t) => t.id);
+  assert.ok(order.indexOf('embed') < order.indexOf('qa'));
+  // Planning the build late costs odds: binding starts is what makes a plan's dates matter.
+  const odds = (p) => P.onTimeOdds(p, ctx(intro), { runs: 200, seed: 'late' }).share;
+  assert.ok(odds(late) < odds(plan) - 0.1);
+});
+
 test('on-time odds: the touchpoint calendar is the biggest lever, and odds can be run in slices', () => {
   const plan = baseline(intro);
   const c = ctx(intro);
   const full = P.onTimeOdds(plan, c, { runs: 200, seed: 's' });
-  assert.ok(full.share >= 0.85 && full.share <= 0.98, `Intro baseline ${full.share}`);
+  assert.ok(full.share >= 0.75 && full.share <= 0.95, `Intro baseline ${full.share}`);
   const none = clone(plan);
   none.touchpoints = {};
   assert.ok(P.onTimeOdds(none, c, { runs: 200, seed: 's' }).share < 0.4, 'no touchpoints at all sinks the plan');

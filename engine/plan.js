@@ -324,14 +324,15 @@ const nameOf = (project, world, role) => world.people.find((p) => p.id === proje
 
 // ---------- playing a plan on the engine ----------
 
-// One run of the plan on sim.js: tasks worked in the plan's start order, the plan's links (rolling links
+// One run of the plan on sim.js: no task starts before its planned start week (owner decision, Nov 19),
+// tasks are worked in the plan's start order, the plan's links (rolling links
 // release a task once its feeder has run for `lag` weeks), the touchpoint calendar spent as Action Points,
 // and every situation answered with its best choice (situations: false turns them off).
 // A required link left out lets the task start early, and the first time it starts before that input is
 // finished its full effort is planted as hidden rework, and the redo waits for that input
 // (a shoot on unapproved scripts is reshot once the scripts are approved).
 export function playPlan(plan, { world, project, deck, seed = 'plan', situations = true, onWeek = null }) {
-  const order = [...project.tasks].sort((a, b) => (plan.tasks[a.id]?.start ?? 99) - (plan.tasks[b.id]?.start ?? 99));
+  const order = workOrder(plan, project);
   const proj = { ...project, tasks: order.map((t) => ({ ...t, dependsOn: [] })) };
   const g = S.createGame({ world, project: proj, deck: situations ? deck : { events: [] }, seed });
   const deps = Object.fromEntries(project.tasks.map((t) => [t.id, (plan.tasks[t.id]?.deps ?? []).map(parseDep).filter((d) => d.id !== t.id)]));
@@ -345,6 +346,9 @@ export function playPlan(plan, { world, project, deck, seed = 'plan', situations
         const f = byId(d.id);
         return !f || f.startedWeek === null || g.week < f.startedWeek + d.lag;
       }).map((d) => d.id);
+      // A task can't start before its planned start week: until then it waits on itself.
+      const start = plan.tasks[t.id]?.start;
+      if (t.startedWeek === null && start != null && g.week < start) t.dependsOn.push(t.id);
     }
   };
   let guard = 0;
@@ -369,6 +373,24 @@ export function playPlan(plan, { world, project, deck, seed = 'plan', situations
     }
   }
   return g;
+}
+
+// The order people work their ready tasks in: by planned start week, but never ahead of a task it links to,
+// so work handed over mid-week can be picked up the same week (sim.js works tasks in list order).
+export function workOrder(plan, project) {
+  const start = (t) => plan.tasks[t.id]?.start ?? 99;
+  const left = [...project.tasks];
+  const done = new Set();
+  const out = [];
+  while (left.length) {
+    const ready = left.filter((t) => (plan.tasks[t.id]?.deps ?? []).every((d) => { const id = parseDep(d).id; return done.has(id) || !plan.tasks[id] || id === t.id; }));
+    const pool = ready.length ? ready : left; // a loop: fall back to start order
+    const next = pool.reduce((a, b) => (start(b) < start(a) ? b : a));
+    out.push(next);
+    done.add(next.id);
+    left.splice(left.indexOf(next), 1);
+  }
+  return out;
 }
 
 // On-time odds over `runs` seeded runs, callable in slices (from, runs) so a screen can spread the work.
@@ -419,7 +441,7 @@ export function standardTouchpoints(plan, project, { overtime = {} } = {}) {
 
 // Median start and finish weeks of each task over `runs` engine runs with links restored: the starting
 // point for a baseline's windows (scripts/plans.mjs then applies the hand-written parts).
-export function medianWindows(plan, ctx, { runs = 60, seed = 'baseline' } = {}) {
+export function medianWindows(plan, ctx, { runs = 60, seed = 'baseline', startQuantile = 0.5 } = {}) {
   const starts = {}, ends = {};
   for (let i = 0; i < runs; i++) {
     const first = {}; // first finish: rework found later reopens a task, which shouldn't stretch its window
@@ -429,8 +451,8 @@ export function medianWindows(plan, ctx, { runs = 60, seed = 'baseline' } = {}) 
       (ends[t.id] ??= []).push(first[t.id] ?? t.finishedWeek ?? g.launchWeek);
     }
   }
-  const med = (xs) => xs.sort((a, b) => a - b)[Math.floor(xs.length / 2)];
-  return Object.fromEntries(Object.keys(starts).map((id) => [id, { start: med(starts[id]), end: med(ends[id]) }]));
+  const q = (xs, k) => xs.sort((a, b) => a - b)[Math.min(xs.length - 1, Math.floor(xs.length * k))];
+  return Object.fromEntries(Object.keys(starts).map((id) => [id, { start: q(starts[id], startQuantile), end: q(ends[id], 0.5) }]));
 }
 
 function round(x, d = 0) {
