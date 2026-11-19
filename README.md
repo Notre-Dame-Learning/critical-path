@@ -20,6 +20,7 @@ Then open `http://localhost:8080/app/`. Type a **run code** (for example `fellow
 - **Standard mode:** pick from 3-6 options; one is best.
 - **Hard mode:** write your answer. When the game runs inside Claude, Claude grades it against the situation's options (the rubric); elsewhere, such as GitHub Pages, you pick the option closest to what you wrote. Six situations are talked through instead: Claude plays the stakeholder for up to four replies, then returns a verdict the engine checks and maps to one of the situation's options (`engine/conversation.js`, `content/conversations.json`, `content/stakeholders.json`).
 - **Pace:** Story (one more Action Point a week, a week of buffer, a rested team) for a first run, or Standard, the real ODL pace. Set in `engine/difficulty.js`.
+- **Progression:** every finished run adds XP on eight skill tracks, achievements and a rank (shown on the start screen and in Your profile). Ranks are recognition only; add `?locks=1` to the URL to lock projects and modes by rank.
 - **Schedule gauge:** compares finished work with the pace needed to launch on time (earned schedule), in weeks ahead or behind.
 
 ## How it works
@@ -35,7 +36,8 @@ Then open `http://localhost:8080/app/`. Type a **run code** (for example `fellow
 ```
 engine/    simulation rules (sim.js), seeded random numbers (rng.js), Story pace (difficulty.js),
            Build the Plan checks, odds and scoring (plan.js), Critique the Plan scoring (critique.js),
-           Monte Carlo odds by policy (montecarlo.js), Daily Mission (mission.js), skill tracks (tracks.js)
+           Monte Carlo odds by policy (montecarlo.js), Daily Mission (mission.js), skill tracks (tracks.js),
+           progression: XP, ranks, achievements and profile codes (progression.js)
 content/   world.json (people), projects/, scenarios/, plans/ (Build the Plan baselines), flaws/ and critique-samples.json (Critique the Plan)  — plain JSON, edit freely
 app/       the browser game (no build step)
 test/      engine tests: npm test

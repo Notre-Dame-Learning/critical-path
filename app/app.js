@@ -5,6 +5,8 @@ import { defaultDifficulty, rememberDifficulty, difficultyHtml, pickedDifficulty
 import { pickSeed, runCodeHtml } from './run-code.js';
 import * as C from '../engine/conversation.js';
 import { nextTip, seenTips, markSeen, tipsEnabled, setTipsEnabled } from './coach.js';
+import * as P from '../engine/progression.js';
+import { loadProfile, saveProfile, rankLineHtml, xpPanelHtml, profileHtml } from './profile-view.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -14,6 +16,9 @@ const VERDICT = (credit) => credit >= 0.95 ? ['best', 'Best move'] : credit >= 0
 
 let content, game, lastOutcome = null, feed = [];
 let selectedProject = null;
+// Ranks are recognition only unless ?locks=1 (Progression tab, open question 1).
+const LOCKS = new URLSearchParams(location.search).get('locks') === '1';
+let profileReturn = 'intro';
 // Hard mode: the player's written answer for the current situation, and where it is in grading.
 let hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
 // Hard mode, six situations: a conversation with the stakeholder, played by Claude (engine/conversation.js).
@@ -79,7 +84,9 @@ function showIntro() {
   feed = [];
   $('end').hidden = true;
   $('game').hidden = true;
+  $('profile').hidden = true;
   $('intro').hidden = false;
+  $('rank-line').innerHTML = rankLineHtml(loadProfile(localStore()), esc);
   renderClock();
   renderProjects();
   renderAiNote();
@@ -93,7 +100,15 @@ function showIntro() {
 
 function renderProjects() {
   const w = content.world;
+  const open = P.unlocked(loadProfile(localStore()) ?? P.newProfile(), { locks: LOCKS });
+  if (!open.projects.includes(selectedProject)) selectedProject = open.projects[0];
+  const hardBox = $('mode-hard');
+  if (hardBox) { hardBox.disabled = !open.modes.includes('hard'); if (hardBox.disabled) { hardBox.checked = false; $('mode-standard').checked = true; } }
   $('projects').innerHTML = content.projects.map((p) => {
+    if (!open.projects.includes(p.id)) {
+      const at = P.RANKS.find((r) => r.unlocks.projects.includes(p.id));
+      return `<div class="project locked"><span class="project-body"><span class="project-top"><strong>${esc(p.title)}</strong></span><span class="small muted">Unlocks at ${esc(at?.label ?? 'a higher rank')}</span></span></div>`;
+    }
     const fac = w.faculty.find((f) => f.id === p.team.faculty);
     const weeks = p.launchWeek - (p.startWeek ?? 1) + 1;
     const chip = p.difficulty === 'Hard' ? 'poor' : p.difficulty === 'Standard' ? 'best' : 'partial';
@@ -116,6 +131,7 @@ function startGame() {
   setTipsEnabled(localStore(), $('tips-on').checked);
   game = createGameAt(S, { world: content.world, project, deck: content.deck, seed, mode, difficulty });
   game.projectRef = project.id;
+  game.runId = `${seed}:${Date.now().toString(36)}`;
   lastOutcome = null;
   feed = [];
   hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
@@ -328,6 +344,15 @@ function renderEnd() {
   const s = r.scores;
   const label = { scope: 'Course complete', quality: 'Quality', team: 'Team health', faculty: 'Faculty trust', judgment: 'Judgment' };
   const lessons = S.debrief(game);
+  // Progression: add this run to the profile once (applyRun ignores a run it has already counted).
+  if (!game.xp) {
+    const res = P.applyRun(loadProfile(localStore()) ?? P.newProfile(), game);
+    saveProfile(localStore(), res.profile);
+    game.xp = { total: res.total, gained: res.gained, newBadges: res.newBadges, promotion: res.promotion, levelUps: res.levelUps, duplicate: res.duplicate };
+    save();
+  }
+  const xpPanel = xpPanelHtml({ ...game.xp, profile: loadProfile(localStore()) ?? P.newProfile() }, esc);
+  $('profile').hidden = true;
   $('end').hidden = false;
   $('end').innerHTML = `
     <div class="kicker">${esc(game.project.title)}${game.mode === 'hard' ? ' · Hard mode' : ''}${game.difficulty === 'story' ? ' · Story' : ''}</div>
@@ -335,6 +360,7 @@ function renderEnd() {
     <h2>${r.launchedOnTime ? `Launched on time in week ${r.finishedWeek}` : 'Launch day arrived before the course was finished'}</h2>
     <p>Overall score ${r.overall}. ${r.launchedOnTime ? 'Students open a finished course.' : `About ${100 - s.scope}% of the planned work wasn't done by launch.`}</p>
     <div class="scores">${Object.entries(s).filter(([, v]) => v !== null).map(([k, v]) => `<div class="score"><div class="k">${label[k]}</div><div class="v">${v}</div></div>`).join('')}</div>
+    ${xpPanel}
     <h2>Debrief</h2>
     <p class="muted small">Situations you handled with the best move are folded; open any of them to review.</p>
     ${lessons.length ? lessons.map(renderLesson).join('') : '<p>No situations came up this run.</p>'}
@@ -350,6 +376,7 @@ function renderEnd() {
     const project = content.projects.find((p) => p.id === projectRef);
     game = createGameAt(S, { world: content.world, project, deck: content.deck, seed, mode, difficulty });
     game.projectRef = projectRef;
+    game.runId = `${seed}:${Date.now().toString(36)}`;
     lastOutcome = null;
     feed = [];
     showGame();
@@ -574,6 +601,38 @@ function renderTalk(ev) {
     ${status}${controls}</div>`;
 }
 
+// ---------- profile ----------
+
+function showProfile() {
+  profileReturn = !$('end').hidden ? 'end' : 'intro';
+  const profile = loadProfile(localStore()) ?? P.newProfile();
+  $('intro').hidden = true;
+  $('end').hidden = true;
+  $('game').hidden = true;
+  $('profile').hidden = false;
+  $('profile').innerHTML = profileHtml(profile, esc);
+  $('profile').scrollIntoView?.({ block: 'start' });
+}
+
+function closeProfile() {
+  $('profile').hidden = true;
+  if (profileReturn === 'end' && game?.over) { $('end').hidden = false; renderEnd(); } else showIntro();
+}
+
+async function copyProfileCode() {
+  const code = P.exportCode(loadProfile(localStore()) ?? P.newProfile());
+  $('profile-code').value = code;
+  try { await navigator.clipboard.writeText(code); $('profile-msg').textContent = 'Copied. Paste it on the other device.'; } catch { $('profile-msg').textContent = 'Copy the code from the box above.'; }
+}
+
+function importProfileCode() {
+  const p = P.importCode($('profile-code').value);
+  if (!p) { $('profile-msg').textContent = 'That isn\'t a profile code. It starts with CP1.'; return; }
+  saveProfile(localStore(), p);
+  $('profile').innerHTML = profileHtml(p, esc);
+  $('profile-msg').textContent = 'Profile loaded.';
+}
+
 // ---------- input ----------
 
 document.addEventListener('change', (e) => {
@@ -584,6 +643,10 @@ document.addEventListener('change', (e) => {
 });
 
 document.addEventListener('click', (e) => {
+  if (e.target.closest('#open-profile')) { showProfile(); return; }
+  if (e.target.closest('#profile-close')) { closeProfile(); return; }
+  if (e.target.closest('#profile-copy')) { copyProfileCode(); return; }
+  if (e.target.closest('#profile-import')) { importProfileCode(); return; }
   const tipOk = e.target.closest('[data-tip-ok]');
   if (tipOk) { markSeen(localStore(), tipOk.dataset.tipOk); renderCoach(); return; }
   if (e.target.closest('[data-tip-off]')) { setTipsEnabled(localStore(), false); renderCoach(); return; }

@@ -255,3 +255,19 @@ label.prompt { display: block; }
 .coach .row { margin-top: .3rem; }
 .tips-toggle { display: flex; gap: .5rem; align-items: center; margin-top: .8rem; font-size: .9rem; }
 .tips-toggle small { color: var(--quiet); }
+
+/* Progression */
+.rank-line { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 0 0 .5rem; font-size: .9rem; }
+.rank-line button { padding: .25rem .6rem; }
+.xp-panel { border: 1px solid var(--rule); border-radius: 10px; padding: .8rem 1rem; margin: 1rem 0; }
+.xp-panel h2 { color: var(--gold); }
+.promotion { font-size: 1.05rem; }
+.tracks { display: grid; gap: .55rem; margin: .6rem 0 1rem; }
+.track-head { display: flex; justify-content: space-between; gap: .5rem; font-size: .85rem; flex-wrap: wrap; }
+.track .bar > i { background: var(--gold); }
+.badges { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+.badge { font-size: .78rem; border: 1px dashed var(--rule); border-radius: 999px; padding: .15rem .6rem; color: var(--quiet); }
+.badge.earned { border-style: solid; border-color: var(--gold); color: var(--ink); background: var(--partial-bg); }
+.runs { padding-left: 1.1rem; font-size: .88rem; }
+.rank-big { font-size: 1.15rem; }
+.project.locked { opacity: .6; cursor: default; }
