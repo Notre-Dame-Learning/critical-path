@@ -35,7 +35,7 @@ Then open `http://localhost:8080/app/`. Type a **run code** (for example `fellow
 ```
 engine/    simulation rules (sim.js), seeded random numbers (rng.js), Story pace (difficulty.js),
            Build the Plan checks, odds and scoring (plan.js), Critique the Plan scoring (critique.js)
-content/   world.json (people), projects/, scenarios/, plans/ (Build the Plan baselines)  — plain JSON, edit freely
+content/   world.json (people), projects/, scenarios/, plans/ (Build the Plan baselines), flaws/ and critique-samples.json (Critique the Plan)  — plain JSON, edit freely
 app/       the browser game (no build step)
 test/      engine tests: npm test
 scripts/   bundle.mjs, plans.mjs (npm run plans: baseline checks and odds; -- --write rebuilds them), grade-testset.mjs (hard-mode grading test set), pending.mjs (upload queue)

@@ -1,0 +1,34 @@
+{
+  "id": "single_point_of_failure",
+  "category": "single_point_of_failure",
+  "check": "backup",
+  "title": "No backups on the critical path",
+  "severity": "medium",
+  "min_rank": "PM",
+  "skill_track": "Team Leadership",
+  "plant": {
+    "op": "clear_backups"
+  },
+  "detect_signals": [
+    "The Backup column is empty",
+    "Li owns five critical-path tasks with no one named to step in"
+  ],
+  "sim_effect": "A sick week or a clash for the busiest person stalls the critical path with no one ready to pick it up.",
+  "accepted_fixes": [
+    "Name Perrick as backup for embedding and Li for distribution",
+    "Cross-train a backup on the critical-path tasks the busiest person owns"
+  ],
+  "partial_fixes": [
+    "Ask the supervisor to find cover if someone is out",
+    "List backups in the charter without telling the team"
+  ],
+  "concept": "Single point of failure: no critical-path task should depend on one person alone",
+  "sop_ref": "PM SOP: roles and responsibilities; LD SOP: hand-off",
+  "explanation": "When one person carries most of the critical path, any absence stops the project. A named backup who has seen the work can pick it up in days, not weeks.",
+  "plant_by_project": {},
+  "projects": [
+    "intro-psych-online",
+    "ai-ethics-documentary"
+  ],
+  "note": "Not planted on Rescue: after the re-baseline no one owns 4 critical-path tasks there, so clearing backups breaks nothing."
+}

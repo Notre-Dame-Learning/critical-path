@@ -1,0 +1,37 @@
+{
+  "id": "unrealistic_parallel",
+  "category": "parallelism",
+  "check": "sequence",
+  "title": "Scripts start before the course map is done",
+  "severity": "medium",
+  "min_rank": "Senior PM",
+  "skill_track": "Planning",
+  "plant": {
+    "op": "overlap",
+    "task": "scripts",
+    "with": "coursemap"
+  },
+  "plant_by_project": {
+    "rescue-sustainable-business": {
+      "op": "overlap",
+      "task": "mastersite",
+      "with": "content"
+    }
+  },
+  "detect_signals": [
+    "A task is planned to start before the work it depends on ends",
+    "The link is there, but the window ignores it"
+  ],
+  "sim_effect": "The window promises progress the link forbids: the task can't start on time, so the weeks it was given are lost.",
+  "accepted_fixes": [
+    "Start the task when the work it depends on ends",
+    "Sequence it after its input, or split it so only approved modules start early"
+  ],
+  "partial_fixes": [
+    "Keep the overlap but add a check-in",
+    "Ask the owner to start on what they can"
+  ],
+  "concept": "Sequencing: a window that ignores its own dependency is a hidden delay",
+  "sop_ref": "LD SOP: course map approved before development; PM SOP: Design phase",
+  "explanation": "Planning work to start before its input is ready makes the schedule look shorter than it is. When the input arrives late, the downstream work is squeezed or redone."
+}

@@ -1,0 +1,34 @@
+{
+  "id": "no_stakeholder_plan",
+  "category": "stakeholder",
+  "check": "stakeholders",
+  "title": "No Friday summaries and no director gate",
+  "severity": "medium",
+  "min_rank": "PM",
+  "skill_track": "Stakeholders",
+  "plant": {
+    "op": "remove_contact",
+    "types": [
+      "faculty-update"
+    ],
+    "gate": true
+  },
+  "detect_signals": [
+    "No Friday summaries in the calendar",
+    "Weeks with no faculty contact at all",
+    "No director gate before QA"
+  ],
+  "sim_effect": "Faculty trust drifts down unnoticed and the faculty partner slows; a late director review can force a date change.",
+  "accepted_fixes": [
+    "Send a Friday summary every week there is no working session, and add a director gate before QA",
+    "Keep faculty contact at least every two weeks and book the director review before QA starts"
+  ],
+  "partial_fixes": [
+    "Add a director gate in launch week",
+    "Send a summary only at milestones"
+  ],
+  "concept": "Stakeholder management: steady contact and a clear approval gate",
+  "sop_ref": "PM SOP: weekly summaries; timelines reviewed by the directors",
+  "explanation": "Faculty who hear nothing for weeks lose trust and respond slower, and bad news found late costs more. A director gate before QA catches problems while the date can still hold.",
+  "plant_by_project": {}
+}

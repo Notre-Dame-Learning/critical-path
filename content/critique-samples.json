@@ -1,0 +1,131 @@
+{
+  "_note": "Critique the Plan sample rounds on the Intro to Psychology baseline (content/plans/intro-psych-online.json), one per rank. engine/critique.js buildRound plants the flaws in order; targets come from the plant. Each round fails exactly its planted checks and no two flaws share a target.",
+  "rounds": [
+    {
+      "id": "intro-coordinator",
+      "project": "intro-psych-online",
+      "rank": "Coordinator",
+      "flaws": [
+        "missing_dependency",
+        "review_squeezed"
+      ],
+      "key": {
+        "missing_dependency": {
+          "where": "Production lists no link to script review",
+          "fix": "Restore the link"
+        },
+        "review_squeezed": {
+          "where": "One internal review, in week 11",
+          "fix": "Internal reviews in weeks 3, 6 and 9"
+        }
+      },
+      "decoys": [
+        {
+          "targets": [
+            "animations"
+          ],
+          "why": "Animations and production share weeks 5–7, but they are different people and both wait for script review."
+        },
+        {
+          "targets": [
+            "mastersite"
+          ],
+          "why": "The master site build starts before post ends, which is normal: videos are embedded later, once distribution is done."
+        },
+        {
+          "targets": [
+            "load:mp"
+          ],
+          "why": "Perrick peaks at 94% in post-production: a yellow warning under the 100% line, accepted because post can't be split."
+        }
+      ]
+    },
+    {
+      "id": "intro-pm",
+      "project": "intro-psych-online",
+      "rank": "PM",
+      "flaws": [
+        "no_buffer",
+        "full_utilization",
+        "no_stakeholder_plan"
+      ],
+      "key": {
+        "no_buffer": {
+          "where": "QA in weeks 13–14 with launch in week 14",
+          "fix": "QA ends in week 13"
+        },
+        "full_utilization": {
+          "where": "Post-production in weeks 8–9 (Perrick at 140%)",
+          "fix": "Post back to weeks 8–10"
+        },
+        "no_stakeholder_plan": {
+          "where": "No Friday summaries and no director gate",
+          "fix": "Summaries in weeks without a working session and a gate in week 10"
+        }
+      },
+      "decoys": [
+        {
+          "targets": [
+            "animations"
+          ],
+          "why": "Animations and production share weeks 5–7, but they are different people and both wait for script review."
+        },
+        {
+          "targets": [
+            "mastersite"
+          ],
+          "why": "The master site build starts before post ends, which is normal: videos are embedded later, once distribution is done."
+        }
+      ]
+    },
+    {
+      "id": "intro-senior-pm",
+      "project": "intro-psych-online",
+      "rank": "Senior PM",
+      "flaws": [
+        "missing_dependency",
+        "unrealistic_parallel",
+        "single_point_of_failure",
+        "unowned_risks"
+      ],
+      "key": {
+        "missing_dependency": {
+          "where": "Production lists no link to script review",
+          "fix": "Restore the link"
+        },
+        "unrealistic_parallel": {
+          "where": "Scripts start in week 1 while the course map runs to week 3",
+          "fix": "Scripts from week 3"
+        },
+        "single_point_of_failure": {
+          "where": "The Backup column is empty; Li owns 5 critical-path tasks",
+          "fix": "Perrick backs up embedding"
+        },
+        "unowned_risks": {
+          "where": "Two risks with no owner or trigger",
+          "fix": "Owners and dated triggers"
+        }
+      },
+      "decoys": [
+        {
+          "targets": [
+            "animations"
+          ],
+          "why": "Animations and production share weeks 5–7, but they are different people and both wait for script review."
+        },
+        {
+          "targets": [
+            "mastersite"
+          ],
+          "why": "The master site build starts before post ends, which is normal: videos are embedded later, once distribution is done."
+        },
+        {
+          "targets": [
+            "load:mp"
+          ],
+          "why": "Perrick peaks at 94% in post-production: a yellow warning under the 100% line, accepted because post can't be split."
+        }
+      ]
+    }
+  ]
+}

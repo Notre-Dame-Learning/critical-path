@@ -1,0 +1,35 @@
+{
+  "id": "no_buffer",
+  "category": "buffer",
+  "check": "buffer",
+  "title": "QA runs into launch week",
+  "severity": "high",
+  "min_rank": "Coordinator",
+  "skill_track": "Estimating",
+  "plant": {
+    "op": "shift_to_launch",
+    "anchor": "qa",
+    "tasks": [
+      "embed",
+      "qa",
+      "handoff"
+    ]
+  },
+  "detect_signals": [
+    "QA ends in launch week",
+    "No free week between the last build work and launch"
+  ],
+  "sim_effect": "Any slip in post-production or embedding pushes QA past launch; the course opens unfinished.",
+  "accepted_fixes": [
+    "Pull embed and QA a week earlier so QA ends the week before launch",
+    "Plan QA to finish a week before launch and keep launch week for the hand-off only"
+  ],
+  "partial_fixes": [
+    "Ask for a director waiver to launch with QA still open",
+    "Add overtime in launch week"
+  ],
+  "concept": "Buffer: protect the launch date with slack on the critical path",
+  "sop_ref": "PM SOP: Delivery phase; QA and migration finish before the course opens",
+  "explanation": "With QA in launch week, any slip of a week misses the first day of term. A week of buffer before launch absorbs the slips every project has.",
+  "plant_by_project": {}
+}

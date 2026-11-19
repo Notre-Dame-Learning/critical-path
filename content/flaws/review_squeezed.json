@@ -1,0 +1,29 @@
+{
+  "id": "review_squeezed",
+  "category": "quality_squeeze",
+  "check": "quality",
+  "title": "Internal reviews squeezed to the end",
+  "severity": "high",
+  "min_rank": "Coordinator",
+  "skill_track": "Planning",
+  "plant": {
+    "op": "squeeze_reviews"
+  },
+  "detect_signals": [
+    "Only one internal review, the week before QA",
+    "Weeks of design and media work with no review"
+  ],
+  "sim_effect": "Hidden rework builds up unseen and surfaces once QA starts, when it is most expensive to fix.",
+  "accepted_fixes": [
+    "Spread internal reviews through the build, at least every three or four weeks",
+    "Review each module as it is finished, plus a pass before QA"
+  ],
+  "partial_fixes": [
+    "Move the single review two weeks earlier",
+    "Add a longer review at the end"
+  ],
+  "concept": "Rework cycle: find defects early instead of inspecting at the end",
+  "sop_ref": "LD SOP: milestone reviews; PM SOP: internal touchbases",
+  "explanation": "Putting all review at the end means problems stay hidden until there is no time left to fix them. Regular reviews surface rework while it is cheap.",
+  "plant_by_project": {}
+}

@@ -1,0 +1,39 @@
+{
+  "id": "full_utilization",
+  "category": "utilization",
+  "check": "load",
+  "title": "Post-production crammed into two weeks",
+  "severity": "medium",
+  "min_rank": "PM",
+  "skill_track": "Capacity",
+  "plant": {
+    "op": "compress",
+    "task": "post",
+    "weeks": 2
+  },
+  "detect_signals": [
+    "Post-production is planned in two weeks",
+    "Perrick's load goes over 100% in those weeks"
+  ],
+  "sim_effect": "The plan assumes more hours than Perrick has; post slips and everything after it moves.",
+  "accepted_fixes": [
+    "Give post-production its three weeks back",
+    "Spread post over three weeks and start the master site build in parallel"
+  ],
+  "partial_fixes": [
+    "Ask Perrick for overtime in those weeks",
+    "Move distribution a week later"
+  ],
+  "concept": "Capacity: plan people at 80–85%, not 100%",
+  "sop_ref": "Media SOP 4M: rough cut and final cut rounds",
+  "explanation": "A plan that needs more hours than a person has will slip, and overtime adds mistakes. Planning below full load leaves room for the review rounds post always needs.",
+  "plant_by_project": {
+    "rescue-sustainable-business": {
+      "op": "compress",
+      "task": "post",
+      "weeks": 2,
+      "start": 12
+    }
+  },
+  "note": "On Rescue, post already has two weeks of overtime (11-12), so the plant moves post to weeks 12-13 where only one week has overtime."
+}

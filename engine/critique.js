@@ -7,10 +7,11 @@
 //   False positives -3 each, at most -9 (decoys included)
 // Raw points are scaled to 0-100 against 20 per flaw + 10.
 //
-// Pure functions only: no plan model needed, so this file does not depend on engine/plan.js.
-// Planting flaws and playing both plans forward are added here once plan.js is in the repo.
+// Scoring needs no plan model. Planting flaws into a baseline plan (plantFlaw, buildRound) uses
+// engine/plan.js; playing the flawed and fixed plans forward is still to add.
 
 import { makeRng } from './rng.js';
+import { criticalPath } from './plan.js';
 
 export const CATEGORIES = [
   'dependency', 'buffer', 'utilization', 'single_point_of_failure',
@@ -187,4 +188,110 @@ export function debriefLines(round, result) {
       : 'Every flaw here was low; this plan could be approved with notes.' });
   }
   return lines;
+}
+
+// ---------- planting flaws (content/flaws/*.json) into a baseline plan ----------
+
+// Flag targets: a task id; "link:<from>><to>"; "risk:<id>"; "gate"; "touchpoints:qa-review" or
+// "touchpoints:faculty-contact" (the calendar's review or contact slots); "load:<role>"; "backup:<role>".
+// plantFlaw returns a new plan (the input is untouched) and the targets a careful reviewer could flag.
+export function plantFlaw(plan, flaw, project) {
+  if (!flawApplies(flaw, project)) throw new Error(`${flaw.id} isn't planted on ${project.id}`);
+  const p = structuredClone(plan);
+  const plant = flaw.plant_by_project?.[project.id] ?? flaw.plant;
+  const t = (id) => {
+    if (!p.tasks[id]) throw new Error(`${flaw.id}: no task ${id} in ${project.id}`);
+    return p.tasks[id];
+  };
+  const owner = (id) => project.tasks.find((x) => x.id === id).owner;
+  let targets = [];
+  switch (plant.op) {
+    case 'remove_link': {
+      const to = t(plant.to);
+      to.deps = to.deps.filter((d) => d.split(':')[0] !== plant.from);
+      targets = [plant.to, plant.from, `link:${plant.from}>${plant.to}`];
+      break;
+    }
+    case 'shift_to_launch': {
+      const by = p.launchWeek - t(plant.anchor).end;
+      for (const id of plant.tasks) {
+        const x = t(id);
+        x.start = Math.min(p.launchWeek, x.start + by);
+        x.end = Math.min(p.launchWeek, x.end + by);
+      }
+      targets = [...plant.tasks];
+      break;
+    }
+    case 'squeeze_reviews': {
+      const qa = project.tasks.find((x) => x.isQA).id;
+      const week = String(t(qa).start - 1);
+      for (const w of Object.keys(p.touchpoints)) p.touchpoints[w] = p.touchpoints[w].map((x) => (x === 'qa-review' ? 'faculty-update' : x));
+      p.touchpoints[week] = [...(p.touchpoints[week] ?? [null, null])];
+      p.touchpoints[week][1] = 'qa-review';
+      targets = ['touchpoints:qa-review'];
+      break;
+    }
+    case 'clear_risk_fields': {
+      const hit = p.risks.slice(0, plant.count);
+      for (const r of hit) for (const k of plant.fields) r[k] = '';
+      targets = hit.map((r) => `risk:${r.id}`);
+      break;
+    }
+    case 'compress': {
+      const x = t(plant.task);
+      if (plant.start) x.start = plant.start;
+      x.end = x.start + plant.weeks - 1;
+      targets = [plant.task, `load:${owner(plant.task)}`];
+      break;
+    }
+    case 'clear_backups': {
+      const had = Object.keys(p.tasks).filter((id) => p.tasks[id].backup);
+      for (const x of Object.values(p.tasks)) x.backup = null;
+      const counts = {};
+      for (const id of criticalPath(p, project)) counts[owner(id)] = (counts[owner(id)] ?? 0) + 1;
+      targets = [...had, ...Object.keys(counts).filter((r) => counts[r] >= 4).map((r) => `backup:${r}`)];
+      break;
+    }
+    case 'remove_contact': {
+      for (const w of Object.keys(p.touchpoints)) p.touchpoints[w] = p.touchpoints[w].map((x) => (plant.types.includes(x) ? null : x));
+      if (plant.gate) p.gate = null;
+      targets = ['touchpoints:faculty-contact', ...(plant.gate ? ['gate'] : [])];
+      break;
+    }
+    case 'overlap': {
+      const x = t(plant.task);
+      const start = Math.max(t(plant.with).start, p.joinWeek ?? 1);
+      x.end = Math.max(x.end, start);
+      x.start = start;
+      targets = [plant.task, plant.with];
+      break;
+    }
+    default:
+      throw new Error(`${flaw.id}: unknown plant op ${plant.op}`);
+  }
+  return { plan: p, targets };
+}
+
+export function flawApplies(flaw, project) {
+  return !flaw.projects || flaw.projects.includes(project.id);
+}
+
+// A playable round from a sample (content/critique-samples.json): the flawed plan and the answer key
+// in the shape scoreCritique expects. Flaws are planted in order on the project's baseline.
+export function buildRound(sample, flawsById, baseline, project) {
+  let plan = baseline;
+  const flaws = [];
+  for (const id of sample.flaws) {
+    const flaw = flawsById[id];
+    if (!flaw) throw new Error(`Unknown flaw ${id}`);
+    const planted = plantFlaw(plan, flaw, project);
+    plan = planted.plan;
+    flaws.push({
+      id: flaw.id, title: flaw.title, category: flaw.category, severity: sample.severity?.[id] ?? flaw.severity,
+      skill_track: flaw.skill_track, check: flaw.check, targets: planted.targets,
+      accepted_fixes: flaw.accepted_fixes, partial_fixes: flaw.partial_fixes,
+      concept: flaw.concept, explanation: flaw.explanation, where: sample.key?.[id]?.where ?? null, bestFix: sample.key?.[id]?.fix ?? null,
+    });
+  }
+  return { id: sample.id, project: project.id, rank: sample.rank, plan, flaws, decoys: sample.decoys ?? [] };
 }

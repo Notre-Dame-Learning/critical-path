@@ -1,0 +1,31 @@
+{
+  "id": "missing_dependency",
+  "category": "dependency",
+  "check": "links",
+  "title": "Shoot before script review",
+  "severity": "high",
+  "min_rank": "Coordinator",
+  "skill_track": "Planning",
+  "plant": {
+    "op": "remove_link",
+    "from": "scriptreview",
+    "to": "production"
+  },
+  "detect_signals": [
+    "Production lists no link to script review",
+    "Nothing stops the shoot from starting before the scripts are final"
+  ],
+  "sim_effect": "Production can start as soon as it is placed; if it starts before script review is finished, its full effort becomes hidden rework, and the reshoot waits for the reviewed scripts.",
+  "accepted_fixes": [
+    "Restore the link: production waits for script review",
+    "Make the shoot depend on the finished script review and move the shoot if the dates clash"
+  ],
+  "partial_fixes": [
+    "Add a note to check the scripts before the shoot",
+    "Ask Perrick to confirm the scripts informally before filming"
+  ],
+  "concept": "Dependencies: work that consumes an approval must wait for it",
+  "sop_ref": "Media SOP 3M: scripts are reviewed and finalized before production days",
+  "explanation": "Filming scripts that haven't been reviewed means reshoots once the review changes them. The link keeps the shoot behind the review, and if the dates then clash, move the shoot, not the review.",
+  "plant_by_project": {}
+}

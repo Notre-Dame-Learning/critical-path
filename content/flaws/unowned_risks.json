@@ -1,0 +1,34 @@
+{
+  "id": "unowned_risks",
+  "category": "risk_ownership",
+  "check": "risks",
+  "title": "Risks with no owner or trigger",
+  "severity": "medium",
+  "min_rank": "Coordinator",
+  "skill_track": "Risk",
+  "plant": {
+    "op": "clear_risk_fields",
+    "count": 2,
+    "fields": [
+      "owner",
+      "trigger"
+    ]
+  },
+  "detect_signals": [
+    "Two risks have no owner",
+    "No trigger says when to act"
+  ],
+  "sim_effect": "When the risk fires nobody is watching for it, so it lands at full impact.",
+  "accepted_fixes": [
+    "Give each risk an owner and a dated trigger, e.g. \"no scripts by week 4\"",
+    "Assign owners, triggers and contingencies at the next team meeting"
+  ],
+  "partial_fixes": [
+    "Assign an owner but leave the trigger open",
+    "Note the risks in the weekly summary"
+  ],
+  "concept": "Risk management: a risk without an owner and a trigger is just a worry",
+  "sop_ref": "PM SOP: project charter risks; When Things Go Wrong",
+  "explanation": "A risk nobody owns is noticed only after it has happened. An owner with a dated trigger turns it into a decision someone makes on time.",
+  "plant_by_project": {}
+}
