@@ -239,3 +239,12 @@ label.prompt { display: block; }
 .run-code span small, .run-code > small { color: var(--quiet); font-size: .8rem; }
 .run-code input { font: inherit; color: var(--ink); background: var(--card); border: 1.5px solid var(--rule); border-radius: 8px; padding: .5rem .7rem; max-width: 16rem; }
 .run-code input:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: var(--navy); }
+
+/* Hard-mode conversations */
+.talk-log { display: grid; gap: .5rem; margin: .6rem 0; max-height: 22rem; overflow-y: auto; }
+.bubble { border-radius: 10px; padding: .5rem .75rem; max-width: 88%; }
+.bubble p { margin: .15rem 0 0; white-space: pre-wrap; }
+.bubble strong { font-size: .78rem; color: var(--quiet); }
+.bubble.them { background: var(--card); border: 1px solid var(--rule); justify-self: start; }
+.bubble.me { background: var(--navy); color: var(--card); justify-self: end; }
+.bubble.me strong { color: var(--card); opacity: .8; }

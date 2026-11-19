@@ -3,6 +3,7 @@ import { avatarSVG } from './avatars.js';
 import { createGameAt } from '../engine/difficulty.js';
 import { defaultDifficulty, rememberDifficulty, difficultyHtml, pickedDifficulty } from './difficulty-picker.js';
 import { pickSeed, runCodeHtml } from './run-code.js';
+import * as C from '../engine/conversation.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -14,6 +15,9 @@ let content, game, lastOutcome = null, feed = [];
 let selectedProject = null;
 // Hard mode: the player's written answer for the current situation, and where it is in grading.
 let hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
+// Hard mode, six situations: a conversation with the stakeholder, played by Claude (engine/conversation.js).
+// stage: opening | player | waiting | judging | error
+let talk = null;
 
 // ---------- AI grading availability (hard mode) ----------
 // Inside Claude the page can ask Claude to grade; elsewhere (e.g. GitHub Pages) it can't,
@@ -54,6 +58,8 @@ async function init() {
       world: await loadJson('../content/world.json'),
       deck: await loadJson('../content/scenarios/core-deck.json'),
       projects: await Promise.all(manifest.projects.map((id) => loadJson(`../content/projects/${id}.json`))),
+      conversations: await loadJson('../content/conversations.json'),
+      stakeholders: await loadJson('../content/stakeholders.json'),
     };
   }
   selectedProject = content.projects[0].id;
@@ -110,6 +116,7 @@ function startGame() {
   lastOutcome = null;
   feed = [];
   hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
+  talk = null;
   showGame();
 }
 
@@ -224,11 +231,24 @@ function renderTurn() {
   const ev = S.currentEvent(game);
   if (ev) {
     if (hard.eventId !== ev.id) hard = { eventId: ev.id, text: '', stage: 'write', error: '', allowPick: false };
+    const conv = talkable(ev);
+    if (conv) {
+      if (talk?.eventId !== ev.id) startTalk(ev, conv);
+      $('event').innerHTML = renderTalk(ev);
+      const line = $('talk-line');
+      if (line) {
+        line.value = talk.draft;
+        line.oninput = () => { talk.draft = line.value; $('talk-send').disabled = line.value.trim().length < 2; };
+      }
+      const log = $('talk-log');
+      if (log) log.scrollTop = log.scrollHeight;
+    } else {
     $('event').innerHTML = renderEvent(ev);
     const box = $('answer');
     if (box) {
       box.value = hard.text;
       box.oninput = () => { hard.text = box.value; $('submit-answer').disabled = box.value.trim().length < 15; };
+    }
     }
   } else if (lastOutcome) {
     const [cls, verdict] = VERDICT(lastOutcome.credit);
@@ -331,11 +351,17 @@ function renderLesson(l) {
   const written = l.response
     ? `<dt>You wrote</dt><dd class="quote">${esc(l.response)}</dd>${l.feedback ? `<dt>Feedback</dt><dd>${esc(l.feedback)}</dd>` : `<dt>Closest option you picked</dt><dd>${esc(l.chosen)} <span class="muted">${esc(l.why)}</span></dd>`}`
     : `<dt>You chose</dt><dd>${esc(l.chosen)} <span class="muted">${esc(l.why)}</span></dd>`;
+  const talked = game.conversations?.find((c) => c.week === l.week && c.title === l.title);
+  const talkRows = talked ? `
+      <dt>Conversation</dt><dd>${esc(talked.outcome)} · rubric ${talked.total}/10${talked.change !== null ? ` · ${talked.meter} ${talked.change >= 0 ? '+' : ''}${talked.change}` : ''}${talked.slipped ? ' · the commitment slipped' : ''}</dd>
+      ${talked.best ? `<dt>Your strongest line</dt><dd class="quote">${esc(talked.best)}</dd>` : ''}
+      ${talked.weakest ? `<dt>Your weakest line</dt><dd class="quote">${esc(talked.weakest)}</dd>` : ''}
+      <dt>What was really going on</dt><dd>${esc(talked.talkTo === 'director' ? 'The media director' : person(talked.talkTo).name)} ${esc(talked.hiddenConcern)}.${talked.revealed ? ' You uncovered it.' : ' An open question about their situation would have brought it out.'}</dd>` : '';
   return `<details class="lesson" ${l.credit < 0.95 ? 'open' : ''}>
     <summary class="lesson-head">${face(l.who ?? 'ld', l.credit >= 0.95 ? 'happy' : l.credit >= 0.6 ? 'neutral' : 'worried', 44)}<div><h3>Week ${l.week}: ${esc(l.title)}</h3>
     <div class="tier"><span class="chip ${cls}">${verdict}</span> ${l.response ? 'Written answer' : esc(l.tierLabel)} · ${Math.round(l.credit * 100)}% credit</div></div></summary>
     <dl>
-      ${written}
+      ${talked ? talkRows : written}
       ${l.bestLabel ? `<dt>Best move</dt><dd>${esc(l.bestLabel)} <span class="muted">${esc(l.bestWhy)}</span></dd>` : ''}
       <dt>The idea</dt><dd>${esc(l.concept)}</dd>
       <dt>Handling it without escalating</dt><dd>${esc(l.independent)}</dd>
@@ -396,6 +422,145 @@ async function submitAnswer() {
   }
 }
 
+// ---------- hard mode conversations ----------
+
+const UNAVAILABLE = ['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'];
+const playerLines = () => (talk?.transcript ?? []).filter((m) => m.from === 'player');
+
+// A conversation runs for the six talkable situations in hard mode while Claude is available,
+// unless the player has fallen back to picking the closest option.
+function talkable(ev) {
+  if (game.mode !== 'hard' || aiState !== 'ready' || !content.conversations || !content.stakeholders) return null;
+  if (hard.eventId === ev.id && hard.stage === 'pick') return null;
+  return C.conversationFor(game, ev.id, content.conversations);
+}
+
+function startTalk(ev, conv) {
+  talk = { eventId: ev.id, conv, packet: C.contextPacket(game, conv, content.stakeholders), transcript: [], stage: 'opening', draft: '', error: '', fails: 0, retry: null };
+  askReply();
+}
+
+async function callClaude(prompt, retry) {
+  talk.retry = retry;
+  talk.error = '';
+  talk.ctl = new AbortController();
+  try {
+    return await sample.json(prompt, { signal: talk.ctl.signal });
+  } finally {
+    if (talk) talk.ctl = null;
+  }
+}
+
+function talkFailed(e) {
+  if (!talk) return;
+  const code = e?.code;
+  if (UNAVAILABLE.includes(code)) {
+    aiState = 'none';
+    talk = null;
+    hard.stage = 'write';
+    hard.error = 'Claude isn\'t available here, so write what you would do, then pick the closest option.';
+  } else {
+    talk.stage = 'error';
+    talk.error = code === 'rate_limited' ? 'Claude is busy right now. Try again in a minute, or pick the closest option instead.' : 'The conversation didn\'t go through. Try again, or pick the closest option instead.';
+  }
+  renderTurn();
+}
+
+async function askReply() {
+  const id = talk.eventId;
+  talk.stage = talk.transcript.length ? 'waiting' : 'opening';
+  renderTurn();
+  try {
+    const reply = C.checkReply(await callClaude(C.turnPrompt(talk.packet, talk.transcript), askReply));
+    if (!reply) throw { code: 'invalid_json' };
+    if (talk?.eventId !== id) return;
+    talk.transcript.push({ from: 'stakeholder', text: reply });
+    talk.stage = 'player';
+    renderTurn();
+  } catch (e) { talkFailed(e); }
+}
+
+function sendLine() {
+  const text = talk?.draft.trim();
+  if (!text || talk.stage !== 'player') return;
+  talk.transcript.push({ from: 'player', text: text.slice(0, 1200) });
+  talk.draft = '';
+  if (playerLines().length >= C.MAX_TURNS) requestVerdict(false);
+  else askReply();
+}
+
+function endTalk(escalated) {
+  if (!talk || talk.stage !== 'player') return;
+  if (escalated && talk.draft.trim()) talk.transcript.push({ from: 'player', text: talk.draft.trim().slice(0, 1200) });
+  if (!playerLines().length) return;
+  talk.draft = '';
+  requestVerdict(escalated);
+}
+
+async function requestVerdict(escalated) {
+  talk.stage = 'judging';
+  talk.escalated = escalated;
+  renderTurn();
+  try {
+    const raw = await callClaude(C.verdictPrompt(talk.packet, talk.transcript, { escalated }), () => requestVerdict(escalated));
+    const checked = C.checkVerdict(raw, talk.packet, talk.transcript, { escalated });
+    if (!checked.ok) {
+      talk.fails += 1;
+      if (talk.fails >= 2) { pickInsteadOfTalk('Claude\'s verdict didn\'t come back in a usable form, so pick the option closest to what you said.'); return; }
+      requestVerdict(escalated);
+      return;
+    }
+    const ev = S.currentEvent(game);
+    const res = C.applyVerdict(game, talk.conv, checked.verdict, talk.transcript);
+    const v = checked.verdict;
+    const feedback = [
+      `Outcome: ${v.outcome} (rubric ${C.rubricTotal(v.rubric)}/10).`,
+      v.hidden_concern_revealed ? 'You found out what was really going on.' : '',
+      v.no_escalation_path,
+    ].filter(Boolean).join(' ');
+    lastOutcome = { title: S.say(game, ev.title), text: res.outcome, why: res.why, credit: res.credit, reaction: res.reaction, who: res.who, feedback, graded: true };
+    talk = null;
+    hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
+    render();
+  } catch (e) { talkFailed(e); }
+}
+
+function retryTalk() {
+  if (talk?.retry) talk.retry();
+}
+
+function pickInsteadOfTalk(message = '') {
+  if (!talk) return;
+  talk.ctl?.abort();
+  hard = { eventId: talk.eventId, text: playerLines().map((m) => m.text).join('\n'), stage: 'pick', error: message, allowPick: false };
+  talk = null;
+  renderTurn();
+}
+
+function renderTalk(ev) {
+  const who = ev.who ?? 'ld';
+  const them = talk.packet.stakeholder.name;
+  const busy = talk.stage === 'opening' || talk.stage === 'waiting' || talk.stage === 'judging';
+  const n = playerLines().length;
+  const bubbles = talk.transcript.map((m) => `<div class="bubble ${m.from === 'player' ? 'me' : 'them'}"><strong>${m.from === 'player' ? 'You' : esc(them)}</strong><p>${esc(m.text)}</p></div>`).join('');
+  const status = talk.stage === 'opening' || talk.stage === 'waiting' ? `<p class="muted small" role="status">${esc(them)} is replying…</p>`
+    : talk.stage === 'judging' ? '<p class="muted small" role="status">Wrapping up the conversation…</p>' : '';
+  const controls = talk.stage === 'error'
+    ? `<p class="small error">${esc(talk.error)}</p><div class="row"><button class="primary" id="talk-retry">Try again</button><button id="talk-pick">Pick the closest option instead</button></div>`
+    : `<label class="prompt" for="talk-line">Your reply to ${esc(them)} <span class="muted small">(${Math.min(n + 1, C.MAX_TURNS)} of ${C.MAX_TURNS})</span></label>
+      <textarea id="talk-line" rows="3" ${busy ? 'disabled' : ''} placeholder="Ask, propose, agree a date…"></textarea>
+      <div class="row">
+        <button class="primary" id="talk-send" ${busy || talk.draft.trim().length < 2 ? 'disabled' : ''}>Send</button>
+        <button id="talk-end" ${busy || !n ? 'disabled' : ''}>End the conversation</button>
+        <button id="talk-escalate" ${busy ? 'disabled' : ''}>Escalate to ${esc(game.supervisor.short)}</button>
+      </div>`;
+  return `<div class="event pop">
+    <div class="event-head">${face(who, ev.mood, 80)}<div><div class="kicker">Situation · ${esc(S.say(game, ev.title))}</div><div class="who">Talk it through with ${esc(them)}</div></div></div>
+    <p>${esc(S.say(game, ev.text))}</p>
+    <div class="talk-log" id="talk-log" aria-live="polite">${bubbles}</div>
+    ${status}${controls}</div>`;
+}
+
 // ---------- input ----------
 
 document.addEventListener('change', (e) => {
@@ -407,6 +572,11 @@ document.addEventListener('change', (e) => {
 
 document.addEventListener('click', (e) => {
   if (e.target.closest('#submit-answer')) { submitAnswer(); return; }
+  if (e.target.closest('#talk-send')) { sendLine(); return; }
+  if (e.target.closest('#talk-end')) { endTalk(false); return; }
+  if (e.target.closest('#talk-escalate')) { endTalk(true); return; }
+  if (e.target.closest('#talk-retry')) { retryTalk(); return; }
+  if (e.target.closest('#talk-pick')) { pickInsteadOfTalk(); return; }
   if (e.target.closest('#stop-grading')) { gradingCtl?.abort(); return; }
   if (e.target.closest('#pick-instead')) { hard.stage = 'pick'; hard.error = ''; renderTurn(); return; }
   const choice = e.target.closest('[data-choice]');

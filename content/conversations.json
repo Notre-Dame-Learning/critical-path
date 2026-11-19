@@ -1,0 +1,139 @@
+{
+  "_note": "Hard-mode conversations (Game-master prompts tab, 'Wired in'). Each outcome resolves the situation through one of its own options, so the simulation stays the deck's. meter: which number the engine moves (faculty trust, a staff member's morale, or none). commitTask: the task a commitment lands on.",
+  "conversations": [
+    {
+      "eventId": "silent-faculty",
+      "talkTo": "faculty",
+      "meter": "trust",
+      "commitTask": "scripts",
+      "hidden_concern": "was handed an extra course section this term and is embarrassed to say so",
+      "facts": [
+        "{faculty} hasn't answered {ld}'s or {mp}'s last five emails",
+        "Scripts are due to {mp} in two weeks",
+        "Studio days are booked; the next opening is weeks later",
+        "The course launches in week {launch}"
+      ],
+      "sop_step": "PM SOP: Challenging Faculty; Faculty Availability",
+      "player_goal": "Get {faculty} back in contact and agree a firm plan for the scripts without losing the studio days",
+      "map": {
+        "agreed": "streamline-checkins",
+        "partial": "long-email",
+        "escalated_options": "escalate-with-plan",
+        "escalated_bare": "forward",
+        "unresolved": "wait",
+        "refused": "everyone-follow-up"
+      }
+    },
+    {
+      "eventId": "faculty-overwhelmed",
+      "talkTo": "faculty",
+      "meter": "trust",
+      "commitTask": "content",
+      "hidden_concern": "is also chairing a search committee this month, which nobody at ODL knows about",
+      "facts": [
+        "Scripts, quiz questions and reading lists are all due the same week as {faculty}'s midterms",
+        "{ld} can draft quiz questions from the course map",
+        "The course launches in week {launch}"
+      ],
+      "sop_step": "PM SOP: Development phase note on pacing; Faculty Availability",
+      "player_goal": "Re-pace {faculty}'s deliverables so the work keeps moving without moving launch",
+      "map": {
+        "agreed": "repace",
+        "partial": "extend-all",
+        "escalated_options": "escalate-with-plan",
+        "escalated_bare": "escalate-with-plan",
+        "unresolved": "extend-all",
+        "refused": "hold-firm"
+      }
+    },
+    {
+      "eventId": "script-too-long",
+      "talkTo": "faculty",
+      "meter": "trust",
+      "commitTask": "scriptreview",
+      "hidden_concern": "worries that a shorter video will look less rigorous to colleagues in the department",
+      "facts": [
+        "The Module 3 script reads at about 14 minutes",
+        "The signed charter commits to 5-minute videos",
+        "{mp} has to lock the scripts before production days",
+        "Detail can move to a reading or the course site"
+      ],
+      "sop_step": "PM SOP: Change of Scope",
+      "player_goal": "Get the Module 3 video back near the charter's length with {faculty}'s agreement",
+      "map": {
+        "agreed": "charter-trim",
+        "partial": "split-in-two",
+        "escalated_options": "escalate-plan",
+        "escalated_bare": "escalate-plan",
+        "unresolved": "fix-in-post",
+        "refused": "split-in-two"
+      }
+    },
+    {
+      "eventId": "overloaded-ld",
+      "talkTo": "ld",
+      "meter": "morale",
+      "commitTask": "mastersite",
+      "hidden_concern": "is applying for a senior designer role and worries that saying no to work will look bad",
+      "facts": [
+        "{ld} is lead designer on four other courses",
+        "{ld}'s milestone check-ins have gotten shorter",
+        "The master site build is behind"
+      ],
+      "sop_step": "PM SOP: Managing team workload",
+      "player_goal": "Find out what {ld} can realistically do and agree a plan that protects the master site",
+      "map": {
+        "agreed": "one-on-one",
+        "partial": "do-it-yourself",
+        "escalated_options": "escalate-workload",
+        "escalated_bare": "escalate-workload",
+        "unresolved": "push-through",
+        "refused": "push-through"
+      }
+    },
+    {
+      "eventId": "graphics-requests",
+      "talkTo": "gd",
+      "meter": "morale",
+      "commitTask": "animations",
+      "hidden_concern": "already worked two late nights last week and hasn't told anyone",
+      "facts": [
+        "{gd} is getting requests directly from {mp} and from a producer on another project",
+        "Each producer says theirs is urgent",
+        "{gd} is shared across projects"
+      ],
+      "sop_step": "Media SOP: graphics requests; PM SOP: Managing team workload",
+      "player_goal": "Agree one way requests reach {gd} and an order {gd} can work to",
+      "map": {
+        "agreed": "intake",
+        "partial": "our-first",
+        "escalated_options": "escalate-plan",
+        "escalated_bare": "escalate-plan",
+        "unresolved": "ignore",
+        "refused": "ignore"
+      }
+    },
+    {
+      "eventId": "style-rejected",
+      "talkTo": "director",
+      "meter": null,
+      "commitTask": "animations",
+      "hidden_concern": "the dean's office complained last term about another course's cartoonish look",
+      "facts": [
+        "The media director saw {gd}'s rough animations and wants a different visual style",
+        "Nobody signed off on the design frames",
+        "The course launches in week {launch}"
+      ],
+      "sop_step": "Media SOP: 2M Design Frame, 5M Animations",
+      "player_goal": "Agree a style decision the director will sign off on, and a plan to recover the animation time",
+      "map": {
+        "agreed": "salvage-plan",
+        "partial": "redo-all",
+        "escalated_options": "escalate-plan",
+        "escalated_bare": "escalate-plan",
+        "unresolved": "push-back",
+        "refused": "redo-all"
+      }
+    }
+  ]
+}

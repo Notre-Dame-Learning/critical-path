@@ -10,6 +10,7 @@
     "bundle": "node scripts/bundle.mjs",
     "plans": "node scripts/plans.mjs",
     "odds": "node scripts/odds.mjs",
-    "missions": "node scripts/missions.mjs"
+    "missions": "node scripts/missions.mjs",
+    "talks": "node scripts/talks.mjs"
   }
 }

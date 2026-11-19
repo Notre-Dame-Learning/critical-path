@@ -18,7 +18,7 @@ Then open `http://localhost:8080/app/`. Type a **run code** (for example `fellow
 
 - **Intro to Psychology online** (Standard, 14 weeks), **AI Ethics documentary micro-course** (media-heavy, 15 weeks) and **Rescue: Sustainable Business certificate** (hard; you take over in week 6). Projects live in `content/projects/` and are listed in `content/projects.json`.
 - **Standard mode:** pick from 3-6 options; one is best.
-- **Hard mode:** write your answer. When the game runs inside Claude, Claude grades it against the situation's options (the rubric); elsewhere, such as GitHub Pages, you pick the option closest to what you wrote.
+- **Hard mode:** write your answer. When the game runs inside Claude, Claude grades it against the situation's options (the rubric); elsewhere, such as GitHub Pages, you pick the option closest to what you wrote. Six situations are talked through instead: Claude plays the stakeholder for up to four replies, then returns a verdict the engine checks and maps to one of the situation's options (`engine/conversation.js`, `content/conversations.json`, `content/stakeholders.json`).
 - **Pace:** Story (one more Action Point a week, a week of buffer, a rested team) for a first run, or Standard, the real ODL pace. Set in `engine/difficulty.js`.
 - **Schedule gauge:** compares finished work with the pace needed to launch on time (earned schedule), in weeks ahead or behind.
 
@@ -39,7 +39,7 @@ engine/    simulation rules (sim.js), seeded random numbers (rng.js), Story pace
 content/   world.json (people), projects/, scenarios/, plans/ (Build the Plan baselines), flaws/ and critique-samples.json (Critique the Plan)  — plain JSON, edit freely
 app/       the browser game (no build step)
 test/      engine tests: npm test
-scripts/   bundle.mjs, missions.mjs (npm run missions: Daily Mission staging report), odds.mjs (npm run odds: on-time odds by project and policy), plans.mjs (npm run plans: baseline checks and odds; -- --write rebuilds them), grade-testset.mjs (hard-mode grading test set), pending.mjs (upload queue)
+scripts/   bundle.mjs, talks.mjs (npm run talks: what talking it through is worth), missions.mjs (npm run missions: Daily Mission staging report), odds.mjs (npm run odds: on-time odds by project and policy), plans.mjs (npm run plans: baseline checks and odds; -- --write rebuilds them), grade-testset.mjs (hard-mode grading test set), pending.mjs (upload queue)
 docs/      build notes
 ```
 

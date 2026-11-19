@@ -1,0 +1,66 @@
+{
+  "_note": "Stakeholder persona cards for hard-mode conversations (Game-master prompts tab). Names come from the cast; a staff card adds the person's traits from world.json.",
+  "cards": {
+    "faculty": {
+      "role": "Faculty partner (subject-matter expert)",
+      "power": 4,
+      "interest": 3,
+      "communication_preference": "short emails and quick check-ins; dislikes long meetings",
+      "wants": "content done their way, with minimal admin",
+      "pressure_points": "teaching load, research deadlines, perfectionism",
+      "raises_trust": "respecting their expertise; drafting things for them to review",
+      "lowers_trust": "chasing without context; surprise deadlines"
+    },
+    "ld": {
+      "role": "Lead Learning Designer",
+      "power": 2,
+      "interest": 5,
+      "communication_preference": "one-on-one, direct",
+      "wants": "clean hand-offs and realistic dates",
+      "pressure_points": "juggling several courses; late content",
+      "raises_trust": "protecting their load; clear priorities",
+      "lowers_trust": "adding work without taking any away"
+    },
+    "mp": {
+      "role": "Lead Media Producer",
+      "power": 2,
+      "interest": 5,
+      "communication_preference": "quick chats at the edit suite",
+      "wants": "locked scripts before the shoot; studio dates kept",
+      "pressure_points": "the studio calendar; rework after shoots",
+      "raises_trust": "locking scope before production",
+      "lowers_trust": "changes after storyboards are approved"
+    },
+    "gd": {
+      "role": "Graphic Designer",
+      "power": 2,
+      "interest": 4,
+      "communication_preference": "written requests with final copy attached",
+      "wants": "final copy and brand rules up front",
+      "pressure_points": "animation rework; branding approvals",
+      "raises_trust": "batching feedback into one round",
+      "lowers_trust": "piecemeal feedback; last-minute changes"
+    },
+    "sup": {
+      "role": "Project Manager Supervisor",
+      "power": 4,
+      "interest": 3,
+      "communication_preference": "early heads-up, short",
+      "wants": "no surprises; problems brought with options",
+      "pressure_points": "several projects at once",
+      "raises_trust": "an early heads-up with a recommendation",
+      "lowers_trust": "late escalation; a problem without a proposal"
+    },
+    "director": {
+      "role": "ODL media director (approver)",
+      "name": "the media director",
+      "power": 5,
+      "interest": 3,
+      "communication_preference": "a clear request with impact and options",
+      "wants": "launch dates held and the quality bar met",
+      "pressure_points": "the term calendar; the unit's reputation",
+      "raises_trust": "a clear change request with impact and options",
+      "lowers_trust": "asking for a date change without trade-offs"
+    }
+  }
+}

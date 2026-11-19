@@ -13,6 +13,8 @@ const content = {
   world: JSON.parse(read('content/world.json')),
   deck: JSON.parse(read('content/scenarios/core-deck.json')),
   projects: manifest.projects.map((id) => JSON.parse(read(`content/projects/${id}.json`))),
+  conversations: JSON.parse(read('content/conversations.json')),
+  stakeholders: JSON.parse(read('content/stakeholders.json')),
 };
 
 const html = read('app/index.html');
