@@ -233,3 +233,9 @@ textarea:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-col
 .your-answer p { margin: .2rem 0 0; white-space: pre-wrap; }
 .quote { white-space: pre-wrap; border-left: 3px solid var(--rule); padding-left: .6rem; }
 label.prompt { display: block; }
+
+/* Run code (start screen) */
+.run-code { display: grid; gap: .3rem; margin-top: .9rem; }
+.run-code span small, .run-code > small { color: var(--quiet); font-size: .8rem; }
+.run-code input { font: inherit; color: var(--ink); background: var(--card); border: 1.5px solid var(--rule); border-radius: 8px; padding: .5rem .7rem; max-width: 16rem; }
+.run-code input:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: var(--navy); }

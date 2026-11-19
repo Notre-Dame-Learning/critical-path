@@ -2,6 +2,7 @@ import * as S from '../engine/sim.js';
 import { avatarSVG } from './avatars.js';
 import { createGameAt } from '../engine/difficulty.js';
 import { defaultDifficulty, rememberDifficulty, difficultyHtml, pickedDifficulty } from './difficulty-picker.js';
+import { pickSeed, runCodeHtml } from './run-code.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -76,6 +77,7 @@ function showIntro() {
   renderProjects();
   renderAiNote();
   $('difficulty').innerHTML = difficultyHtml(defaultDifficulty(localStore()), esc);
+  $('run-code-box').innerHTML = runCodeHtml('', esc);
   const w = content.world;
   const cast = [...w.people.map((p) => [p, p.role]), [w.supervisor, w.supervisor.role]];
   $('cast').innerHTML = cast.map(([p, role]) => `<figure class="cast-member">${avatarSVG(p.avatar, 'happy', { size: 64, label: p.name })}<figcaption><strong>${esc(p.name)}</strong><span>${esc(role)}</span></figcaption></figure>`).join('');
@@ -100,7 +102,7 @@ function renderProjects() {
 function startGame() {
   const project = content.projects.find((p) => p.id === selectedProject);
   const mode = $('mode-hard').checked ? 'hard' : 'standard';
-  const seed = new URLSearchParams(location.search).get('seed') ?? randomSeed();
+  const seed = pickSeed({ typed: $('run-code')?.value, search: location.search, random: randomSeed });
   const difficulty = pickedDifficulty($('difficulty'));
   rememberDifficulty(localStore(), difficulty);
   game = createGameAt(S, { world: content.world, project, deck: content.deck, seed, mode, difficulty });
@@ -303,6 +305,7 @@ function renderEnd() {
     <h2>Debrief</h2>
     <p class="muted small">Situations you handled with the best move are folded; open any of them to review.</p>
     ${lessons.length ? lessons.map(renderLesson).join('') : '<p>No situations came up this run.</p>'}
+    <p class="muted small">Run code: <strong>${esc(game.seed)}</strong>. Type it on the start screen to replay these situations.</p>
     <div class="row">
       <button class="primary" id="again">Play another project</button>
       <button id="replay">Replay this run (same events)</button>
