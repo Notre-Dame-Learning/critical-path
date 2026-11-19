@@ -59,4 +59,4 @@ Effects: `trust`, `morale` (`who`), `responsiveness` (`weeks`), `capacity` (`who
 
 ## Status
 
-v0.3 plus Story pace, run codes and Critique scoring (Nov 19): three projects, 30 situations grounded in the ODL SOPs, a team of five (Li Yu, Perrick Datrick, Sam Rivera, the faculty partner, and supervisor Dwayneah the Retriever Johnson), a schedule gauge, a compact phase view, targeted overtime, and an AI-graded hard mode. Build the Plan and Critique the Plan come next.
+v0.3 plus Story pace, run codes and Critique scoring (Nov 19): three projects, 33 situations grounded in the ODL SOPs, a team of five (Li Yu, Perrick Datrick, Sam Rivera, the faculty partner, and supervisor Dwayneah the Retriever Johnson), a schedule gauge, a compact phase view, targeted overtime, and an AI-graded hard mode. Build the Plan and Critique the Plan come next.

@@ -2944,6 +2944,337 @@
       "projects": [
         "ai-ethics-documentary"
       ]
+    },
+    {
+      "id": "est-two-weekends",
+      "title": "\"I'll Write Them All in Two Weekends\"",
+      "who": "faculty",
+      "mood": "happy",
+      "track": "estimating",
+      "track2": "stakeholders",
+      "projects": [
+        "intro-psych-online",
+        "ai-ethics-documentary"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          6
+        ],
+        "requires": {
+          "taskNotDone": "scripts"
+        },
+        "chance": 0.45
+      },
+      "text": "{faculty} is upbeat at the check-in: \"Don't worry about the scripts. I'll write them all over two weekends.\" Nobody on the team has seen {fobj} write a script yet.",
+      "choices": [
+        {
+          "id": "pilot-module",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Thank {fobj}, then ask for one module's script first. Time it with {ld}, and set the dates for the rest from what it actually took.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 2
+            },
+            {
+              "type": "responsiveness",
+              "value": 0.1,
+              "weeks": 3
+            }
+          ],
+          "outcome": "The first script takes {faculty} a full week. You plan the rest at that pace, and they arrive when the plan says.",
+          "why": "An estimate based on one real sample beats a hopeful promise, and the faculty member stays the author of the plan."
+        },
+        {
+          "id": "pad-it",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Plan around two weekends, but quietly add a week of slack at the end.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "scripts",
+              "value": 3
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "scripts",
+              "value": 3
+            }
+          ],
+          "outcome": "The scripts run past the two weekends and eat the slack, and a few are rushed.",
+          "why": "Padding a guess hides the problem instead of measuring it."
+        },
+        {
+          "id": "take-word",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "happy",
+          "label": "Take {fobj} at {fpos} word and book script review for the week after.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "scripts",
+              "value": 4
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "scripts",
+              "value": 4
+            },
+            {
+              "type": "trust",
+              "value": -3
+            }
+          ],
+          "outcome": "Two weekends pass with three scripts done. Script review sits idle, and the rushed drafts need rework.",
+          "why": "A promise isn't an estimate. Nobody had seen how long a script really takes."
+        },
+        {
+          "id": "ask-sup",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask {sup} whether two weekends sounds realistic.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "scripts",
+              "value": 2
+            }
+          ],
+          "outcome": "{sup} says probably not, and asks how you'll find out for sure.",
+          "why": "The way to check is a sample module, which you can arrange yourself."
+        }
+      ],
+      "debrief": {
+        "concept": "Estimating: plan from evidence, not from promises.",
+        "independent": "Thank the faculty member, then estimate from a sample: have one module drafted first, time it, compare with past courses, and let those actuals set the remaining dates.",
+        "escalateWhen": "Not an escalation issue. It's a planning conversation you can lead.",
+        "sop": "PM SOP: Development phase pacing; LD SOP: script drafts"
+      }
+    },
+    {
+      "id": "est-post-guess",
+      "title": "\"Two Weeks for Post?\"",
+      "who": "mp",
+      "mood": "happy",
+      "track": "estimating",
+      "track2": "communication",
+      "projects": [
+        "ai-ethics-documentary"
+      ],
+      "trigger": {
+        "weeks": [
+          5,
+          10
+        ],
+        "requires": {
+          "taskStarted": "production",
+          "taskNotDone": "post"
+        },
+        "chance": 0.45
+      },
+      "text": "You ask {mp} how long post-production will take for the documentary episodes. \"Two weeks, easy,\" {mp} says, already heading back to the edit suite.",
+      "choices": [
+        {
+          "id": "three-point",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "neutral",
+          "label": "Ask {mp} for a best, likely and worst case per episode, compare them with the last documentary's actual post time, and plan on the likely figure with the gap as buffer.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": 2
+            },
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": -2
+            }
+          ],
+          "outcome": "The likely case is closer to three weeks. You plan for that, and the rough cuts land on schedule.",
+          "why": "Ranges and past actuals correct optimism, and they give the buffer a size you can explain."
+        },
+        {
+          "id": "pad-20",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Accept two weeks and add 20% to be safe.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "post",
+              "value": 4
+            }
+          ],
+          "outcome": "Post runs to nearly three weeks, and the last episode is rushed.",
+          "why": "A fixed pad on a guess is still a guess."
+        },
+        {
+          "id": "book-two",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "happy",
+          "label": "Book two weeks for post and move on.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "post",
+              "value": 8
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -4
+            }
+          ],
+          "outcome": "Week two ends with half the episodes cut. {mp} works late to close the gap.",
+          "why": "{mp} is an optimistic estimator. Taking the first number at face value plans for the best case."
+        },
+        {
+          "id": "ask-actuals",
+          "tier": "escalate_plan",
+          "credit": 0.6,
+          "reaction": "neutral",
+          "label": "Ask {sup} for post times on the last two documentaries, then set the estimate with {mp}.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "{sup} sends the numbers a few days later: about three weeks each time.",
+          "why": "Past actuals are the right evidence, but {mp} could have given a range today."
+        }
+      ],
+      "debrief": {
+        "concept": "Optimism bias: ask for a range and check it against actuals.",
+        "independent": "Ask the person doing the work for best, likely and worst cases, compare with what similar work actually took, and plan on the likely case with the gap as buffer.",
+        "escalateWhen": "Only if the realistic estimate breaks the launch date. Then bring options.",
+        "sop": "Media SOP: 4M Post-Production; PM SOP: timelines"
+      }
+    },
+    {
+      "id": "est-module-one-actuals",
+      "title": "Module 1 Took Twice as Long",
+      "who": "ld",
+      "mood": "worried",
+      "track": "estimating",
+      "track2": "planning",
+      "trigger": {
+        "weeks": [
+          4,
+          13
+        ],
+        "requires": {
+          "taskStarted": "mastersite",
+          "taskNotDone": "mastersite"
+        },
+        "chance": 0.45
+      },
+      "text": "{ld}: \"Module 1 of the master site took six hours, not the three we planned. If the others are like it, the build runs well past its dates.\"",
+      "choices": [
+        {
+          "id": "re-estimate",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Re-estimate the remaining modules with {ld} from module 1's actuals, show the new finish date, and agree now what changes: more of the build from templates, or optional pages moved after launch.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 2
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": 3
+            }
+          ],
+          "outcome": "The re-estimate adds a few days. Templating the quiz pages wins most of it back.",
+          "why": "The first actuals are the best estimate you have. Acting on them early keeps the choices cheap."
+        },
+        {
+          "id": "work-faster",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "sad",
+          "label": "Ask {ld} to pick up the pace on the next modules.",
+          "effects": [
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -8
+            },
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 3
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 5
+            }
+          ],
+          "outcome": "{ld} rushes the next modules, and QA later finds broken links and missing alt text.",
+          "why": "Pressure doesn't change how long the work takes. It moves the cost into quality."
+        },
+        {
+          "id": "keep-plan",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "worried",
+          "label": "Module 1 is always slow. Keep the plan as it is.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 6
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 3
+            }
+          ],
+          "outcome": "Every module takes about as long as the first. The build runs late and squeezes embedding and QA.",
+          "why": "Ignoring the first actuals means finding out at the end, when there are no cheap options left."
+        },
+        {
+          "id": "tell-sup",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Tell {sup} the build will run over, with the re-estimate and two options.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 3
+            }
+          ],
+          "outcome": "{sup} likes the options and asks you to choose with {ld}.",
+          "why": "Good escalation, but this is a call you and the designer can make within the timeline."
+        }
+      ],
+      "debrief": {
+        "concept": "Re-estimating: the first actuals are your best estimate.",
+        "independent": "Compare the first module's actuals with the plan, re-estimate the rest from them, and agree the trade-offs (templates, scope) while there's still time to choose.",
+        "escalateWhen": "When the re-estimate moves an approved milestone. Changes to established timelines need director approval.",
+        "sop": "LD SOP: master site build; PM SOP: When Things Go Wrong, With Timelines"
+      }
     }
   ]
 }
