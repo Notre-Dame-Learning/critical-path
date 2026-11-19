@@ -8,6 +8,7 @@
     "test": "node --test",
     "start": "npx --yes http-server . -p 8080 -c-1",
     "bundle": "node scripts/bundle.mjs",
-    "plans": "node scripts/plans.mjs"
+    "plans": "node scripts/plans.mjs",
+    "odds": "node scripts/odds.mjs"
   }
 }
