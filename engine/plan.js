@@ -297,7 +297,8 @@ export function runChecks(plan, project, world) {
   return out;
 }
 
-function stakeholderParts(plan, project) {
+// Faculty contact gaps and the gate, for the Stakeholders check, the score and the calendar shading.
+export function stakeholderParts(plan, project) {
   const join = joinOf(project);
   const qaTask = project.tasks.find((t) => t.isQA);
   const qa = qaTask ? plan.tasks[qaTask.id] : null;
