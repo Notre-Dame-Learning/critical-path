@@ -2,13 +2,14 @@
 // Tips never hint at a situation's answer, and are held back during a situation (except the first one).
 // Design: "First-run coach" tab of the framework doc.
 import * as S from '../engine/sim.js';
+import * as M from '../engine/moves.js';
 
 // In table order: the first tip whose condition holds, and that hasn't been seen, is shown.
 export const TIPS = [
   { id: 'takeover', duringSituation: true, when: (g) => g.startWeek > 1 && g.week === g.startWeek,
     text: 'Welcome aboard. You\'re taking over in week {week}: some work is done, some is late, and some of it hides rework nobody has found yet. Check in with the team early so you know what you really inherited.' },
   { id: 'action-points', when: (g) => g.week === g.startWeek && !g.actionsTaken.some((a) => a.week === g.week),
-    text: 'You get {ap} Action Points a week. Each move below costs one, and the small text under it says what it does. Spend them, then end the week.' },
+    text: 'You meet {faculty} every week anyway, so pick a focus for that meeting; it\'s free. Your {ap} Action Points go on team moves, and the small text under each says what it does. Watch what you\'re noticing: the moves that matter change week to week.' },
   { id: 'first-situation', duringSituation: true, when: (g) => Boolean(g.pendingEvent) && g.decisions.length === 0,
     text: 'Your first situation. Several options are partly right, so read them all. Escalating to me is always allowed, but I\'d rather you handle what you can and keep me informed.' },
   { id: 'end-week', when: (g) => g.week === g.startWeek && g.actionPoints === 0,
@@ -17,12 +18,14 @@ export const TIPS = [
     text: 'The recap shows the hours each person put in and what finished. The schedule bar compares finished work with the pace needed to launch on time: ahead, on track or behind.' },
   { id: 'rework-found', when: (g) => g.tasks.some((t) => t.known >= 0.5) || g.log.some((e) => e.discovered >= 0.5),
     text: 'Somebody found rework: mistakes in work that looked finished. Found now, it\'s cheap to fix. Check-ins and internal reviews find more of it early.' },
+  { id: 'risk-move', when: (g) => g.week > g.startWeek && M.moveOptions(g).some((o) => o.kind === 'risk'),
+    text: 'See "Head off a risk"? Those moves come up when trouble is likely. Heading it off is cheaper than handling it, though it isn\'t guaranteed.' },
   { id: 'behind', when: (g) => ['behind', 'far-behind'].includes(S.scheduleStatus(g).label),
-    text: 'You\'re behind the pace to launch. Extra hours help this week but cost morale and add mistakes, and asking the same person twice running wears thin fast.' },
+    text: 'You\'re behind the pace to launch. Extra hours help this week but cost morale and add mistakes. A backup from the directors, or moving some work to after launch, are options too; each has a cost.' },
   { id: 'low-morale', when: (g) => S.STAFF.some((r) => g.team[r].morale < 45),
     text: 'Someone on the team is worn down. Tired people work slower and make mistakes you won\'t see until later. A check-in helps.' },
   { id: 'low-trust', when: (g) => g.team.faculty.trust < 45,
-    text: '{faculty}\'s trust is low, so {fsub}\'ll respond more slowly. The Friday summary rebuilds trust a little every week.' },
+    text: '{faculty}\'s trust is low, so {fsub}\'ll respond more slowly. A status update with real news, or asking about {fpos} workload in the weekly meeting, rebuilds it.' },
   { id: 'qa-started', when: (g) => g.tasks.some((t) => t.isQA && t.startedWeek !== null),
     text: 'QA has started, so hidden rework will surface much faster now. Leave room in these last weeks to fix what it finds.' },
   { id: 'launch-week', when: (g) => g.week === g.launchWeek,

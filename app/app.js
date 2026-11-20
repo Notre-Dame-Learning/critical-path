@@ -1,4 +1,6 @@
 import * as S from '../engine/sim.js';
+import * as M from '../engine/moves.js';
+import { signalsHtml, meetingHtml, movesHtml, avoidedHtml } from './moves-view.js';
 import { avatarSVG } from './avatars.js';
 import { createGameAt } from '../engine/difficulty.js';
 import { defaultDifficulty, rememberDifficulty, difficultyHtml, pickedDifficulty } from './difficulty-picker.js';
@@ -300,12 +302,11 @@ function renderTurn() {
     $('event').innerHTML = '';
   }
 
-  const blocked = Boolean(ev) || game.actionPoints <= 0;
-  const acts = S.actionList(game);
-  $('actions').innerHTML = `<div class="actions">${acts.map((a) => a.needsWho
-    ? `<div class="action-who"><div>${esc(a.label)}<span class="help">${esc(a.help)}</span></div>
-        <div class="who-buttons">${S.STAFF.map((r) => `<button data-action="overtime" data-who="${r}" ${blocked ? 'disabled' : ''} aria-label="Ask ${esc(game.team[r].name)} for extra hours">${face(r, null, 28)}<span>${esc(game.team[r].short)}</span></button>`).join('')}</div></div>`
-    : `<button data-action="${a.id}" ${blocked ? 'disabled' : ''}>${esc(a.label)}<span class="help">${esc(a.help)}</span></button>`).join('')}</div>`;
+  // Weekly moves v2: signals, the meeting focus (free) and team moves (Action Points).
+  const hints = P.rankOf(loadProfile(localStore()) ?? P.newProfile()).id === 'coordinator';
+  $('actions').innerHTML = signalsHtml(M.signals(game, { hints }), esc)
+    + meetingHtml(game, M.meetingOptions(game), esc, { blocked: Boolean(ev) })
+    + movesHtml(game, M.moveOptions(game), esc, face, { blocked: Boolean(ev) });
   $('feed').innerHTML = feed.filter((f) => f.week === game.week).map((f) => `<li>${esc(f.text)}</li>`).join('');
   $('end-week').disabled = Boolean(ev);
   $('end-week').textContent = game.week === game.launchWeek ? 'Launch the course' : `End week ${game.week}`;
@@ -371,6 +372,7 @@ function renderEnd() {
     <div class="scores">${Object.entries(s).filter(([, v]) => v !== null).map(([k, v]) => `<div class="score"><div class="k">${label[k]}</div><div class="v">${v}</div></div>`).join('')}</div>
     ${xpPanel}
     <section class="coach-debrief" id="coach-debrief" aria-live="polite"></section>
+    ${avoidedHtml(M.avoided(game), game.v2?.deferred ?? [], game, esc)}
     <h2>Situation by situation</h2>
     <p class="muted small">Situations you handled with the best move are folded; open any of them to review.</p>
     ${lessons.length ? lessons.map(renderLesson).join('') : '<p>No situations came up this run.</p>'}
@@ -772,7 +774,8 @@ document.addEventListener('click', (e) => {
   if (e.target.closest('#stop-grading')) { gradingCtl?.abort(); return; }
   if (e.target.closest('#pick-instead')) { hard.stage = 'pick'; hard.error = ''; renderTurn(); return; }
   const choice = e.target.closest('[data-choice]');
-  const action = e.target.closest('[data-action]');
+  const meeting = e.target.closest('[data-meeting]');
+  const move = e.target.closest('[data-move]');
   if (choice) {
     const ev = S.currentEvent(game);
     const written = game.mode === 'hard' && hard.text.trim() ? { response: hard.text.trim() } : {};
@@ -780,17 +783,20 @@ document.addEventListener('click', (e) => {
     lastOutcome = { title: S.say(game, ev.title), text: res.outcome, why: res.why, credit: res.credit, reaction: res.reaction, who: res.who };
     hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
     render();
-  } else if (action && !action.disabled) {
-    const note = S.takeAction(game, action.dataset.action, action.dataset.who);
-    const label = S.actionList(game).find((a) => a.id === note.actionId).label;
-    feed.push({ week: game.week, text: `${label}${note.who ? ` (${game.team[note.who].short})` : ''}: ${note.detail}` });
+  } else if (meeting && !meeting.disabled) {
+    M.setMeetingFocus(game, meeting.dataset.meeting);
+    render();
+  } else if (move && !move.disabled) {
+    const label = M.moveOptions(game).find((o) => o.id === move.dataset.move)?.label ?? move.dataset.move;
+    const note = M.takeMove(game, move.dataset.move);
+    feed.push({ week: game.week, text: `${label}: ${note.detail}` });
     render();
   }
 });
 
 $('start').onclick = startGame;
 $('end-week').onclick = () => {
-  S.advanceWeek(game);
+  M.endWeek(game);
   lastOutcome = null;
   if (game.over) {
     renderClock();

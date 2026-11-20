@@ -82,6 +82,23 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 .actions { display: grid; gap: .45rem; margin-bottom: .75rem; }
 .actions .help { display: block; font-size: .78rem; color: var(--quiet); }
+.signals, .meeting, .moves { margin-bottom: .9rem; }
+.signals h3, .meeting h3, .moves h3 { font-family: inherit; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--quiet); margin: 0 0 .4rem; font-weight: 600; }
+.moves h3 .muted { text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: .3rem; }
+.signals ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .35rem; }
+.sig { display: grid; grid-template-columns: .7rem 1fr; gap: .45rem; align-items: start; font-size: .88rem; }
+.sig .dot { width: .55rem; height: .55rem; border-radius: 50%; margin-top: .4rem; background: var(--quiet); }
+.sig.watch .dot { background: var(--warn); }
+.sig.urgent .dot { background: var(--bad); }
+.sig .hint { display: block; font-size: .78rem; color: var(--quiet); }
+.focus { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .45rem; }
+.focus .help { display: block; font-size: .78rem; color: var(--quiet); }
+.meeting .picked { font-size: .88rem; margin: 0; padding: .5rem .7rem; border-radius: 8px; background: var(--accent-bg); }
+.moves .group { margin-bottom: .5rem; }
+.action-who.off { opacity: .55; }
+.moves .group-h { font-size: .78rem; font-weight: 600; margin-bottom: .3rem; }
+.moves .cost { font-size: .72rem; border: 1px solid var(--rule); border-radius: 999px; padding: 0 .4rem; margin-left: .3rem; }
+.avoided { margin: 1rem 0; }
 .feed { list-style: none; padding: 0; margin: 0 0 1rem; font-size: .85rem; color: var(--quiet); }
 .feed li { padding: .2rem 0; }
 .report { font-size: .85rem; background: var(--accent-bg); border-radius: 8px; padding: .6rem .8rem; margin-bottom: 1rem; }

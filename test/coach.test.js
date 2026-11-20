@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as S from '../engine/sim.js';
 import { createGameAt } from '../engine/difficulty.js';
-import { goodHabits } from '../engine/montecarlo.js';
+import * as M from '../engine/moves.js';
+import { readTheBoard } from '../engine/montecarlo.js';
 import { TIPS, nextTip, seenTips, markSeen, tipsEnabled, setTipsEnabled } from '../app/coach.js';
 
 const load = (p) => JSON.parse(fs.readFileSync(new URL(`../content/${p}`, import.meta.url)));
@@ -27,13 +28,10 @@ function coachedRun(project, seed, { play = 'best', mode = 'standard' } = {}) {
       S.chooseOption(g, (play === 'best' ? sorted[0] : sorted.at(-1)).id);
       ask();
     }
-    for (const a of play === 'best' ? goodHabits(g) : ['overtime:mp', 'overtime:mp']) {
-      if (g.actionPoints <= 0) break;
-      const [id, who] = a.split(':');
-      S.takeAction(g, id, who);
-      ask();
-    }
-    S.advanceWeek(g);
+    if (play === 'best') readTheBoard(g);
+    else for (let i = 0; i < 2 && g.actionPoints > 0; i++) M.takeMove(g, 'overtime:mp');
+    ask();
+    M.endWeek(g);
   }
   assert.equal(nextTip(g, new Set()), null, 'no tip once the course has launched');
   return { g, shown };
@@ -80,7 +78,7 @@ test('no tip leaves a name unfilled or gives away a situation option, in either 
       }
     }
   }
-  assert.equal(TIPS.length, 11);
+  assert.equal(TIPS.length, 12);
   const story = createGameAt(S, { world, project: intro, deck, seed: 'ap', difficulty: 'story' });
   assert.match(nextTip(story).text, /3 Action Points/);
 });

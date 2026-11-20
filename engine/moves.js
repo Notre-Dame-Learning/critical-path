@@ -312,7 +312,7 @@ export function avoided(g) {
   const m = v2(g);
   return m.prevented.map((id) => {
     const e = g.deck.find((x) => x.id === id);
-    return { eventId: id, title: S.say(g, e.title), move: S.say(g, e.prevent?.move ?? ''), concept: S.say(g, e.debrief.concept) };
+    return { eventId: id, title: S.say(g, e.title), move: e.prevent?.move ? S.say(g, e.prevent.move) : S.say(g, 'You asked about {faculty}\'s workload in the weekly meeting'), concept: S.say(g, e.debrief.concept) };
   });
 }
 
