@@ -349,7 +349,8 @@ function applyEffect(state, fx) {
 
 function simulateWeek(state, rng, { nominal = false } = {}) {
   const pressure = nominal ? 0 : schedulePressure(state);
-  const entry = { week: state.week, pressure: round(pressure, 2), hours: {}, errorRate: {}, discovered: 0, completed: [] };
+  // work: per person, hours spent by task ({ task, new, fix }) and hours left idle (nothing ready).
+  const entry = { week: state.week, pressure: round(pressure, 2), hours: {}, errorRate: {}, discovered: 0, completed: [], work: {}, idle: {} };
 
   for (const role of ROLES) {
     const person = state.team[role];
@@ -362,6 +363,7 @@ function simulateWeek(state, rng, { nominal = false } = {}) {
     );
     entry.hours[role] = round(hours, 1);
     entry.errorRate[role] = round(errorRate, 2);
+    const spent = [];
 
     for (const t of state.tasks) {
       if (hours <= 0) break;
@@ -375,7 +377,10 @@ function simulateWeek(state, rng, { nominal = false } = {}) {
       t.done += fresh;
       hours -= fresh;
       t.hidden += (fix + fresh) * errorRate;
+      if (fix + fresh > 0) spent.push({ task: t.id, new: round(fresh, 1), fix: round(fix, 1) });
     }
+    entry.work[role] = spent;
+    entry.idle[role] = round(Math.max(0, hours), 1);
   }
 
   if (!nominal) {
@@ -399,6 +404,8 @@ function simulateWeek(state, rng, { nominal = false } = {}) {
       const p = state.team[role];
       p.morale = clamp(p.morale + (70 - p.morale) * 0.1 - 6 * pressure, 0, 100);
     }
+    entry.morale = Object.fromEntries(STAFF.map((r) => [r, round(state.team[r].morale)]));
+    entry.trust = round(state.team.faculty.trust);
   }
   return entry;
 }

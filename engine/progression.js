@@ -2,6 +2,7 @@
 // Rules: "Progression" tab of the framework doc. Reads the finished game state only; sim.js is unchanged.
 import * as S from './sim.js';
 import { TRACKS, TRACK_LABEL, LEVELS, levelOf, tracksOf } from './tracks.js';
+import { cleanPlayer } from './player.js';
 
 export { TRACKS, TRACK_LABEL, LEVELS, levelOf };
 
@@ -193,6 +194,8 @@ export function importCode(code) {
     clean.runs = p.runs.filter((r) => r && typeof r.project === 'string').slice(-200);
     clean.missions = Array.isArray(p.missions) ? p.missions.slice(-400) : [];
     clean.missionStreak = Number(p.missionStreak) || 0;
+    const player = cleanPlayer(p.player);
+    if (player) clean.player = player;
     return clean;
   } catch { return null; }
 }

@@ -1,5 +1,5 @@
 // Original drawn portraits for the cast, with five expressions.
-// spec: { skin, hair, style: 'long'|'short'|'bob'|'curly', shirt, glasses, beard }
+// spec: { skin, hair, style: 'long'|'short'|'bob'|'curly'|'bald', shirt, glasses, beard }
 // mood: 'happy' | 'neutral' | 'worried' | 'sad' | 'frustrated'
 
 export const MOODS = ['happy', 'neutral', 'worried', 'sad', 'frustrated'];
@@ -86,6 +86,8 @@ function hairFront(s) {
       return `<path d="M35 46 Q38 21 60 21 Q83 21 85 46 Q74 33 58 33 Q46 34 35 46 Z" fill="${s.hair}"/>`;
     case 'bob':
       return `<path d="M34 50 Q35 21 60 20 Q86 21 86 48 Q72 38 64 30 Q56 40 34 50 Z" fill="${s.hair}"/>`;
+    case 'bald':
+      return '';
     case 'curly':
       return `<g fill="${s.hair}">${[[40, 34], [48, 26], [58, 23], [68, 24], [77, 29], [83, 38], [37, 43], [53, 30], [64, 31]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="8"/>`).join('')}</g>`;
     default:

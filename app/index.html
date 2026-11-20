@@ -19,13 +19,13 @@
   </header>
 
   <main id="main">
+    <section class="card desk" id="desk" aria-label="Your desk" hidden></section>
     <section class="intro card" id="intro" hidden>
-      <div id="rank-line"></div>
-      <h2>Pick your project</h2>
+      <h2 class="step-h"><span class="num">1</span>Pick your project</h2>
       <div class="projects" id="projects" role="radiogroup" aria-label="Project"></div>
       <div class="plan-entry" id="plan-entry"></div>
 
-      <h2>Pick your mode</h2>
+      <h2 class="step-h"><span class="num">2</span>Pick your mode</h2>
       <div class="modes" role="radiogroup" aria-label="Mode">
         <label class="mode"><input type="radio" name="mode" id="mode-standard" value="standard" checked>
           <span><strong>Standard</strong><small>Choose from several options when a situation comes up. One is best; others are partly right.</small></span></label>
@@ -34,12 +34,12 @@
       </div>
       <p class="muted small" id="ai-note"></p>
 
-      <h2>Pick your pace</h2>
+      <h2 class="step-h"><span class="num">3</span>Pick your pace</h2>
       <div class="modes" id="difficulty" role="radiogroup" aria-label="Pace"></div>
       <div id="run-code-box"></div>
       <label class="tips-toggle"><input type="checkbox" id="tips-on" checked> Tips from Dwayneah as you play <small>(each shows once)</small></label>
 
-      <h2>Your team</h2>
+      <h2 class="step-h"><span class="num">4</span>Meet your team</h2>
       <div class="cast" id="cast"></div>
       <ul class="how">
         <li>Each turn is one week. You meet your faculty partner every week: pick that meeting's focus (free), spend <strong>Action Points</strong> on team moves, then end the week.</li>
@@ -54,16 +54,17 @@
       <section class="card status" id="status" aria-label="Where the project stands"></section>
       <div class="grid">
         <section class="card turn" aria-labelledby="turn-h">
-          <h2 id="turn-h">This week</h2>
+          <div class="week-top"><h2 id="turn-h">This week</h2><div id="stepper"></div></div>
           <div id="coach"></div>
-          <div id="report"></div>
           <div id="event"></div>
           <div id="actions"></div>
-          <ul class="feed" id="feed"></ul>
-          <button class="primary" id="end-week">End week</button>
+          <section class="step end-step" id="end-step">
+            <div class="step-head" id="end-head"></div>
+            <button class="primary big" id="end-week">End week</button>
+          </section>
         </section>
-        <section class="card" aria-labelledby="team-h">
-          <h2 id="team-h">People</h2>
+        <section class="card team-card" aria-labelledby="team-h">
+          <h2 id="team-h">Your team</h2>
           <div id="team"></div>
         </section>
       </div>

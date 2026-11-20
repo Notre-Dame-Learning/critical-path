@@ -45,7 +45,7 @@ test('the debrief lists situations headed off and scope moved after launch, esca
   for (let i = 0; i < 20 && !g?.v2?.prevented?.length; i++) g = playOnce({ world, project: intro, deck, seed: `av${i}`, policy: 'best' });
   const html = avoidedHtml(M.avoided(g), [{ task: 'post', hours: 4.2, week: 9 }], g, esc);
   assert.match(html, /What you avoided/);
-  assert.equal((html.match(/class="lesson folded"/g) ?? []).length, g.v2.prevented.length);
+  assert.equal((html.match(/class="lesson folded avoided-item"/g) ?? []).length, g.v2.prevented.length);
   assert.match(html, /about 4 hours of post-production/);
   assert.equal(avoidedHtml([], [], g, esc), '');
   const odd = avoidedHtml([{ title: '<b>x</b>', move: '', concept: '' }], [], g, esc);

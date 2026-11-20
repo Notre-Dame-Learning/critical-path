@@ -1,6 +1,10 @@
 import * as S from '../engine/sim.js';
 import * as M from '../engine/moves.js';
-import { signalsHtml, meetingHtml, movesHtml, avoidedHtml } from './moves-view.js';
+import { signalsHtml, meetingHtml, movesHtml, avoidedHtml, stepperHtml } from './moves-view.js';
+import { teamHtml } from './team-view.js';
+import { icon } from './icons.js';
+import { defaultPlayer, randomPlayer, cleanPlayer } from '../engine/player.js';
+import { deskHtml, avatarMakerHtml } from './home-view.js';
 import { avatarSVG } from './avatars.js';
 import { createGameAt } from '../engine/difficulty.js';
 import { defaultDifficulty, rememberDifficulty, difficultyHtml, pickedDifficulty } from './difficulty-picker.js';
@@ -8,7 +12,7 @@ import { pickSeed, runCodeHtml } from './run-code.js';
 import * as C from '../engine/conversation.js';
 import { nextTip, seenTips, markSeen, tipsEnabled, setTipsEnabled } from './coach.js';
 import * as P from '../engine/progression.js';
-import { loadProfile, saveProfile, rankLineHtml, xpPanelHtml, profileHtml } from './profile-view.js';
+import { loadProfile, saveProfile, xpPanelHtml, profileHtml } from './profile-view.js';
 import * as I from '../engine/impact.js';
 import * as G from '../engine/debrief-gm.js';
 import { mountPlanEditor } from './plan-screen.js';
@@ -24,6 +28,8 @@ let selectedProject = null;
 // Ranks are recognition only unless ?locks=1 (Progression tab, open question 1).
 const LOCKS = new URLSearchParams(location.search).get('locks') === '1';
 let profileReturn = 'intro';
+// The avatar maker on the start screen: null when closed, else the draft being edited.
+let maker = null;
 let planner = null;
 // Hard mode: the player's written answer for the current situation, and where it is in grading.
 let hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
@@ -93,7 +99,8 @@ function showIntro() {
   $('profile').hidden = true;
   closePlannerView();
   $('intro').hidden = false;
-  $('rank-line').innerHTML = rankLineHtml(loadProfile(localStore()), esc);
+  $('desk').hidden = false;
+  renderDesk();
   renderClock();
   renderProjects();
   renderAiNote();
@@ -103,6 +110,49 @@ function showIntro() {
   const w = content.world;
   const cast = [...w.people.map((p) => [p, p.role]), [w.supervisor, w.supervisor.role]];
   $('cast').innerHTML = cast.map(([p, role]) => `<figure class="cast-member">${avatarSVG(p.avatar, 'happy', { size: 64, label: p.name })}<figcaption><strong>${esc(p.name)}</strong><span>${esc(role)}</span></figcaption></figure>`).join('');
+}
+
+// ---------- your desk (start screen) and the avatar maker ----------
+
+function renderDesk() {
+  const profile = loadProfile(localStore()) ?? P.newProfile();
+  $('desk').innerHTML = maker
+    ? avatarMakerHtml(maker.draft, esc, { avatarSVG, mood: maker.mood })
+    : deskHtml(profile, esc, { avatarSVG });
+  const name = $('av-name');
+  if (name) name.oninput = () => { maker.draft.name = name.value; };
+}
+
+function openMaker() {
+  const current = player();
+  maker = { draft: structuredClone(current ?? defaultPlayer()), mood: 'happy' };
+  renderDesk();
+  $('desk').scrollIntoView?.({ block: 'start' });
+}
+
+function saveMaker() {
+  const profile = loadProfile(localStore()) ?? P.newProfile();
+  profile.player = cleanPlayer(maker.draft);
+  saveProfile(localStore(), profile);
+  maker = null;
+  renderDesk();
+}
+
+function makerClick(e) {
+  if (e.target.closest('#edit-avatar') || e.target.closest('#make-avatar')) { openMaker(); return true; }
+  if (!maker) return false;
+  const part = e.target.closest('[data-av]');
+  const tog = e.target.closest('[data-av-toggle]');
+  const mood = e.target.closest('[data-av-mood]');
+  if (part) maker.draft.avatar[part.dataset.av] = part.dataset.val;
+  else if (tog) maker.draft.avatar[tog.dataset.avToggle] = !maker.draft.avatar[tog.dataset.avToggle];
+  else if (mood) maker.mood = mood.dataset.avMood;
+  else if (e.target.closest('#av-random')) maker.draft = { ...randomPlayer(), name: maker.draft.name };
+  else if (e.target.closest('#av-save')) { saveMaker(); return true; }
+  else if (e.target.closest('#av-cancel')) { maker = null; renderDesk(); return true; }
+  else return false;
+  renderDesk();
+  return true;
 }
 
 function renderProjects() {
@@ -152,9 +202,11 @@ function startGame() {
 
 function showGame() {
   $('intro').hidden = true;
+  $('desk').hidden = true;
   $('end').hidden = true;
   $('game').hidden = false;
   render();
+  window.scrollTo?.(0, 0);
 }
 
 // ---------- people ----------
@@ -183,9 +235,11 @@ function renderClock() {
   const dots = Array.from({ length: game.actionPointsPerWeek }, (_, i) => `<span class="${i < game.actionPoints ? 'full' : ''}"></span>`).join('');
   $('clock').innerHTML = game.over
     ? '<strong>Launched</strong>'
-    : `<strong>Week ${game.week}</strong> of ${game.launchWeek}${game.mode === 'hard' ? ' · Hard' : ''}<br>Action Points <span class="ap" aria-label="${game.actionPoints} left">${dots}</span>`;
+    : `<span class="clock-me">${playerFace(40)}<span><strong>Week ${game.week}</strong> of ${game.launchWeek}${game.mode === 'hard' ? ' · Hard' : ''}<br>Action Points <span class="ap" aria-label="${game.actionPoints} left">${dots}</span></span></span>`;
 }
 
+// Locked design (owner, Nov 20): the status card (schedule gauge, phase bars, in-progress chips, full plan)
+// looks right as it is. Change its layout or styles only when the owner asks.
 function renderStatus() {
   const st = S.scheduleStatus(game);
   const started = game.log.length > 0;
@@ -238,18 +292,23 @@ function meter(label, value) {
   return `<div class="meter"><span>${label}</span><div class="bar ${cls}"><i style="width:${Math.round(value)}%"></i></div><span class="val">${Math.round(value)}</span></div>`;
 }
 
+// The player's avatar, from the profile (the avatar maker on the start screen).
+function player() {
+  return loadProfile(localStore())?.player ?? null;
+}
+// Your face follows the schedule: happy when on track or ahead, worried when behind, frustrated when far behind.
+function playerMood() {
+  if (!game || !game.log.length) return 'happy';
+  const label = S.scheduleStatus(game).label;
+  return label === 'far-behind' ? 'frustrated' : label === 'behind' ? 'worried' : 'happy';
+}
+function playerFace(size, mood = playerMood()) {
+  const p = player() ?? defaultPlayer();
+  return avatarSVG(p.avatar, mood, { size, label: p.name || 'You' });
+}
+
 function renderTeam() {
-  const row = (r, body) => `<div class="person">${face(r, null, 46)}<div class="person-body">${body}</div></div>`;
-  const staff = S.STAFF.map((r) => {
-    const p = game.team[r];
-    return row(r, `<div class="name">${esc(p.name)}</div><div class="role">${esc(p.role)}</div>${meter('Morale', p.morale)}`);
-  });
-  const f = game.team.faculty;
-  $('team').innerHTML = [
-    ...staff,
-    row('faculty', `<div class="name">${esc(f.name)}</div><div class="role">Faculty partner</div>${meter('Trust', f.trust)}`),
-    row('sup', `<div class="name">${esc(game.supervisor.name)}</div><div class="role">${esc(game.supervisor.role)} · you can escalate to ${esc(game.supervisor.short)}</div>`),
-  ].join('');
+  $('team').innerHTML = teamHtml(game, { face, esc, player: player(), playerFace: playerFace(52) });
 }
 
 function renderCoach() {
@@ -263,10 +322,6 @@ function renderCoach() {
 
 function renderTurn() {
   renderCoach();
-  const last = game.log.at(-1);
-  $('report').innerHTML = last && last.week === game.week - 1
-    ? `<div class="report"><strong>Week ${last.week} recap.</strong> ${weekSummary(last)}</div>`
-    : '';
 
   const ev = S.currentEvent(game);
   if (ev) {
@@ -304,10 +359,12 @@ function renderTurn() {
 
   // Weekly moves v2: signals, the meeting focus (free) and team moves (Action Points).
   const hints = P.rankOf(loadProfile(localStore()) ?? P.newProfile()).id === 'coordinator';
-  $('actions').innerHTML = signalsHtml(M.signals(game, { hints }), esc)
-    + meetingHtml(game, M.meetingOptions(game), esc, { blocked: Boolean(ev) })
-    + movesHtml(game, M.moveOptions(game), esc, face, { blocked: Boolean(ev) });
-  $('feed').innerHTML = feed.filter((f) => f.week === game.week).map((f) => `<li>${esc(f.text)}</li>`).join('');
+  $('stepper').innerHTML = stepperHtml(game, { situation: Boolean(ev) });
+  $('actions').innerHTML = `<div class="steps ${ev ? 'waiting' : ''}">${signalsHtml(M.signals(game, { hints }), esc)
+    + meetingHtml(game, M.meetingOptions(game), esc, { blocked: Boolean(ev), facultyFace: face('faculty', null, 52) })
+    + movesHtml(game, M.moveOptions(game), esc, face, { blocked: Boolean(ev) })}</div>`;
+  const launch = game.week === game.launchWeek;
+  $('end-head').innerHTML = `${icon('end', { size: 44, tone: 'rose' })}<div class="step-title"><span class="step-n">Step 4</span><h3>${launch ? 'Launch day' : 'End the week'}</h3><span class="small muted">${ev ? 'Handle the situation first.' : game.weekFlags.meeting ? 'The team works through the week, then you see where the hours went.' : 'No meeting focus picked: it will be a routine status meeting.'}</span></div>`;
   $('end-week').disabled = Boolean(ev);
   $('end-week').textContent = game.week === game.launchWeek ? 'Launch the course' : `End week ${game.week}`;
 }
@@ -337,15 +394,6 @@ function renderEvent(ev) {
       ${grading ? '<button id="stop-grading">Stop</button>' : ''}
       ${hard.allowPick && !grading ? '<button id="pick-instead">Pick the closest option instead</button>' : ''}
     </div></div>`;
-}
-
-function weekSummary(entry) {
-  const n = (r) => (r === 'faculty' ? game.team.faculty.short : game.team[r].short);
-  const parts = [`${n('ld')} ${entry.hours.ld}h, ${n('mp')} ${entry.hours.mp}h, ${n('gd')} ${entry.hours.gd}h, ${n('faculty')} ${entry.hours.faculty}h.`];
-  if (entry.completed.length) parts.push(`Finished: ${entry.completed.map((id) => game.tasks.find((t) => t.id === id).name).join(', ')}.`);
-  if (entry.discovered >= 1) parts.push(`${entry.discovered}h of rework surfaced.`);
-  if (entry.pressure >= 0.3) parts.push('The team is feeling schedule pressure.');
-  return esc(parts.join(' '));
 }
 
 function renderEnd() {
@@ -699,6 +747,7 @@ function renderTalk(ev) {
 function showPlanner() {
   const project = content.projects.find((p) => p.id === selectedProject);
   $('intro').hidden = true;
+  $('desk').hidden = true;
   $('end').hidden = true;
   $('game').hidden = true;
   $('profile').hidden = true;
@@ -721,6 +770,7 @@ function showProfile() {
   profileReturn = !$('end').hidden ? 'end' : 'intro';
   const profile = loadProfile(localStore()) ?? P.newProfile();
   $('intro').hidden = true;
+  $('desk').hidden = true;
   $('end').hidden = true;
   $('game').hidden = true;
   $('profile').hidden = false;
@@ -757,6 +807,7 @@ document.addEventListener('change', (e) => {
 });
 
 document.addEventListener('click', (e) => {
+  if (makerClick(e)) return;
   if (e.target.closest('#open-profile')) { showProfile(); return; }
   if (e.target.closest('#open-plan')) { showPlanner(); return; }
   if (e.target.closest('#profile-close')) { closeProfile(); return; }
