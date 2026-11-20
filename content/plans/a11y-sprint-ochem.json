@@ -5,9 +5,9 @@
   "gate": 2,
   "tasks": {
     "audit": {"start":1,"end":1,"est":[4,5,7],"deps":[],"backup":null,"locked":false},
-    "captions": {"start":1,"end":2,"est":[12,15,20],"deps":["audit"],"backup":null,"locked":false},
-    "alttext": {"start":1,"end":2,"est":[9,11,15],"deps":["audit"],"backup":null,"locked":false},
-    "docs": {"start":1,"end":2,"est":[8,10,14],"deps":["audit"],"backup":"gd","locked":false},
+    "captions": {"start":1,"end":3,"est":[15,19,26],"deps":["audit"],"backup":null,"locked":false},
+    "alttext": {"start":1,"end":2,"est":[10,12,16],"deps":["audit"],"backup":null,"locked":false},
+    "docs": {"start":1,"end":2,"est":[9,11,15],"deps":["audit"],"backup":"gd","locked":false},
     "facultyreview": {"start":2,"end":2,"est":[3,4,5],"deps":["alttext","docs"],"backup":null,"locked":false},
     "qa": {"start":3,"end":3,"est":[4,5,7],"deps":["captions","facultyreview"],"backup":"mp","locked":false},
     "handoff": {"start":4,"end":4,"est":[2,2,3],"deps":["qa"],"backup":null,"locked":false}

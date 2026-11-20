@@ -346,14 +346,14 @@
         },
         "chance": 0.45
       },
-      "text": "{faculty} hasn't answered {ld}'s or {mp}'s last emails. Scripts are due in two weeks. {ld}: \"I've sent three messages. {mp} sent two more.\"",
+      "text": "{faculty} has skipped the last two weekly meetings and hasn't answered {ld}'s or {mp}'s emails. Scripts are due in two weeks. {ld}: \"I've sent three messages. {mp} sent two more.\"",
       "choices": [
         {
           "id": "streamline-checkins",
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Route all requests through you, and propose a standing 15-minute Friday check-in plus comments in the script Google Docs.",
+          "label": "Route all requests through you, ask {fobj} what would make the weekly meeting worth {fpos} time, and move script feedback into comments in the Google Docs.",
           "effects": [
             {
               "type": "trust",
@@ -365,8 +365,8 @@
               "weeks": 5
             }
           ],
-          "outcome": "{faculty} accepts the Friday slot. Fewer emails, faster answers.",
-          "why": "For hard-to-reach faculty the SOP says streamline communication through as few people as possible, limit emails, and use short check-ins and async comments."
+          "outcome": "{faculty} admits the meetings felt like status updates. You refocus them on drafts; {fsub}'s back the next week.",
+          "why": "For hard-to-reach faculty the SOP says streamline communication through as few people as possible, limit emails, and make the time you do have together count."
         },
         {
           "id": "long-email",
@@ -455,7 +455,7 @@
       ],
       "debrief": {
         "concept": "Stakeholder communication: fit the channel to the person.",
-        "independent": "Find out how the faculty member prefers to communicate. Funnel requests through one person, keep emails few and short, and use brief standing check-ins and doc comments.",
+        "independent": "Find out how the faculty member prefers to communicate and what would make the weekly meeting useful to them. Funnel requests through one person, keep emails few and short, and use doc comments for feedback.",
         "escalateWhen": "Bring in ODL leadership when silence persists after you've changed the approach and the delivery date is at risk.",
         "sop": "PM SOP: Challenging Faculty; Faculty Availability"
       }
@@ -910,6 +910,13 @@
         "independent": "As soon as production dates are known, block them on the media team's calendar. When a path stalls, re-sequence other work (placeholders in the master site).",
         "escalateWhen": "Escalate for shared-resource conflicts you can't resolve with the other project's PM.",
         "sop": "PM SOP: Design phase (block media calendars); LD SOP: placeholders"
+      },
+      "prevent": {
+        "risk": "The media calendar is shared, and production days aren't blocked yet.",
+        "move": "Block production days on the media calendar",
+        "when": {
+          "taskStarted": "scriptreview"
+        }
       }
     },
     {
@@ -1147,7 +1154,7 @@
           "tier": "resolve",
           "credit": 1.0,
           "reaction": "happy",
-          "label": "Learn how {fsub} reads email. Move key asks and dates to the top of the Friday weekly summary, and share a one-page development timeline.",
+          "label": "Learn how {fsub} reads email. Move key asks and dates to the top of the meeting summary, and share a one-page development timeline.",
           "effects": [
             {
               "type": "responsiveness",
@@ -1211,7 +1218,7 @@
       ],
       "debrief": {
         "concept": "Communication: match the channel to how the person actually reads.",
-        "independent": "Ask which messages they read; use meeting summaries and Friday weekly summaries deliberately, lead with asks and dates, and share a visible development timeline.",
+        "independent": "Ask which messages they read; put asks and dates at the top of every meeting summary, and share a visible development timeline.",
         "escalateWhen": "Not an escalation issue unless deadlines keep slipping after you've adapted.",
         "sop": "PM SOP: Summary emails; Challenging Faculty"
       }
@@ -1419,6 +1426,13 @@
         "independent": "Hold media to the distribution checklist for every asset, and track it where the team works.",
         "escalateWhen": "Escalate if captioning services or budget are unavailable.",
         "sop": "Media SOP: 7M Distribution"
+      },
+      "prevent": {
+        "risk": "Videos will start finishing soon, and nobody has ordered captions.",
+        "move": "Order captions as each video finishes",
+        "when": {
+          "taskStarted": "post"
+        }
       }
     },
     {
@@ -1505,6 +1519,13 @@
         "independent": "Agree one shared place (the asset list) where media hands assets to design, and make it part of the checklist.",
         "escalateWhen": "Not an escalation issue.",
         "sop": "Media SOP: 7M Distribution; LD SOP: Milestone 3 asset list"
+      },
+      "prevent": {
+        "risk": "Embed codes will be needed as soon as distribution finishes.",
+        "move": "Agree the embed-code hand-off with {mp}",
+        "when": {
+          "taskStarted": "distribution"
+        }
       }
     },
     {
@@ -1600,6 +1621,13 @@
         "independent": "Collect releases before anyone appears on camera when possible, and always before footage is shared. File them by the naming convention.",
         "escalateWhen": "Escalate if the person refuses to sign and the footage is essential.",
         "sop": "Media SOP: 2M Release Forms; PM SOP: Google Drive structure"
+      },
+      "prevent": {
+        "risk": "People on camera will need signed releases.",
+        "move": "Send release forms with every booking",
+        "when": {
+          "taskStarted": "production"
+        }
       }
     },
     {
@@ -1779,6 +1807,13 @@
         "independent": "Go to the people who own the question (library, copyright), and offer the faculty member options rather than a problem.",
         "escalateWhen": "Escalate if the faculty member refuses compliant alternatives.",
         "sop": "LD SOP: Development (placeholders for library reserves)"
+      },
+      "prevent": {
+        "risk": "Readings will be chosen soon, and some may need library clearance.",
+        "move": "Ask the library to clear readings early",
+        "when": {
+          "taskStarted": "coursemap"
+        }
       }
     },
     {
@@ -1934,6 +1969,13 @@
         "independent": "Plan the hand-off weeks ahead: document, deliverables, meeting, follow-ups. Then run the retrospective.",
         "escalateWhen": "Not an escalation issue.",
         "sop": "PM SOP: Delivery; Retrospective"
+      },
+      "prevent": {
+        "risk": "Launch is a few weeks out, and no hand-off meeting is booked.",
+        "move": "Book the hand-off meeting now",
+        "when": {
+          "taskStarted": "distribution"
+        }
       }
     },
     {
@@ -2463,6 +2505,11 @@
         "independent": "Verify licenses, replace what's unclear, and keep sources in the asset list.",
         "escalateWhen": "Escalate if a required asset can't be licensed.",
         "sop": "Media SOP: 6M Branding; LD SOP: Milestone 3 asset list"
+      },
+      "prevent": {
+        "risk": "{gd} is about to source images for the course branding.",
+        "move": "Check image licences before branding starts",
+        "when": {}
       }
     },
     {
@@ -2563,6 +2610,13 @@
         "independent": "Make requests visible in one place with dates, and coordinate with other PMs who share the person.",
         "escalateWhen": "Escalate when two projects' priorities genuinely conflict and the PMs can't agree.",
         "sop": "PM SOP: With Timelines (shifting work between team members)"
+      },
+      "prevent": {
+        "risk": "{gd} takes requests from more than one producer.",
+        "move": "Set up one request queue for {gd}",
+        "when": {
+          "taskStarted": "scriptreview"
+        }
       }
     },
     {
@@ -4127,7 +4181,7 @@
           6
         ],
         "requires": {
-          "taskStarted": "quizbank",
+          "taskStarted": "content",
           "taskNotDone": "quizbank"
         },
         "chance": 0.6
@@ -4144,7 +4198,7 @@
             {
               "type": "addEffort",
               "task": "quizbank",
-              "value": 1
+              "value": 3
             },
             {
               "type": "trust",

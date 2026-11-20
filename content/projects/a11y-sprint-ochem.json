@@ -28,7 +28,7 @@
       "name": "Correct captions on 24 lecture videos",
       "phase": "Fix",
       "owner": "mp",
-      "effort": 15,
+      "effort": 19,
       "dependsOn": [
         "audit"
       ]
@@ -38,7 +38,7 @@
       "name": "Alt text and accessible versions of chemical diagrams",
       "phase": "Fix",
       "owner": "gd",
-      "effort": 11,
+      "effort": 12,
       "dependsOn": [
         "audit"
       ]
@@ -48,7 +48,7 @@
       "name": "Remediate scanned PDFs and slide decks",
       "phase": "Fix",
       "owner": "ld",
-      "effort": 10,
+      "effort": 11,
       "dependsOn": [
         "audit"
       ]

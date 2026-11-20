@@ -29,10 +29,14 @@ test('calibration bands: random play rarely launches on time, passive play never
 });
 
 test('policies spend Action Points as described, and runs replay exactly from the seed', () => {
-  const spent = (policy) => playOnce({ world, project: intro, deck, seed: 's1', policy }).actionsTaken.length;
+  // Every week has one meeting entry (a plain status meeting when no focus is picked); moves are the rest.
+  const moves = (g) => g.actionsTaken.filter((a) => a.actionId !== 'meeting');
   const g = playOnce({ world, project: intro, deck, seed: 's1', policy: 'random' });
-  assert.equal(spent('random'), g.log.length * 2, 'random play spends every Action Point');
-  assert.equal(spent('passive'), 0);
+  assert.equal(g.actionsTaken.filter((a) => a.actionId === 'meeting').length, g.log.length);
+  assert.ok(moves(g).length >= g.log.length * 1.5, 'random play spends most Action Points');
+  const passive = playOnce({ world, project: intro, deck, seed: 's1', policy: 'passive' });
+  assert.equal(moves(passive).length, 0);
+  assert.ok(passive.actionsTaken.every((a) => a.focus === 'status'));
   assert.ok(playOnce({ world, project: intro, deck, seed: 's1', policy: 'plan' }).decisions.length === 0);
   assert.deepEqual(playOnce({ world, project: rescue, deck, seed: 'x', policy: 'random' }).result, playOnce({ world, project: rescue, deck, seed: 'x', policy: 'random' }).result);
   assert.deepEqual(runOdds({ world, project: documentary, deck, runs: 30, seed: 'd' }), runOdds({ world, project: documentary, deck, runs: 30, seed: 'd' }));

@@ -1,7 +1,9 @@
 // What mattered in a finished run: replay it from its record, test each situation answered the other
 // way plus two habits, and rank the moves by how much they changed the outcome. Design: "Debrief game
-// master" tab of the framework doc. sim.js is unchanged.
+// master" tab of the framework doc. sim.js is unchanged. Runs played with weekly moves v2 (moves.js)
+// replay through moves.js; older records (v1 actions) replay through sim.takeAction.
 import * as S from './sim.js';
+import * as M from './moves.js';
 import { createGameAt } from './difficulty.js';
 
 export const FUTURES = 30;
@@ -24,8 +26,29 @@ export function recordOf(state) {
         ...(talk ? { talk: { meter: talk.meter, who: talk.talkTo, meterAfter: talk.meterAfter, slipHours: talk.slipHours ?? 0, task: talk.commitTask } } : {}),
       };
     }),
-    actions: state.actionsTaken.map((a) => ({ week: a.week, actionId: a.actionId, ...(a.who ? { who: a.who } : {}) })),
+    moves: state.v2 ? 2 : 1,
+    actions: state.actionsTaken.map((a) => ({ week: a.week, actionId: a.actionId, ...(a.who ? { who: a.who } : {}), ...(a.target ? { target: a.target } : {}), ...(a.focus ? { focus: a.focus } : {}) })),
   };
+}
+
+// A recorded v2 entry back to its move id (null for the meeting, which has its own call).
+const V2_ID = { 'qa-review': () => 'review', 'status-update': () => 'status-update', 'team-meeting': () => 'team-meeting' };
+function moveIdOf(a) {
+  if (V2_ID[a.actionId]) return V2_ID[a.actionId]();
+  if (['checkin', 'overtime', 'backup'].includes(a.actionId)) return a.who ? `${a.actionId}:${a.who}` : null;
+  if (['defer', 'placeholder', 'prevent'].includes(a.actionId)) return `${a.actionId}:${a.target}`;
+  return null;
+}
+
+// Apply one recorded entry in a v2 replay. Moves not on offer under other luck are skipped.
+function applyV2(g, a) {
+  if (a.actionId === 'meeting') {
+    if (!g.weekFlags.meeting && (a.focus === 'status' || M.meetingOptions(g).some((o) => o.id === a.focus))) M.setMeetingFocus(g, a.focus);
+    return;
+  }
+  const id = moveIdOf(a);
+  if (id && M.moveOptions(g).some((o) => o.id === id && o.affordable)) M.takeMove(g, id);
+  else if (!id) M.applyLegacy(g, a.actionId);
 }
 
 // How the player answers a situation the record doesn't have (a replay on other luck brings up other
@@ -64,11 +87,16 @@ export function replay({ world, project, deck }, record, { seed = record.seed, c
     }
     let moves = record.actions.filter((a) => a.week === g.week);
     if (actions) moves = actions(g.week, moves);
-    for (const m of moves) {
-      if (g.actionPoints <= 0) break;
-      S.takeAction(g, m.actionId, m.who);
+    if (record.moves === 2) {
+      for (const m of moves) applyV2(g, m);
+      M.endWeek(g);
+    } else {
+      for (const m of moves) {
+        if (g.actionPoints <= 0) break;
+        S.takeAction(g, m.actionId, m.who);
+      }
+      S.advanceWeek(g);
     }
-    S.advanceWeek(g);
   }
   return g;
 }
@@ -98,11 +126,11 @@ export function candidates(state) {
   }
   const overtime = state.actionsTaken.filter((a) => a.actionId === 'overtime').length;
   if (overtime >= 2) {
-    out.push({ ref: 'habit:no-overtime', kind: 'habit', title: 'Overtime', playerDid: `Asked for extra hours ${overtime} times`, alternative: 'A team check-in instead of each overtime ask',
-      actions: (week, moves) => moves.map((m) => (m.actionId === 'overtime' ? { week, actionId: 'checkin' } : m)), concept: 'Sustainable pace' });
+    out.push({ ref: 'habit:no-overtime', kind: 'habit', title: 'Overtime', playerDid: `Asked for extra hours ${overtime} times`, alternative: 'A check-in with that person instead of each overtime ask',
+      actions: (week, moves) => moves.map((m) => (m.actionId === 'overtime' ? { week, actionId: 'checkin', ...(m.who ? { who: m.who } : {}) } : m)), concept: 'Sustainable pace' });
   }
   const weeks = state.log.length;
-  const checks = state.actionsTaken.filter((a) => a.actionId === 'checkin' || a.actionId === 'qa-review').length;
+  const checks = state.actionsTaken.filter((a) => a.actionId === 'checkin' || a.actionId === 'qa-review' || a.actionId === 'team-meeting').length;
   if (checks < weeks / 4) {
     const start = state.startWeek;
     out.push({ ref: 'habit:reviews', kind: 'habit', title: 'Internal reviews', playerDid: `${checks} check-ins or reviews in ${weeks} weeks`, alternative: 'An internal review every third week',

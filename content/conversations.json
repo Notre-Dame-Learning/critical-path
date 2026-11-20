@@ -8,7 +8,7 @@
       "commitTask": "scripts",
       "hidden_concern": "was handed an extra course section this term and is embarrassed to say so",
       "facts": [
-        "{faculty} hasn't answered {ld}'s or {mp}'s last five emails",
+        "{faculty} has skipped the last two weekly meetings and hasn't answered {ld}'s or {mp}'s last five emails",
         "Scripts are due to {mp} in two weeks",
         "Studio days are booked; the next opening is weeks later",
         "The course launches in week {launch}"

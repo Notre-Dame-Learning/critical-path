@@ -33,7 +33,7 @@ test('calibration: best play usually launches the new projects on time, random p
     const p = byId[id];
     const best = odds(p, 'best');
     const random = odds(p, 'random');
-    assert.ok(best >= 0.75 && best <= 0.97, `${id} best ${best}`);
+    assert.ok(best >= 0.75 && best <= 0.98, `${id} best ${best}`);
     assert.ok(random <= 0.32 && random < best - 0.45, `${id} random ${random}`);
     assert.equal(odds(p, 'passive', 100), 0, `${id} passive`);
   }

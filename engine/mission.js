@@ -3,7 +3,8 @@
 // Design: "Daily Mission" tab of the framework doc. sim.js is unchanged.
 import * as S from './sim.js';
 import { createGameAt } from './difficulty.js';
-import { goodHabits } from './montecarlo.js';
+import * as M from './moves.js';
+import { readTheBoard } from './montecarlo.js';
 import { makeRng } from './rng.js';
 import { TRACKS, TRACK_LABEL, levelOf, tracksOf } from './tracks.js';
 
@@ -38,12 +39,12 @@ function triggerMet(state, trig) {
 
 const inProject = (event, project) => !event.projects || event.projects.includes(project.id);
 
-// One steady week: answer any situation with its best choice, keep good habits, end the week.
+// One steady week: answer any situation with its best choice, read the board, end the week.
 function steadyWeek(g) {
   const ev = S.currentEvent(g);
   if (ev) S.chooseOption(g, S.bestChoice(ev).id);
-  for (const a of goodHabits(g)) if (g.actionPoints > 0) S.takeAction(g, a);
-  S.advanceWeek(g);
+  readTheBoard(g);
+  M.endWeek(g);
 }
 
 // Play the project as a steady PM (other situations live, answered well) until the mission's situation
@@ -65,8 +66,8 @@ export function stage({ world, project, deck, event, seed, difficulty = 'standar
       g.mission = { eventId: event.id, projectId: project.id, stagedWeek: g.week };
       return g;
     }
-    for (const a of goodHabits(g)) if (g.actionPoints > 0) S.takeAction(g, a);
-    S.advanceWeek(g);
+    readTheBoard(g);
+    M.endWeek(g);
   }
   return null;
 }

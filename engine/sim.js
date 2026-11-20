@@ -487,7 +487,8 @@ export function currentEvent(state) {
 // ---------- scoring and debrief ----------
 
 export function scorecard(state, finishedWeek) {
-  const totalEffort = state.tasks.reduce((s, t) => s + t.effort, 0);
+  // Work moved to after launch (weekly moves v2) still counts against "course complete".
+  const totalEffort = state.tasks.reduce((s, t) => s + t.effort, 0) + (state.deferredHours ?? 0);
   const hiddenLeft = state.tasks.reduce((s, t) => s + t.hidden, 0);
   const team = STAFF.reduce((s, r) => s + state.team[r].morale, 0) / STAFF.length;
   const judgment = state.decisions.length ? (100 * state.decisions.reduce((s, d) => s + d.credit, 0)) / state.decisions.length : null;

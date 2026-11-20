@@ -5,6 +5,7 @@ import * as S from '../engine/sim.js';
 import * as P from '../engine/progression.js';
 import { playOnce } from '../engine/montecarlo.js';
 import { profileHtml, xpPanelHtml, rankLineHtml } from '../app/profile-view.js';
+import { tracksOf } from '../engine/tracks.js';
 
 const load = (p) => JSON.parse(fs.readFileSync(new URL(`../content/${p}`, import.meta.url)));
 const world = load('world.json');
@@ -29,13 +30,16 @@ test('situation XP: 20 × credit primary, 8 × credit secondary, hard mode × 1.
   assert.equal(P.ACHIEVEMENTS.length, 11);
 });
 
-test('run XP: scorecard by track, habits capped at 8 per action, situations at their best credit', () => {
+test('run XP: scorecard by track, habits capped at 8 per move, situations headed off, situations at their best credit', () => {
   const g = run(intro, 'xp1');
   const { xp, situations } = P.runXp(g);
   const s = g.result.scores;
-  assert.equal(xp.capacity, Math.round(s.team) / 10);
-  assert.ok(Math.abs(xp.planning - (s.scope / 10 + (g.result.launchedOnTime ? 10 : 0))) < 0.11);
-  assert.ok(xp.leadership <= 8 && xp.communication <= 8 && xp.leadership > 0);
+  // Situations headed off pay PREVENT_XP on their primary track.
+  const headedOff = (track) => g.v2.prevented.filter((id) => tracksOf(deck.events.find((e) => e.id === id)).primary === track).length * P.PREVENT_XP;
+  assert.ok(g.v2.prevented.length > 0);
+  assert.ok(Math.abs(xp.capacity - (s.team / 10 + headedOff('capacity'))) < 0.11);
+  assert.ok(Math.abs(xp.planning - (s.scope / 10 + (g.result.launchedOnTime ? 10 : 0) + headedOff('planning'))) < 0.11);
+  assert.ok(xp.leadership - headedOff('leadership') <= 16 && xp.communication - headedOff('communication') <= 8 && xp.leadership > 0);
   assert.equal(Object.keys(situations).length, g.decisions.length);
   assert.ok(Object.values(situations).every((c) => c >= 0.95));
 });
@@ -66,8 +70,12 @@ test('ranks need XP and the gate: best play reaches PM in 1 run and Senior PM in
   assert.equal(P.rankOf(rich).id, 'coordinator');
   assert.equal(P.nextRank(rich).xpMet, true);
   assert.equal(P.nextRank(rich).gateMet, false);
+  // Random play rarely gets the gate: one random Intro run makes PM about one time in six.
+  const randomRuns = Array.from({ length: 40 }, (_, i) => run(intro, `rand${i}`, 'random'));
+  const madePm = randomRuns.filter((g) => P.rankOf(P.applyRun(P.newProfile(), g).profile).id === 'pm').length;
+  assert.ok(madePm <= 12, `random play made PM in ${madePm} of 40`);
   let q = P.newProfile();
-  for (let i = 0; i < 2; i++) q = P.applyRun(q, run(intro, `rand${i}`, 'random')).profile;
+  for (const g of randomRuns.filter((x) => !x.result.launchedOnTime).slice(0, 2)) q = P.applyRun(q, g).profile;
   assert.equal(P.rankOf(q).id, 'coordinator');
   // Locks are off by default; with ?locks=1 a Coordinator only has Intro in standard mode.
   assert.equal(P.unlocked(q).projects.length, projects.length);

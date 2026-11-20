@@ -5,7 +5,14 @@ import { TRACKS, TRACK_LABEL, LEVELS, levelOf, tracksOf } from './tracks.js';
 
 export { TRACKS, TRACK_LABEL, LEVELS, levelOf };
 
-export const HABIT_TRACK = { checkin: 'leadership', 'faculty-update': 'communication', 'qa-review': 'risk', 'working-session': 'stakeholders' };
+// Habit XP by logged move. v1 ids (older runs) and weekly moves v2 ids; a meeting counts only when the
+// player picked a focus (not the default status meeting).
+export const HABIT_TRACK = {
+  checkin: 'leadership', 'faculty-update': 'communication', 'qa-review': 'risk', 'working-session': 'stakeholders',
+  meeting: 'stakeholders', 'status-update': 'communication', 'team-meeting': 'leadership',
+};
+export const PREVENT_XP = 8; // a situation headed off (weekly moves v2): XP on its primary track
+const habitCount = (state, action) => state.actionsTaken.filter((a) => a.actionId === action && !(action === 'meeting' && a.focus === 'status')).length;
 export const HABIT_CAP = 8; // XP per action per run
 
 const PROJECT = {
@@ -77,7 +84,12 @@ export function runXp(state) {
   xp.risk += s.quality / 10;
   xp.capacity += s.team / 10;
   xp.stakeholders += s.faculty / 10;
-  for (const [action, track] of Object.entries(HABIT_TRACK)) xp[track] += Math.min(HABIT_CAP, state.actionsTaken.filter((a) => a.actionId === action).length);
+  for (const [action, track] of Object.entries(HABIT_TRACK)) xp[track] += Math.min(HABIT_CAP, habitCount(state, action));
+  for (const id of state.v2?.prevented ?? []) {
+    const ev = state.deck.find((e) => e.id === id);
+    const { primary } = ev ? tracksOf(ev) : {};
+    if (primary) xp[primary] += PREVENT_XP;
+  }
   const best = {};
   for (const d of state.decisions) best[d.eventId] = Math.max(best[d.eventId] ?? 0, d.credit * (state.mode === 'hard' ? 1.5 : 1));
   for (const t of TRACKS) xp[t] = round(xp[t]);
@@ -106,8 +118,8 @@ export const ACHIEVEMENTS = [
     earned: (g) => { const r = g.decisions.filter((d) => RIGHTS.includes(d.eventId)); return r.length >= 2 && r.every((d) => d.credit >= 0.95); } },
   { id: 'own-it', label: 'Own It', why: 'Five or more situations, every one resolved yourself (or escalated where that was best), judgment 90+',
     earned: (g) => g.decisions.length >= 5 && g.decisions.every((d) => d.tier === 'resolve' || (d.tier === 'escalate_plan' && isBest(g, d))) && (g.result.scores.judgment ?? 0) >= 90 },
-  { id: 'early-warning', label: 'Early Warning', why: 'A check-in or internal review in each of the first four weeks',
-    earned: (g) => [0, 1, 2, 3].every((k) => g.actionsTaken.some((a) => a.week === g.startWeek + k && (a.actionId === 'checkin' || a.actionId === 'qa-review'))) },
+  { id: 'early-warning', label: 'Early Warning', why: 'Headed off three or more situations before they came up',
+    earned: (g) => (g.v2?.prevented?.length ?? 0) >= 3 },
   { id: 'rescuer', label: 'Rescuer', why: 'Launched the Rescue on time', earned: (g) => g.result.launchedOnTime && (g.projectRef ?? g.project.id) === PROJECT.rescue },
   { id: 'brooks-was-right', label: 'Brooks Was Right', why: 'Missed launch after asking for overtime 4+ times', earned: (g) => !g.result.launchedOnTime && count(g, 'overtime') >= 4 },
 ];

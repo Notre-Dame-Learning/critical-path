@@ -5,7 +5,8 @@
 import fs from 'node:fs';
 import * as S from '../engine/sim.js';
 import { createGameAt } from '../engine/difficulty.js';
-import { goodHabits } from '../engine/montecarlo.js';
+import * as M from '../engine/moves.js';
+import { readTheBoard } from '../engine/montecarlo.js';
 import { applyVerdict } from '../engine/conversation.js';
 
 const root = new URL('../', import.meta.url);
@@ -30,8 +31,8 @@ function play(project, conv, verdict, seed) {
     const ev = S.currentEvent(g);
     if (ev?.id === conv.eventId) { applyVerdict(g, conv, verdict, [{ from: 'player', text: '…' }]); met = true; }
     else if (ev) S.chooseOption(g, S.bestChoice(ev).id);
-    for (const a of goodHabits(g)) if (g.actionPoints > 0) S.takeAction(g, a);
-    S.advanceWeek(g);
+    readTheBoard(g);
+    M.endWeek(g);
   }
   return { met, onTime: g.result.launchedOnTime, meter: conv.meter === 'trust' ? g.team.faculty.trust : conv.meter === 'morale' ? g.team[conv.talkTo].morale : null };
 }
