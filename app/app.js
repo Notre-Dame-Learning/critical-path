@@ -9,6 +9,7 @@ import * as P from '../engine/progression.js';
 import { loadProfile, saveProfile, rankLineHtml, xpPanelHtml, profileHtml } from './profile-view.js';
 import * as I from '../engine/impact.js';
 import * as G from '../engine/debrief-gm.js';
+import { mountPlanEditor } from './plan-screen.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -21,6 +22,7 @@ let selectedProject = null;
 // Ranks are recognition only unless ?locks=1 (Progression tab, open question 1).
 const LOCKS = new URLSearchParams(location.search).get('locks') === '1';
 let profileReturn = 'intro';
+let planner = null;
 // Hard mode: the player's written answer for the current situation, and where it is in grading.
 let hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
 // Hard mode, six situations: a conversation with the stakeholder, played by Claude (engine/conversation.js).
@@ -87,6 +89,7 @@ function showIntro() {
   $('end').hidden = true;
   $('game').hidden = true;
   $('profile').hidden = true;
+  closePlannerView();
   $('intro').hidden = false;
   $('rank-line').innerHTML = rankLineHtml(loadProfile(localStore()), esc);
   renderClock();
@@ -122,6 +125,10 @@ function renderProjects() {
       <span class="small muted">With ${esc(fac.name)} · ${weeks} weeks${p.startWeek ? `, you join in week ${p.startWeek}` : ''}</span></span>
     </label>`;
   }).join('');
+  const chosen = content.projects.find((p) => p.id === selectedProject);
+  $('plan-entry').innerHTML = open.plan.includes('build') && chosen
+    ? `<button type="button" id="open-plan">Build the plan for ${esc(chosen.title)}</button><small class="muted">Or plan it before you run it: set each task's weeks, links and backup, and eight checks grade the plan as you go.</small>`
+    : '<small class="muted">Build the Plan unlocks at Project Manager.</small>';
 }
 
 function startGame() {
@@ -685,6 +692,27 @@ function renderTalk(ev) {
     ${status}${controls}</div>`;
 }
 
+// ---------- Build the Plan ----------
+
+function showPlanner() {
+  const project = content.projects.find((p) => p.id === selectedProject);
+  $('intro').hidden = true;
+  $('end').hidden = true;
+  $('game').hidden = true;
+  $('profile').hidden = true;
+  $('planner').hidden = false;
+  planner?.unmount();
+  const rank = P.rankOf(loadProfile(localStore()) ?? P.newProfile()).id;
+  planner = mountPlanEditor($('planner'), { project, world: content.world, store: localStore(), rank, onExit: showIntro });
+  window.scrollTo?.(0, 0);
+}
+
+function closePlannerView() {
+  planner?.unmount();
+  planner = null;
+  $('planner').hidden = true;
+}
+
 // ---------- profile ----------
 
 function showProfile() {
@@ -728,6 +756,7 @@ document.addEventListener('change', (e) => {
 
 document.addEventListener('click', (e) => {
   if (e.target.closest('#open-profile')) { showProfile(); return; }
+  if (e.target.closest('#open-plan')) { showPlanner(); return; }
   if (e.target.closest('#profile-close')) { closeProfile(); return; }
   if (e.target.closest('#profile-copy')) { copyProfileCode(); return; }
   if (e.target.closest('#profile-import')) { importProfileCode(); return; }

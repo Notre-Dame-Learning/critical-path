@@ -23,6 +23,7 @@ Then open `http://localhost:8080/app/`. Type a **run code** (for example `fellow
 - **Hard mode:** write your answer. When the game runs inside Claude, Claude grades it against the situation's options (the rubric); elsewhere, such as GitHub Pages, you pick the option closest to what you wrote. Six situations are talked through instead: Claude plays the stakeholder for up to four replies, then returns a verdict the engine checks and maps to one of the situation's options (`engine/conversation.js`, `content/conversations.json`, `content/stakeholders.json`).
 - **Pace:** Story (one more Action Point a week, a week of buffer, a rested team) for a first run, or Standard, the real ODL pace. Set in `engine/difficulty.js`.
 - **Progression:** every finished run adds XP on eight skill tracks, achievements and a rank (shown on the start screen and in Your profile). Ranks are recognition only; add `?locks=1` to the URL to lock projects and modes by rank.
+- **Build the Plan (in progress):** on the start screen, *Build the plan for …* opens the plan editor for the selected project (`app/plan-screen.js`): a timeline of task bars (tap for the task sheet: weeks, estimate, links, backup; on a computer drag bars and ends or use ← →), an Unscheduled tray, and a live checks panel with the eight checks, team load strips and what blocks Submit. Drafts save per project in the browser. The touchpoint calendar, risk register, odds meter and scoring come next.
 - **Schedule gauge:** compares finished work with the pace needed to launch on time (earned schedule), in weeks ahead or behind.
 
 ## How it works
@@ -42,7 +43,7 @@ engine/    simulation rules (sim.js), seeded random numbers (rng.js), Story pace
            progression: XP, ranks, achievements and profile codes (progression.js),
            the AI end-of-run debrief: replay and ranked moves (impact.js), packet, prompt and checks (debrief-gm.js)
 content/   world.json (people), projects/, scenarios/, plans/ (Build the Plan baselines), flaws/ and critique-samples.json (Critique the Plan)  — plain JSON, edit freely
-app/       the browser game (no build step)
+app/       the browser game (no build step); plan-edit.js, plan-layout.js and plan-screen.js are the Build the Plan editor
 test/      engine tests: npm test
 scripts/   bundle.mjs, talks.mjs (npm run talks: what talking it through is worth), missions.mjs (npm run missions: Daily Mission staging report), odds.mjs (npm run odds: on-time odds by project and policy), plans.mjs (npm run plans: baseline checks and odds; -- --write rebuilds them), grade-testset.mjs (hard-mode grading test set), pending.mjs (upload queue)
 docs/      build notes
