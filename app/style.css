@@ -606,7 +606,7 @@ button.big { font-size: 1.05rem; padding: .8rem 1rem; border-radius: 12px; }
   .clock-me .avatar { display: none; }
 }
 
-/* ---------- Frozen top on desktop: header (with the week's steps) and the status card ---------- */
+/* ---------- Frozen header on desktop, with the week's steps ---------- */
 .top-steps:empty { display: none; }
 .top-steps { align-self: center; }
 .top-steps .stepper { justify-content: center; }
@@ -617,9 +617,7 @@ button.big { font-size: 1.05rem; padding: .8rem 1rem; border-radius: 12px; }
 .tiles.three .tile .pips { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; }
 .tiles.three .tile .tile-text { grid-column: 1 / -1; grid-row: 2; }
 @media (min-width: 861px) {
-  body:has(#game:not([hidden])) .top { position: sticky; top: 0; z-index: 30; background: var(--bg); }
-  body:has(#game:not([hidden])) #status { position: sticky; top: var(--top-h, 92px); z-index: 20; box-shadow: 0 -16px 0 var(--bg), 0 10px 18px -12px rgba(0, 0, 0, .25); }
-  body:has(#game:not([hidden])) #status .plan-list { max-height: 34vh; overflow-y: auto; }
+  body:has(#game:not([hidden])) .top { position: sticky; top: 0; z-index: 30; background: var(--bg); box-shadow: 0 8px 14px -12px rgba(0, 0, 0, .3); }
 }
 @media (min-width: 861px) and (max-width: 1180px) {
   body:has(#game:not([hidden])) .top .sub { display: none; }

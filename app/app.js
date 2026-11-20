@@ -878,17 +878,6 @@ function randomSeed() {
   return Math.random().toString(36).slice(2, 8);
 }
 
-// Desktop: the header and the status card stay frozen at the top while the week scrolls under them.
-// The status card sticks just below the header, whose height changes with the steps and the clock.
-function trackHeaderHeight() {
-  const top = document.querySelector('.top');
-  if (!top) return;
-  const set = () => document.documentElement.style.setProperty('--top-h', `${top.offsetHeight}px`);
-  set();
-  if (window.ResizeObserver) new ResizeObserver(set).observe(top);
-}
-trackHeaderHeight();
-
 init().catch((err) => {
   $('main').innerHTML = `<div class="card"><h2>Couldn't start the game</h2><p>${esc(err.message)}. Open it through a local web server (npm start) rather than as a file.</p></div>`;
 });
