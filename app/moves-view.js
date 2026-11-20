@@ -74,9 +74,9 @@ export function movesHtml(game, options, esc, face, { blocked = false } = {}) {
   return `<section class="step moves ${ap > 0 && !blocked ? 'open' : ''}">${stepHead(3, 'moves', 'blue', 'Team moves', `<span class="pill ap-pill">${tokens}${ap} Action Point${ap === 1 ? '' : 's'} left</span>`)}
     ${risk.length ? `<div class="group risk"><div class="group-h">Head off a risk</div><div class="tiles">${risk.map((o) => tile(o, 'teal')).join('')}</div></div>` : ''}
     ${context.length ? `<div class="group context"><div class="group-h">This week's options</div><div class="tiles">${context.map((o) => tile(o, 'gold')).join('')}</div></div>` : ''}
-    <div class="group"><div class="group-h">Always available</div><div class="tiles">
+    <div class="group"><div class="group-h">Always available</div><div class="tiles stack">
       ${people('checkin', 'Check in one-on-one', 'Half an hour. Lifts morale and surfaces problems in their work.')}
-      ${core.map((o) => tile(o, 'blue')).join('')}
+      <div class="tiles three">${core.map((o) => tile(o, 'blue')).join('')}</div>
       ${people('overtime', 'Ask for extra hours', '+5 hours this week; lower morale and more mistakes.')}
     </div></div>
     ${done.length ? `<div class="group did"><div class="group-h">Done this week</div><ul class="did-list">${done.map((a) => `<li>${icon(iconFor(a.actionId), { size: 28, tone: 'grey' })}<span>${esc(a.detail)}</span></li>`).join('')}</ul></div>` : ''}

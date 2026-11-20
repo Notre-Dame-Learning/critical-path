@@ -100,6 +100,7 @@ function showIntro() {
   closePlannerView();
   $('intro').hidden = false;
   $('desk').hidden = false;
+  $('stepper').innerHTML = '';
   renderDesk();
   renderClock();
   renderProjects();
@@ -308,7 +309,7 @@ function playerFace(size, mood = playerMood()) {
 }
 
 function renderTeam() {
-  $('team').innerHTML = teamHtml(game, { face, esc, player: player(), playerFace: playerFace(52) });
+  $('team').innerHTML = teamHtml(game, { face, esc });
 }
 
 function renderCoach() {
@@ -398,6 +399,7 @@ function renderEvent(ev) {
 
 function renderEnd() {
   $('game').hidden = true;
+  $('stepper').innerHTML = '';
   const r = game.result;
   const s = r.scores;
   const label = { scope: 'Course complete', quality: 'Quality', team: 'Team health', faculty: 'Faculty trust', judgment: 'Judgment' };
@@ -875,6 +877,17 @@ function localStore() {
 function randomSeed() {
   return Math.random().toString(36).slice(2, 8);
 }
+
+// Desktop: the header and the status card stay frozen at the top while the week scrolls under them.
+// The status card sticks just below the header, whose height changes with the steps and the clock.
+function trackHeaderHeight() {
+  const top = document.querySelector('.top');
+  if (!top) return;
+  const set = () => document.documentElement.style.setProperty('--top-h', `${top.offsetHeight}px`);
+  set();
+  if (window.ResizeObserver) new ResizeObserver(set).observe(top);
+}
+trackHeaderHeight();
 
 init().catch((err) => {
   $('main').innerHTML = `<div class="card"><h2>Couldn't start the game</h2><p>${esc(err.message)}. Open it through a local web server (npm start) rather than as a file.</p></div>`;

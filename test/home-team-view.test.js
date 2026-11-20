@@ -9,7 +9,7 @@ import { playOnce } from '../engine/montecarlo.js';
 import { avatarSVG } from '../app/avatars.js';
 import { icon, ICONS } from '../app/icons.js';
 import { teamHtml, recapHtml, weekSegments } from '../app/team-view.js';
-import { stepperHtml, meetingHtml } from '../app/moves-view.js';
+import { stepperHtml, meetingHtml, movesHtml } from '../app/moves-view.js';
 import { deskHtml, avatarMakerHtml } from '../app/home-view.js';
 import { SKINS, HAIRS, STYLES, SHIRTS, defaultPlayer, randomPlayer, cleanPlayer } from '../engine/player.js';
 
@@ -30,7 +30,7 @@ test('the week log says where each person\'s hours went: work by task, rework fi
   assert.ok(g.log.every((e) => S.STAFF.every((r) => Number.isFinite(e.morale[r])) && Number.isFinite(e.trust)));
 });
 
-test('the team panel shows last week per person, you first, with changes since the week before', () => {
+test('the team panel shows last week\'s headline, then one morale or trust bar per person with its change', () => {
   const g = createGameAt(S, { world, project: intro, deck: { events: [] }, seed: 'team' });
   assert.match(recapHtml(g, esc), /first week/);
   for (let i = 0; i < 3; i++) M.endWeek(g);
@@ -38,9 +38,9 @@ test('the team panel shows last week per person, you first, with changes since t
   assert.match(html, /Last week \(week 3\)/);
   assert.match(html, /class="mate you"/);
   assert.ok(html.includes('Maya &lt;b&gt;') && !html.includes('Maya <b>'));
-  assert.equal((html.match(/class="hbar"/g) ?? []).length, 4, 'three staff and the faculty partner');
-  assert.match(html, /Morale/);
-  assert.match(html, /Trust/);
+  assert.equal((html.match(/class="hbar"/g) ?? []).length, 0, 'one bar per person: morale or trust only');
+  assert.equal((html.match(/<span>Morale<\/span>/g) ?? []).length, 3);
+  assert.equal((html.match(/<span>Trust<\/span>/g) ?? []).length, 1);
   const segs = weekSegments(g, g.log.at(-1), 'ld');
   assert.ok(segs.length && segs.every((x) => x.hours > 0));
   assert.ok(!teamHtml(g, { face, esc }).includes('class="mate you"'), 'no you card without a face');
@@ -102,4 +102,11 @@ test('your desk: avatar, rank on the career path, the next gate, skills, badges 
   assert.equal((maker.match(/data-av="style"/g) ?? []).length, STYLES.length);
   assert.match(maker, /value="A&quot;b"/);
   assert.match(maker, /mood-worried/);
+});
+
+test('the always-available moves: check-ins and extra hours by person, the other three in one row', () => {
+  const g = createGameAt(S, { world, project: intro, deck: { events: [] }, seed: 'row' });
+  const html = movesHtml(g, M.moveOptions(g), esc, face);
+  const row = html.match(/<div class="tiles three">(.*?)<\/div>\s*<div class="tile people/s)?.[1] ?? '';
+  assert.deepEqual([...row.matchAll(/data-move="([^"]+)"/g)].map((m) => m[1]), ['review', 'status-update', 'team-meeting']);
 });

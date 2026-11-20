@@ -1,6 +1,6 @@
-// The team panel: last week's recap per person (where their hours went, as a bar in their shirt colour),
-// morale or trust with the change since the week before, and the week's headline (finished work, rework
-// found, schedule pressure). Pure HTML builders; app.js passes face() and esc().
+// The team panel: last week's headline (finished work, rework found, schedule pressure), then each
+// person's morale (the faculty partner's trust) with the change since the week before. weekSegments and
+// hoursBar can draw where each person's hours went; the panel leaves them out to keep one bar per person. Pure HTML builders; app.js passes face() and esc().
 import * as S from '../engine/sim.js';
 import { icon } from './icons.js';
 import { displayName } from '../engine/player.js';
@@ -32,7 +32,7 @@ export function weekSegments(game, entry, role) {
   return segs;
 }
 
-function hoursBar(segs, esc) {
+export function hoursBar(segs, esc) {
   const total = segs.reduce((s, x) => s + x.hours, 0);
   if (!total) return '<div class="hbar empty"><span class="muted small">No hours last week</span></div>';
   const bar = segs.map((x) => `<i class="seg ${x.kind}" style="width:${Math.min(100, (100 * x.hours) / SCALE)}%${x.color ? `;background:${x.color}` : ''}" title="${esc(x.label)}: ${x.hours}h"></i>`).join('');
@@ -49,13 +49,13 @@ function meterRow(label, value, delta) {
 // The week's headline chips.
 export function recapHtml(game, esc) {
   const last = game.log.at(-1);
-  if (!last) return `<div class="recap-head"><div class="recap-title">${icon('recap', { size: 34, tone: 'blue' })}<div><strong>Week ${game.week} is the first week</strong><span class="muted small">After you end it, each person's hours show here.</span></div></div></div>`;
+  if (!last) return `<div class="recap-head"><div class="recap-title">${icon('recap', { size: 34, tone: 'blue' })}<div><strong>Week ${game.week} is the first week</strong><span class="muted small">After you end it, what the team finished shows here.</span></div></div></div>`;
   const chips = [];
   if (last.completed.length) chips.push(`<span class="rchip good">${icon('finished', { size: 22, tone: 'teal' })}Finished: ${esc(last.completed.map((id) => taskName(game, id)).join(', '))}</span>`);
   if (last.discovered >= 1) chips.push(`<span class="rchip warn">${icon('rework', { size: 22, tone: 'amber' })}${Math.round(last.discovered)}h of rework surfaced</span>`);
   if (last.pressure >= 0.3) chips.push(`<span class="rchip bad">${icon('pressure', { size: 22, tone: 'rose' })}The team feels the schedule pressure</span>`);
   if (!chips.length) chips.push('<span class="rchip">A steady week: nothing finished, no rework found</span>');
-  return `<div class="recap-head"><div class="recap-title">${icon('recap', { size: 34, tone: 'blue' })}<div><strong>Last week (week ${last.week})</strong><span class="muted small">Where everyone's hours went</span></div></div><div class="rchips">${chips.join('')}</div></div>`;
+  return `<div class="recap-head"><div class="recap-title">${icon('recap', { size: 34, tone: 'blue' })}<div><strong>Last week (week ${last.week})</strong><span class="muted small">What came of the team's work</span></div></div><div class="rchips">${chips.join('')}</div></div>`;
 }
 
 export function teamHtml(game, { face, esc, player = null, playerFace = null }) {
@@ -68,11 +68,11 @@ export function teamHtml(game, { face, esc, player = null, playerFace = null }) 
     const p = game.team[r];
     const before = prev?.morale?.[r] ?? (last ? null : undefined);
     const delta = last?.morale && before != null ? p.morale - before : 0;
-    return card(r, p.name, p.role, `${last ? hoursBar(weekSegments(game, last, r), esc) : ''}${meterRow('Morale', p.morale, delta)}`);
+    return card(r, p.name, p.role, meterRow('Morale', p.morale, delta));
   });
   const f = game.team.faculty;
   const fDelta = last?.trust != null && prev?.trust != null ? f.trust - prev.trust : 0;
-  const fac = card('faculty', f.name, 'Faculty partner', `${last ? hoursBar(weekSegments(game, last, 'faculty'), esc) : ''}${meterRow('Trust', f.trust, fDelta)}`, 'faculty');
+  const fac = card('faculty', f.name, 'Faculty partner', meterRow('Trust', f.trust, fDelta), 'faculty');
   const sup = `<div class="mate sup">${face('sup', null, 40)}<div class="mate-body"><div class="mate-top"><span class="name">${esc(game.supervisor.name)}</span><span class="role">${esc(game.supervisor.role)} · you can escalate to ${esc(game.supervisor.short)}</span></div></div></div>`;
   return `${recapHtml(game, esc)}${you}${staff.join('')}${fac}${sup}`;
 }
