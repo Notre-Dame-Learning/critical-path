@@ -288,7 +288,7 @@ label.prompt { display: block; }
 /* Build the Plan: editor screen (app/plan-screen.js) */
 .pe { display: grid; gap: 12px; }
 .pe .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.pe-head { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: .5rem 1rem; align-items: center; }
+.pe-head { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto auto; gap: .5rem 1rem; align-items: center; }
 .pe-title h2 { margin: .1rem 0 0; }
 .pe-title p { margin: 0; }
 .pe-score { display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
@@ -298,7 +298,6 @@ label.prompt { display: block; }
 .pe-submit[aria-disabled="true"] { background: var(--quiet); border-color: var(--quiet); }
 .pe-status { margin: 0; color: var(--navy); }
 .pe-status:empty { display: none; }
-.pe-tabs { display: none; }
 .pe-body { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .pe-body > * { min-width: 0; }
 
@@ -401,8 +400,62 @@ label.prompt { display: block; }
 .pe-add-link select { font-size: .82rem; }
 @media (max-width: 860px) { .pe-add-link { grid-template-columns: minmax(0, 1fr) auto; } .pe-add-link #pe-new-from { grid-column: 1 / -1; } }
 
+/* Plan editor: tabs on every width (Checks only on a phone), odds meter, risk register */
+.pe-tabs { display: flex; gap: .4rem; }
+.pe-tabs button { padding: .4rem .9rem; font-size: .9rem; }
+.pe-tabs button[aria-selected="true"], .pe[data-tab="checks"] .pe-tabs [data-id="tasks"] { border-color: var(--navy); background: var(--accent-bg); font-weight: 600; }
+.pe-tabs [data-id="checks"] { display: none; }
+.pe-tab-count { font-variant-numeric: tabular-nums; color: var(--quiet); font-weight: 400; margin-left: .15rem; }
+.pe-tab-count.pass { color: var(--good); }
+.pe-tab-count.fail { color: var(--bad); }
+.pe[data-tab="risks"] .pe-timeline, .pe:not([data-tab="risks"]) .pe-risks { display: none; }
+.pe-mini { display: none; }
+.pe-odds { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: .5rem; align-items: center; line-height: 1.1; min-width: 7.5rem; transition: opacity .2s; }
+.pe-odds:empty { display: none; }
+.pe-odds-num { grid-row: 1 / 3; font-family: "Source Serif 4", Georgia, serif; font-size: 1.6rem; font-variant-numeric: tabular-nums; color: var(--navy); }
+.pe-odds.good .pe-odds-num { color: var(--good); }
+.pe-odds.mid .pe-odds-num { color: var(--warn); }
+.pe-odds.low .pe-odds-num { color: var(--bad); }
+.pe-odds.running .pe-odds-num, .pe-odds.running .pe-odds-bar { opacity: .45; }
+.pe-odds.waiting { grid-template-columns: auto minmax(0, 9rem); }
+.pe-odds.waiting .pe-odds-num { color: var(--quiet); }
+.pe-odds.waiting .small { grid-row: 1 / 3; line-height: 1.25; }
+.pe-odds-bar { display: flex; gap: 2px; }
+.pe-odds-bar i { width: .55rem; height: .6rem; border-radius: 2px; background: var(--rule); }
+.pe-odds.good .pe-odds-bar i.on { background: var(--good); }
+.pe-odds.mid .pe-odds-bar i.on { background: var(--warn); }
+.pe-odds.low .pe-odds-bar i.on { background: var(--bad); }
+.pe-risks h3 { display: flex; justify-content: space-between; gap: .5rem; }
+.pe-risks > p { margin: 0 0 .6rem; }
+.pe-risk-check { display: flex; gap: .5rem; align-items: flex-start; font-size: .86rem; padding: .45rem .6rem; border-radius: 8px; overflow-wrap: anywhere; }
+.pe-risk-check.pass { background: var(--best-bg); }
+.pe-risk-check.pass .pe-icon { color: var(--good); }
+.pe-risk-check.fail { background: var(--poor-bg); }
+.pe-risk-check.fail .pe-icon { color: var(--bad); }
+.pe-risk-list { list-style: none; margin: .6rem 0; padding: 0; display: grid; gap: .6rem; }
+.pe-risk { padding: .7rem .8rem; border-left: 4px solid var(--good); box-shadow: none; }
+.pe-risk.incomplete { border-left-color: var(--warn); }
+.pe-risk.hl { background: var(--accent-bg); outline: 2px solid var(--gold); }
+.pe-risk-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .5rem; align-items: center; }
+.pe-risk .pe-icon { background: var(--best-bg); color: var(--good); }
+.pe-risk.incomplete .pe-icon { background: var(--partial-bg); color: var(--warn); }
+.pe-risk-text textarea { display: block; width: 100%; margin: 0; font: inherit; font-weight: 600; line-height: 1.3; padding: .4rem .55rem; resize: none; field-sizing: content; min-height: 2.2rem; }
+.pe-risk-remove { padding: .3rem .6rem; font-size: .82rem; }
+.pe-risk > p { margin: .3rem 0 .4rem 1.8rem; }
+.pe-risk-ok { color: var(--good); }
+.pe-risk-missing { color: var(--warn); }
+.pe-risk-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .8rem; }
+.pe-risk-field { display: grid; gap: .2rem; align-content: start; font-size: .84rem; font-weight: 600; }
+.pe-risk-field small { display: block; font-weight: 400; color: var(--quiet); font-size: .74rem; }
+.pe-risk-field textarea { margin-top: 0; padding: .4rem .5rem; font-size: .88rem; font-weight: 400; min-height: 3.6rem; }
+.pe-risk-field select { font: inherit; font-weight: 400; color: var(--ink); background: var(--card); border: 1.5px solid var(--rule); border-radius: 8px; padding: .4rem .5rem; max-width: 100%; }
+.pe-risk-field.missing textarea, .pe-risk-field.missing select, .pe-risk-text textarea[aria-invalid="true"] { border-color: var(--warn); border-style: dashed; }
+.pe-risks select:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.pe-risk-add { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: .4rem; }
+.pe-risk-add select { font: inherit; font-size: .88rem; color: var(--ink); background: var(--card); border: 1.5px solid var(--rule); border-radius: 8px; padding: .4rem .5rem; min-width: 0; }
+.pe-risk-add button { font-size: .88rem; padding: .4rem .75rem; }
+
 @media (max-width: 860px) {
-  .pe-head { grid-template-columns: minmax(0, 1fr) auto; }
   .pe-tools { grid-column: 1 / -1; }
   .pe-submit { position: fixed; z-index: 15; left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom, 0px)); box-shadow: 0 6px 20px rgba(0, 0, 0, .2); }
   .planner { padding-bottom: 4.5rem; }
@@ -410,7 +463,19 @@ label.prompt { display: block; }
   .pe-tabs button { flex: 1; text-align: center; padding: .45rem; }
   .pe-tabs button[aria-selected="true"] { border-color: var(--navy); background: var(--accent-bg); font-weight: 600; }
   .pe-body { grid-template-columns: 1fr; }
-  .pe[data-tab="tasks"] .pe-side, .pe[data-tab="checks"] .pe-main { display: none; }
+  .pe[data-tab="tasks"] .pe-side, .pe[data-tab="risks"] .pe-side, .pe[data-tab="checks"] .pe-main { display: none; }
+  .pe-tabs [data-id="checks"] { display: block; }
+  .pe[data-tab="checks"] .pe-tabs [data-id="tasks"]:not([aria-selected="true"]) { border-color: var(--rule); background: var(--card); font-weight: 400; }
+  .pe-head { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .pe-title { grid-column: 1 / -1; }
+  .pe-odds { justify-self: start; }
+  .pe-mini { display: block; position: sticky; top: 0; z-index: 12; margin: 0 -16px; padding: .4rem 16px; background: var(--card); border-bottom: 1px solid var(--rule); font-size: .85rem; font-variant-numeric: tabular-nums; }
+  .pe-mini .dim { opacity: .5; }
+  .pe-risk-fields { grid-template-columns: 1fr; }
+  .pe-risk-head { grid-template-columns: auto minmax(0, 1fr); }
+  .pe-risk-remove { grid-column: 2; justify-self: end; }
+  .pe-risk-add { grid-template-columns: 1fr auto; }
+  .pe-risk-add select { grid-column: 1 / -1; }
   .pe-grid { --name: 8.5rem; min-width: calc(var(--name) + var(--weeks) * 1.9rem); }
   .pe-name { padding-left: .6rem; }
   .pe-name .avatar { display: none; }

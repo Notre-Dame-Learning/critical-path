@@ -15,6 +15,7 @@ const content = {
   projects: manifest.projects.map((id) => JSON.parse(read(`content/projects/${id}.json`))),
   conversations: JSON.parse(read('content/conversations.json')),
   stakeholders: JSON.parse(read('content/stakeholders.json')),
+  risks: JSON.parse(read('content/risks.json')),
 };
 
 const html = read('app/index.html');

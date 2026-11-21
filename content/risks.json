@@ -1,0 +1,125 @@
+{
+  "_note": "Risk prompts for the plan editor's Add from list. A prompt is only the risk itself: the player writes the owner, mitigation, trigger and contingency. 'projects' holds each project's baseline risks (tests keep them in step with content/plans); 'common' holds risks any ODL course build can meet.",
+  "projects": {
+    "a11y-sprint-ochem": [
+      {
+        "id": "audit-size",
+        "text": "The audit finds more than the request listed"
+      },
+      {
+        "id": "faculty-time",
+        "text": "Prof. Ortiz has little time to check descriptions"
+      }
+    ],
+    "ai-ethics-documentary": [
+      {
+        "id": "guest-cancels",
+        "text": "An interview guest cancels"
+      },
+      {
+        "id": "releases",
+        "text": "Location permits or release forms not signed"
+      },
+      {
+        "id": "faculty-travel",
+        "text": "Prof. Osei travels during script work"
+      }
+    ],
+    "global-health-cases": [
+      {
+        "id": "case-accuracy",
+        "text": "Case details or illustrations are culturally inaccurate"
+      },
+      {
+        "id": "branching-scope",
+        "text": "Branching grows beyond the blueprint"
+      },
+      {
+        "id": "pilot-findings",
+        "text": "The student pilot finds blocking problems late"
+      }
+    ],
+    "intro-psych-online": [
+      {
+        "id": "faculty-availability",
+        "text": "Faculty partner falls behind on scripts during midterms"
+      },
+      {
+        "id": "studio-dates",
+        "text": "Studio days lost to another project"
+      },
+      {
+        "id": "late-video",
+        "text": "Post-production runs long and squeezes embedding and QA"
+      }
+    ],
+    "rescue-sustainable-business": [
+      {
+        "id": "faculty-trust",
+        "text": "Dr. Kowalczyk stays frustrated and slow to respond"
+      },
+      {
+        "id": "hidden-rework",
+        "text": "The previous PM left hidden rework in the course map"
+      },
+      {
+        "id": "post-crunch",
+        "text": "Post-production is the long pole into launch"
+      }
+    ],
+    "stats-refresh-sprint": [
+      {
+        "id": "quiz-bank",
+        "text": "The quiz bank doesn't match the new edition"
+      },
+      {
+        "id": "faculty-email",
+        "text": "Dr. Byrne answers slowly by email"
+      }
+    ],
+    "teaching-ai-microcourse": [
+      {
+        "id": "workshop-date",
+        "text": "The workshop date is fixed and can't slip"
+      },
+      {
+        "id": "late-ideas",
+        "text": "Dr. Raman adds ideas late"
+      }
+    ]
+  },
+  "common": [
+    {
+      "id": "sme-review",
+      "text": "Subject-matter review of drafts takes longer than planned"
+    },
+    {
+      "id": "captions",
+      "text": "Captions or transcripts come back late from the vendor"
+    },
+    {
+      "id": "copyright",
+      "text": "Third-party images or readings need copyright clearance"
+    },
+    {
+      "id": "lms-change",
+      "text": "The Canvas template or a course tool changes mid-build"
+    },
+    {
+      "id": "staff-out",
+      "text": "A team member is out sick or pulled onto another launch"
+    },
+    {
+      "id": "scope-creep",
+      "text": "The faculty partner asks for more modules or media than scoped"
+    },
+    {
+      "id": "late-approval",
+      "text": "Director approval of the design or timeline comes late"
+    },
+    {
+      "id": "a11y-late",
+      "text": "Accessibility review finds problems late, during QA"
+    }
+  ]
+}

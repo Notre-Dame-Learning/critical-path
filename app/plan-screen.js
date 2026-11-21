@@ -1,7 +1,8 @@
 // Plan editor, step 2: the Build the Plan screen. Timeline, task sheet and checks panel, live on
 // engine/plan.js. Edits go through app/plan-edit.js, drawing through app/plan-layout.js.
-// Design: "Plan editor screen" tab of the framework doc. Step 3 (touchpoint calendar, risk register),
-// step 4 (odds meter) and step 5 (Submit, scoring, debrief) build on this file.
+// Design: "Plan editor screen" tab of the framework doc. The risk register (app/plan-risks.js, step 3) and
+// the odds meter (app/plan-odds.js, step 4) are wired in here. Still to build on this file: the
+// touchpoint calendar (step 3's other half, waiting on Weekly moves v2) and Submit, scoring, debrief (step 5).
 //
 // The top half is pure (view model, HTML, key and drag mapping, edit ops) and runs in Node for the tests.
 // mountPlanEditor() at the bottom is the only part that touches the DOM.
@@ -9,6 +10,8 @@ import { runChecks, blockers, usableHours, emptyPlan, taskBank, parseDep, CHECKS
 import * as E from './plan-edit.js';
 import { layout } from './plan-layout.js';
 import { avatarSVG } from './avatars.js';
+import { riskModel, risksHtml, promptFor } from './plan-risks.js';
+import { createOddsMeter, oddsHtml, miniHtml, oddsKey, oddsBlocked } from './plan-odds.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const ROLE = { ld: 'Learning Design', mp: 'Media', gd: 'Graphics', faculty: 'Faculty' };
@@ -54,6 +57,9 @@ export function editFor(op, project) {
     case 'link': return (p) => E.addLink(p, op.from, op.to, op.kind ?? 'FS');
     case 'unlink': return (p) => E.removeLink(p, op.from, op.to);
     case 'retype': return (p) => E.retypeLink(p, op.from, op.to, op.kind);
+    case 'risk-add': return (p) => E.addRisk(p, op.risk ?? {});
+    case 'risk-edit': return (p) => E.editRisk(p, op.id, op.fields);
+    case 'risk-remove': return (p) => E.removeRisk(p, op.id);
     default: throw new Error(`Unknown edit ${op.op}`);
   }
 }
@@ -114,12 +120,13 @@ export function sheetModel(plan, project, world, id, { rank = 'coordinator' } = 
 
 // ---------- HTML ----------
 
-export function headerHtml(view, { canUndo = false, canRedo = false } = {}) {
+export function headerHtml(view, { canUndo = false, canRedo = false, odds = null } = {}) {
   const { project, plan, passed, blockers: block } = view;
   return `<div class="pe-head card">
     <div class="pe-title"><span class="kicker">Build the plan</span>
       <h2>${esc(project.title)}</h2>
       <p class="small muted">Launch week ${plan.launchWeek}${plan.joinWeek > 1 ? ` · you join in week ${plan.joinWeek}` : ''} · ${project.tasks.length} tasks</p></div>
+    ${oddsHtml(odds)}
     <div class="pe-score" aria-label="${passed} of ${CHECKS.length} checks pass"><strong>${passed}/${CHECKS.length}</strong><span class="small muted">checks</span></div>
     <div class="pe-tools">
       <button type="button" data-pe="undo" ${canUndo ? '' : 'disabled'} title="Undo (Ctrl+Z)">Undo</button>
@@ -190,7 +197,7 @@ export function checksHtml(view, { highlight = null } = {}) {
   return `<section class="pe-checks card" aria-label="Checks">
     <h3>Checks <span class="muted">${passed}/${checks.length}</span></h3>
     <ul class="pe-check-list">${rows}</ul>
-    <p class="small muted">Tap a check to light up the tasks and weeks it names. Touchpoints and risks get their own tabs in the next build step.</p>
+    <p class="small muted">Tap a check to light up the tasks, weeks or risks it names. The touchpoint calendar comes in a later build step.</p>
     <h3>Team load</h3>
     <div class="pe-load">${Object.entries(lay.load).filter(([role]) => project.tasks.some((t) => t.owner === role)).map(([role, r]) => strip(role, r)).join('')}</div>
     <p class="small muted">Planned likely hours as a share of usable hours; lines at 85% and 100%.</p>
@@ -233,15 +240,19 @@ export function sheetHtml(m, { error = '' } = {}) {
 
 export function screenHtml(view, ui = {}) {
   const sheet = ui.sheet ? sheetHtml(sheetModel(view.plan, view.project, view.world, ui.sheet, { rank: ui.rank }), { error: ui.sheetError }) : '';
-  return `<div class="pe" data-tab="${ui.tab ?? 'tasks'}">
+  const risks = riskModel(view.plan, view.project, view.world, ui.prompts, { checks: view.checks });
+  const tab = ui.tab ?? 'tasks';
+  return `<div class="pe" data-tab="${tab}">
+    ${miniHtml(view.passed, view.checks.length, ui.odds)}
     ${headerHtml(view, ui)}
     <p class="pe-status small" role="status" aria-live="polite">${esc(ui.status ?? '')}</p>
     <div class="pe-tabs" role="tablist" aria-label="Plan views">
-      <button type="button" role="tab" data-pe="tab" data-id="tasks" aria-selected="${(ui.tab ?? 'tasks') === 'tasks'}">Tasks</button>
-      <button type="button" role="tab" data-pe="tab" data-id="checks" aria-selected="${ui.tab === 'checks'}">Checks ${view.passed}/${view.checks.length}</button>
+      <button type="button" role="tab" data-pe="tab" data-id="tasks" aria-selected="${tab === 'tasks'}">Tasks</button>
+      <button type="button" role="tab" data-pe="tab" data-id="risks" aria-selected="${tab === 'risks'}">Risks <span class="pe-tab-count ${risks.check?.status ?? ''}">${risks.complete}/${risks.cards.length}</span></button>
+      <button type="button" role="tab" data-pe="tab" data-id="checks" aria-selected="${tab === 'checks'}">Checks ${view.passed}/${view.checks.length}</button>
     </div>
     <div class="pe-body">
-      <div class="pe-main">${timelineHtml(view, ui)}</div>
+      <div class="pe-main">${timelineHtml(view, ui)}${risksHtml(risks, ui)}</div>
       <div class="pe-side">${checksHtml(view, ui)}</div>
     </div>
     ${sheet}
@@ -251,22 +262,44 @@ export function screenHtml(view, ui = {}) {
 // ---------- the screen ----------
 
 // Mount the editor in `root` for one project. Returns { unmount }.
-export function mountPlanEditor(root, { project, world, store = null, rank = 'coordinator', onExit = () => {} }) {
+export function mountPlanEditor(root, { project, world, deck = { events: [] }, prompts = null, store = null, rank = 'coordinator', onExit = () => {}, meterOptions = {} }) {
   const saved = E.loadDraft(store, project, world);
   let h = E.history(saved ?? emptyPlan(project, world));
-  const ui = { tab: 'tasks', sheet: null, sheetError: '', status: saved ? 'Your saved draft is back. Reset starts over.' : '', highlight: targetsOf(null), rank };
+  const ui = { tab: 'tasks', sheet: null, sheetError: '', status: saved ? 'Your saved draft is back. Reset starts over.' : '', highlight: targetsOf(null), rank, prompts, odds: null };
   let view = planView(h.present, project, world);
+
+  // The odds meter patches only its own spots, so a slice finishing never disturbs typing or focus.
+  const meter = createOddsMeter({ world, project, deck }, {
+    ...meterOptions,
+    onUpdate: (st) => {
+      ui.odds = st;
+      root.querySelector('.pe-odds')?.replaceWith?.(fragment(oddsHtml(st)));
+      root.querySelector('.pe-mini')?.replaceWith?.(fragment(miniHtml(view.passed, view.checks.length, st)));
+    },
+  });
+  let asked = null;
+  const askOdds = () => {
+    const key = `${oddsBlocked(view.blockers) ?? ''}|${oddsKey(h.present)}`;
+    if (key === asked) return;
+    asked = key;
+    meter.request(h.present, view.blockers);
+  };
+  const fragment = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
 
   const draw = (focus) => {
     view = planView(h.present, project, world);
+    askOdds();
     const scroll = root.querySelector('.pe-scroll')?.scrollLeft ?? 0;
     const sheetScroll = root.querySelector('.pe-sheet')?.scrollTop ?? 0;
+    // Without an explicit target, focus returns to whatever had it (a risk field the player tabbed into).
+    const had = document.activeElement && root.contains(document.activeElement) && document.activeElement.id ? `#${CSS.escape(document.activeElement.id)}` : null;
     root.innerHTML = screenHtml(view, { ...ui, canUndo: h.past.length > 0, canRedo: h.future.length > 0 });
     const sc = root.querySelector('.pe-scroll');
     if (sc) sc.scrollLeft = scroll;
     const sh = root.querySelector('.pe-sheet');
     if (sh) sh.scrollTop = sheetScroll;
-    if (focus) root.querySelector(focus)?.focus({ preventScroll: true });
+    const target = focus ?? had;
+    if (target) root.querySelector(target)?.focus({ preventScroll: true });
   };
 
   const edit = (op, { focus = null, quiet = false } = {}) => {
@@ -288,11 +321,15 @@ export function mountPlanEditor(root, { project, world, store = null, rank = 'co
     if (ui.highlight.key === key) { ui.highlight = targetsOf(null); draw(); return; }
     ui.highlight = { ...targetsOf(item), key };
     const first = ui.highlight.tasks[0];
+    const risk = key === 'check:risks' || (ui.highlight.risks.length > 0 && !first);
     const narrow = window.matchMedia?.('(max-width: 860px)').matches;
-    if (narrow && first) ui.tab = 'tasks';
+    if (risk) ui.tab = 'risks';
+    else if (first && (narrow || ui.tab === 'risks')) ui.tab = 'tasks';
     draw();
-    if (first) root.querySelector(`[data-row="${CSS.escape(first)}"], .pe-tray li.hl`)?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+    if (risk) root.querySelector('.pe-risk.hl, .pe-risks')?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+    else if (first) root.querySelector(`[data-row="${CSS.escape(first)}"], .pe-tray li.hl`)?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
   };
+  const lastRisk = () => h.present.risks.at(-1)?.id;
 
   const onClick = (e) => {
     const b = e.target.closest('[data-pe]');
@@ -332,6 +369,15 @@ export function mountPlanEditor(root, { project, world, store = null, rank = 'co
         if (!from) { ui.sheetError = 'Pick a task to wait for.'; return draw(); }
         return edit({ op: 'link', from, to: ui.sheet, kind: kindOf(root.querySelector('#pe-new-kind')?.value ?? 'FS') });
       }
+      case 'risk-add': edit({ op: 'risk-add' }); return draw(`#pe-risk-${CSS.escape(lastRisk())}-text`);
+      case 'risk-add-pick': {
+        const risk = promptFor(root.querySelector('#pe-risk-pick')?.value, prompts, project);
+        if (!risk) { ui.status = 'Pick a risk from the list first, or write your own.'; return draw('#pe-risk-pick'); }
+        edit({ op: 'risk-add', risk }, { quiet: true });
+        ui.status = 'Added. Now give it an owner, a mitigation, a trigger and a contingency.';
+        return draw(`#pe-risk-${CSS.escape(lastRisk())}-owner`);
+      }
+      case 'risk-remove': edit({ op: 'risk-remove', id }, { quiet: true }); ui.status = 'Risk removed. Undo brings it back.'; return draw('[data-pe="risk-add"]');
       case 'check': return highlightItem(`check:${id}`, view.checks.find((c) => c.id === id));
       case 'blocker': return highlightItem(`blocker:${id}`, view.blockers[Number(id)]);
       default:
@@ -346,10 +392,18 @@ export function mountPlanEditor(root, { project, world, store = null, rank = 'co
     }
     if (el.matches('[data-pe-backup]')) return edit({ op: 'backup', id: ui.sheet, role: el.value || null }, { focus: '[data-pe-backup]' });
     if (el.matches('[data-pe-kind]')) return edit({ op: 'retype', from: el.dataset.peKind, to: ui.sheet, kind: kindOf(el.value) }, { focus: `[data-pe-kind="${CSS.escape(el.dataset.peKind)}"]` });
+    if (el.matches('[data-pe-risk]')) {
+      const op = { op: 'risk-edit', id: el.dataset.peRisk, fields: { [el.dataset.field]: el.value } };
+      if (h.present.risks.find((r) => r.id === op.id)?.[el.dataset.field] === el.value) return undefined;
+      // Wait a tick: a Tab or click that ended the edit has moved focus by then, and the redraw keeps it there.
+      return setTimeout(() => edit(op, { quiet: true }), 0);
+    }
   };
 
   const onKey = (e) => {
     const inField = e.target.closest('input, select, textarea');
+    // Enter in a risk's one-line text commits it, as leaving the field would.
+    if (e.key === 'Enter' && e.target.matches('[data-pe-risk][data-field="text"]')) { e.preventDefault(); e.target.blur(); return undefined; }
     if (!inField && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
       e.preventDefault();
       h = e.shiftKey ? E.redo(h) : E.undo(h);
@@ -408,7 +462,9 @@ export function mountPlanEditor(root, { project, world, store = null, rank = 'co
   draw();
   return {
     get plan() { return h.present; },
+    get odds() { return meter.state(); },
     unmount() {
+      meter.stop();
       root.removeEventListener('click', onClick);
       root.removeEventListener('change', onChange);
       root.removeEventListener('keydown', onKey);

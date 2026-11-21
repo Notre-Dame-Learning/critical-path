@@ -78,6 +78,7 @@ async function init() {
       projects: await Promise.all(manifest.projects.map((id) => loadJson(`../content/projects/${id}.json`))),
       conversations: await loadJson('../content/conversations.json'),
       stakeholders: await loadJson('../content/stakeholders.json'),
+      risks: await loadJson('../content/risks.json'),
     };
   }
   selectedProject = content.projects[0].id;
@@ -756,7 +757,7 @@ function showPlanner() {
   $('planner').hidden = false;
   planner?.unmount();
   const rank = P.rankOf(loadProfile(localStore()) ?? P.newProfile()).id;
-  planner = mountPlanEditor($('planner'), { project, world: content.world, store: localStore(), rank, onExit: showIntro });
+  planner = mountPlanEditor($('planner'), { project, world: content.world, deck: content.deck, prompts: content.risks ?? null, store: localStore(), rank, onExit: showIntro });
   window.scrollTo?.(0, 0);
 }
 
