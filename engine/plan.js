@@ -405,11 +405,12 @@ export function onTimeOdds(plan, ctx, { runs = 500, seed = 'odds', from = 0, sit
 
 // The 100-point score: on-time odds against the baseline (40), 5 per check passed (40),
 // team load (10: everyone at or under 85%, or 5 if under 100%), stakeholder plan (10: 5 + 5).
-export function scorePlan(plan, baseline, ctx, { runs = 500, seed = 'score', baselineOdds } = {}) {
+// playerOdds / baselineOdds: shares already worked out (the Submit screen runs them in slices).
+export function scorePlan(plan, baseline, ctx, { runs = 500, seed = 'score', baselineOdds, playerOdds } = {}) {
   const block = blockers(plan, ctx.project);
   if (block.length) return { submittable: false, blockers: block };
   const checks = runChecks(plan, ctx.project, ctx.world);
-  const player = onTimeOdds(plan, ctx, { runs, seed }).share;
+  const player = playerOdds ?? onTimeOdds(plan, ctx, { runs, seed }).share;
   const base = baselineOdds ?? onTimeOdds(baseline, ctx, { runs, seed }).share;
   const peak = Math.max(...Object.values(loadReport(plan, ctx.project, ctx.world)).map((r) => r.peak.share));
   const sh = stakeholderParts(plan, ctx.project);

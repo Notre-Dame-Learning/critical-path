@@ -3,20 +3,13 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { bundleContent } from './content.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 
 const js = execFileSync('npx', ['--yes', 'esbuild@0.24.0', 'app/app.js', '--bundle', '--format=esm', '--minify'], { cwd: root, encoding: 'utf8' });
-const manifest = JSON.parse(read('content/projects.json'));
-const content = {
-  world: JSON.parse(read('content/world.json')),
-  deck: JSON.parse(read('content/scenarios/core-deck.json')),
-  projects: manifest.projects.map((id) => JSON.parse(read(`content/projects/${id}.json`))),
-  conversations: JSON.parse(read('content/conversations.json')),
-  stakeholders: JSON.parse(read('content/stakeholders.json')),
-  risks: JSON.parse(read('content/risks.json')),
-};
+const content = bundleContent(root);
 
 const html = read('app/index.html');
 const head = html.match(/<title>[\s\S]*?(?=<link rel="stylesheet" href="style.css">)/)[0];

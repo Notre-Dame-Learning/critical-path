@@ -16,6 +16,7 @@ import { loadProfile, saveProfile, xpPanelHtml, profileHtml } from './profile-vi
 import * as I from '../engine/impact.js';
 import * as G from '../engine/debrief-gm.js';
 import { mountPlanEditor } from './plan-screen.js';
+import { CHECKS as PLAN_CHECKS } from '../engine/plan.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -79,6 +80,8 @@ async function init() {
       conversations: await loadJson('../content/conversations.json'),
       stakeholders: await loadJson('../content/stakeholders.json'),
       risks: await loadJson('../content/risks.json'),
+      plans: Object.fromEntries(await Promise.all(manifest.projects.map(async (id) => [id, await loadJson(`../content/plans/${id}.json`).catch(() => null)]))),
+      flaws: Object.fromEntries(await Promise.all(PLAN_CHECKS.map(async (c) => [c.id, await loadJson(`../content/flaws/${c.flaw}.json`)]))),
     };
   }
   selectedProject = content.projects[0].id;
@@ -757,7 +760,16 @@ function showPlanner() {
   $('planner').hidden = false;
   planner?.unmount();
   const rank = P.rankOf(loadProfile(localStore()) ?? P.newProfile()).id;
-  planner = mountPlanEditor($('planner'), { project, world: content.world, deck: content.deck, prompts: content.risks ?? null, store: localStore(), rank, onExit: showIntro });
+  planner = mountPlanEditor($('planner'), {
+    project, world: content.world, deck: content.deck, prompts: content.risks ?? null, store: localStore(), rank, onExit: showIntro,
+    baseline: content.plans?.[project.id] ?? null, flaws: content.flaws ?? {},
+    // A submitted plan goes on the profile: XP by check, only what beats this project's best plan.
+    onScored: (score, { standIn }) => {
+      const res = P.applyPlanRound(loadProfile(localStore()) ?? P.newProfile(), { project: project.id, score, standIn, at: new Date().toISOString() });
+      saveProfile(localStore(), res.profile);
+      return res;
+    },
+  });
   window.scrollTo?.(0, 0);
 }
 

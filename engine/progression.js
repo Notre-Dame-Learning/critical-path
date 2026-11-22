@@ -130,7 +130,7 @@ export const achievementsOf = (state) => ACHIEVEMENTS.filter((a) => a.earned(sta
 // ---------- applying a run ----------
 
 export function newProfile() {
-  return { version: 1, xp: Object.fromEntries(TRACKS.map((t) => [t, 0])), bestCredit: {}, achievements: [], critiquePassedAtSenior: false, runs: [], missions: [], missionStreak: 0 };
+  return { version: 1, xp: Object.fromEntries(TRACKS.map((t) => [t, 0])), bestCredit: {}, achievements: [], critiquePassedAtSenior: false, runs: [], missions: [], missionStreak: 0, planBest: {}, planRounds: [] };
 }
 
 // Add a finished run to the profile. Returns the new profile and what changed; a run already counted
@@ -170,6 +170,58 @@ export function applyRun(profile, state) {
   };
 }
 
+// ---------- Build the Plan rounds ----------
+
+// "Round score ÷ 10, split by check" (Progression tab): each part of the 100-point score goes to the track
+// its check teaches. On-time odds is half Planning, half Estimating; each check that passes its 5 points to
+// its flaw's track; team load to Capacity; the stakeholder plan to Stakeholders.
+export const CHECK_TRACK = {
+  links: 'planning', buffer: 'estimating', quality: 'planning', load: 'capacity',
+  backup: 'leadership', risks: 'risk', sequence: 'planning', stakeholders: 'stakeholders',
+};
+// Until the player plans the touchpoint calendar, a stand-in calendar fills it (app/plan-submit.js), and the
+// parts it decides earn no XP.
+export const CALENDAR_CHECKS = ['quality', 'stakeholders'];
+
+export function planXp(score, { standIn = false } = {}) {
+  const pts = Object.fromEntries(TRACKS.map((t) => [t, 0]));
+  pts.planning += score.parts.odds / 2;
+  pts.estimating += score.parts.odds / 2;
+  for (const c of score.checks) {
+    if (c.status === 'fail' || (standIn && CALENDAR_CHECKS.includes(c.id))) continue;
+    pts[CHECK_TRACK[c.id]] += 5;
+  }
+  pts.capacity += score.parts.load;
+  if (!standIn) pts.stakeholders += score.parts.stakeholders;
+  return Object.fromEntries(TRACKS.map((t) => [t, round(pts[t] / 10)]));
+}
+
+// Add a submitted plan to the profile. XP counts only what beats this project's best plan so far on each
+// track, so resubmitting the same plan earns nothing. Plan rounds sit apart from runs: rank gates read runs.
+export function applyPlanRound(profile, { project, score, standIn = false, at = null }) {
+  const p = structuredClone({ ...newProfile(), ...(profile ?? {}) });
+  p.planBest ??= {};
+  p.planRounds ??= [];
+  const xp = planXp(score, { standIn });
+  const best = (p.planBest[project] ??= {});
+  const gained = {};
+  for (const t of TRACKS) {
+    const gain = round(Math.max(0, xp[t] - (best[t] ?? 0)));
+    if (gain > 0) { gained[t] = gain; best[t] = xp[t]; }
+  }
+  const rankBefore = rankOf(p);
+  const levelsBefore = Object.fromEntries(TRACKS.map((t) => [t, levelOf(p.xp[t] ?? 0)]));
+  for (const [t, g] of Object.entries(gained)) p.xp[t] = round((p.xp[t] ?? 0) + g);
+  const total = round(Object.values(gained).reduce((s, g) => s + g, 0));
+  p.planRounds.push({ project, mode: 'build', total: score.total, odds: round(score.odds.player, 3), standIn, xp: total, at });
+  const rankAfter = rankOf(p);
+  return {
+    profile: p, xp, gained, total,
+    promotion: rankAfter !== rankBefore ? rankAfter.label : null,
+    levelUps: TRACKS.filter((t) => levelOf(p.xp[t]) > levelsBefore[t]).map((t) => ({ track: t, level: levelOf(p.xp[t]) })),
+  };
+}
+
 // ---------- export code ----------
 
 const toBase64 = (s) => (typeof Buffer !== 'undefined' ? Buffer.from(s, 'utf8').toString('base64') : btoa(unescape(encodeURIComponent(s))));
@@ -194,6 +246,11 @@ export function importCode(code) {
     clean.runs = p.runs.filter((r) => r && typeof r.project === 'string').slice(-200);
     clean.missions = Array.isArray(p.missions) ? p.missions.slice(-400) : [];
     clean.missionStreak = Number(p.missionStreak) || 0;
+    for (const [proj, best] of Object.entries(p.planBest ?? {})) {
+      if (typeof best !== 'object' || !best) continue;
+      clean.planBest[proj] = Object.fromEntries(TRACKS.filter((t) => Number.isFinite(best[t])).map((t) => [t, Math.min(10, Math.max(0, best[t]))]));
+    }
+    clean.planRounds = Array.isArray(p.planRounds) ? p.planRounds.filter((r) => r && typeof r.project === 'string').slice(-200) : [];
     const player = cleanPlayer(p.player);
     if (player) clean.player = player;
     return clean;

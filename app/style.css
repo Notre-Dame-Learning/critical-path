@@ -703,3 +703,71 @@ button.big { font-size: 1.05rem; padding: .8rem 1rem; border-radius: 12px; }
 }
 
 .turn > :empty { display: none; }
+
+/* Build the Plan: Submit, checking and the debrief (app/plan-submit.js) */
+.pe-standin { font-style: normal; font-weight: 500; font-size: .68rem; color: var(--quiet); border: 1px dashed var(--quiet); border-radius: 999px; padding: 0 6px; margin-left: .35rem; white-space: nowrap; }
+.pd-checking { display: grid; gap: .6rem; max-width: 640px; margin: 2rem auto; text-align: center; justify-items: center; }
+.pd-checking h2 { margin: 0; font-size: 1.2rem; }
+.pd-progress { width: 100%; height: 10px; border-radius: 999px; background: var(--accent-bg); overflow: hidden; }
+.pd-progress i { display: block; height: 100%; background: var(--navy); transition: width .2s; }
+.pd { display: grid; gap: 12px; }
+.pd-score { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .75rem 1.5rem; align-items: start; }
+.pd-total { display: flex; flex-direction: column; align-items: flex-start; }
+.pd-total .grade { font-size: 3.4rem; }
+.pd-summary p { margin: .2rem 0 .6rem; }
+.pd-odds { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem .9rem; margin-bottom: .5rem; }
+.pd-odds > span { display: flex; flex-direction: column; line-height: 1.1; }
+.pd-odds b { font-family: "Source Serif 4", Georgia, serif; font-size: 1.5rem; color: var(--navy); font-variant-numeric: tabular-nums; }
+.pd-odds > span:nth-child(3) b { color: var(--quiet); }
+.pd-odds small { font-size: .75rem; }
+.pd-vs { align-self: center; }
+.pd-xp { margin: .2rem 0; display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; }
+.pd-parts { grid-column: 1 / -1; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem 1rem; }
+.pd-part { display: grid; gap: .25rem; align-content: start; }
+.pd-part-head { display: flex; justify-content: space-between; gap: .5rem; font-size: .88rem; font-variant-numeric: tabular-nums; }
+.pd-part-head b { font-size: 1.05rem; }
+.pd-meter { height: 6px; border-radius: 999px; background: var(--accent-bg); overflow: hidden; }
+.pd-meter i { display: block; height: 100%; background: var(--navy); }
+.pd-part.standin .pd-meter i { background: repeating-linear-gradient(135deg, var(--quiet) 0 4px, transparent 4px 7px); }
+.pd-part small { font-size: .76rem; }
+.pd-note { grid-column: 1 / -1; margin: 0; }
+.pd-lessons h3, .pd-compare h3 { margin: 0 0 .5rem; }
+.pd-lessons ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .6rem; }
+.pd-lesson { border-left: 4px solid var(--bad); background: var(--poor-bg); border-radius: 8px; padding: .6rem .85rem; }
+.pd-lesson.warn { border-left-color: var(--warn); background: var(--partial-bg); }
+.pd-lesson.pass { border-left-color: var(--good); background: var(--best-bg); }
+.pd-lesson h4 { margin: 0 0 .3rem; display: flex; gap: .45rem; align-items: center; flex-wrap: wrap; font-size: .95rem; }
+.pd-lesson.fail .pe-icon { background: var(--card); color: var(--bad); }
+.pd-lesson.warn .pe-icon { background: var(--card); color: var(--warn); }
+.pd-lesson h4 .muted { font-weight: 400; }
+.pd-lesson p { margin: .2rem 0; }
+.pd-key { display: inline-block; width: 1.4rem; height: .7rem; border-radius: 3px; vertical-align: middle; margin: 0 .2rem 0 .5rem; }
+.pd-key:first-child { margin-left: 0; }
+.pd-key.mine { background: var(--navy); }
+.pd-key.ghost { border: 1.5px dashed var(--gold); }
+.pd-rows { --name: 12rem; }
+.pd-row { display: grid; grid-template-columns: var(--name) minmax(0, 1fr); align-items: center; border-bottom: 1px solid var(--rule); min-height: 2.3rem; }
+.pd-row:last-child { border-bottom: 0; }
+.pd-name { display: flex; flex-direction: column; min-width: 0; font-size: .82rem; line-height: 1.25; padding: .25rem .6rem .25rem 0; }
+.pd-name small { color: var(--quiet); font-size: .72rem; }
+.pd-row.flagged .pd-name > span { color: var(--bad); }
+.pd-row.locked .pd-name { color: var(--quiet); }
+.pd-track { position: relative; align-self: stretch; background: repeating-linear-gradient(90deg, transparent 0 calc(100% / var(--weeks) - 1px), var(--rule) calc(100% / var(--weeks) - 1px) calc(100% / var(--weeks))); }
+.pd-track i { position: absolute; border-radius: 5px; }
+.pd-track i { top: 50%; transform: translateY(-50%); }
+.pd-track i.ghost { height: 1.5rem; border: 1.5px dashed var(--gold); }
+.pd-track i.mine { height: .8rem; background: var(--navy); }
+.pd-row.locked .pd-track i.mine { background: var(--rule); }
+.pd-row.flagged .pd-track i.mine { background: var(--bad); }
+.pd-weeks { display: grid; grid-template-columns: repeat(var(--weeks), minmax(0, 1fr)); background: none; font-size: .68rem; color: var(--quiet); text-align: center; font-variant-numeric: tabular-nums; }
+.pd-weeks .launch { color: var(--gold); font-weight: 700; }
+.pd-axis { min-height: 1.6rem; }
+.pd-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+@media (max-width: 860px) {
+  .pd-score { grid-template-columns: 1fr; }
+  .pd-total { flex-direction: row; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+  .pd-total .kicker { flex-basis: 100%; }
+  .pd-parts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pd-rows { --name: 7.5rem; }
+  .pd-weeks span:nth-child(even):not(.launch), .pd-weeks span.pre { visibility: hidden; }
+}

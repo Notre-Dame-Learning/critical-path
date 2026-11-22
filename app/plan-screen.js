@@ -1,8 +1,9 @@
 // Plan editor, step 2: the Build the Plan screen. Timeline, task sheet and checks panel, live on
 // engine/plan.js. Edits go through app/plan-edit.js, drawing through app/plan-layout.js.
 // Design: "Plan editor screen" tab of the framework doc. The risk register (app/plan-risks.js, step 3) and
-// the odds meter (app/plan-odds.js, step 4) are wired in here. Still to build on this file: the
-// touchpoint calendar (step 3's other half, waiting on Weekly moves v2) and Submit, scoring, debrief (step 5).
+// the odds meter (app/plan-odds.js, step 4) and Submit, scoring and the debrief (app/plan-submit.js, step 5)
+// are wired in here. Still to build: the touchpoint calendar (step 3's other half, waiting on the owner's
+// v1 or v2 answer); until then a plan is checked and played with the stand-in calendar (plan-submit.js).
 //
 // The top half is pure (view model, HTML, key and drag mapping, edit ops) and runs in Node for the tests.
 // mountPlanEditor() at the bottom is the only part that touches the DOM.
@@ -12,6 +13,7 @@ import { layout } from './plan-layout.js';
 import { avatarSVG } from './avatars.js';
 import { riskModel, risksHtml, promptFor } from './plan-risks.js';
 import { createOddsMeter, oddsHtml, miniHtml, oddsKey, oddsBlocked } from './plan-odds.js';
+import { effectivePlan, markStandIn, createSubmitRun, debriefModel, checkingHtml, debriefHtml } from './plan-submit.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const ROLE = { ld: 'Learning Design', mp: 'Media', gd: 'Graphics', faculty: 'Faculty' };
@@ -21,12 +23,14 @@ const STATUS_WORD = { pass: 'passes', warn: 'warning', fail: 'fails' };
 // ---------- view model ----------
 
 // Everything the screen draws for one plan. A check counts as passed unless it fails (a warning passes,
-// as in the score's 5 points per check).
-export function planView(plan, project, world) {
-  const checks = runChecks(plan, project, world);
+// as in the score's 5 points per check). With a baseline, a plan with no calendar is checked with the
+// stand-in calendar (`effective`), and the two checks it decides are marked `standIn`.
+export function planView(plan, project, world, { baseline = null } = {}) {
+  const eff = effectivePlan(plan, project, baseline);
+  const checks = markStandIn(runChecks(eff.plan, project, world), eff.standIn);
   const lay = layout(plan, project, world, { checks });
   return {
-    project, world, plan, checks, lay,
+    project, world, plan, checks, lay, effective: eff.plan, standIn: eff.standIn,
     passed: checks.filter((c) => c.status !== 'fail').length,
     blockers: blockers(plan, project),
   };
@@ -182,7 +186,7 @@ export function checksHtml(view, { highlight = null } = {}) {
     return open || parts.length <= 2 ? c.reason : `${parts.slice(0, 2).join('; ')}; and ${parts.length - 2} more`;
   };
   const rows = checks.map((c) => `<li><button type="button" class="pe-check ${c.status}${active === `check:${c.id}` ? ' active' : ''}" data-pe="check" data-id="${esc(c.id)}" aria-pressed="${active === `check:${c.id}`}">
-      <span class="pe-icon" aria-hidden="true">${ICON[c.status]}</span><span><strong>${esc(c.name)}</strong><span class="sr"> ${STATUS_WORD[c.status]}</span><small>${esc(reasonOf(c, active === `check:${c.id}`))}</small></span></button></li>`).join('');
+      <span class="pe-icon" aria-hidden="true">${ICON[c.status]}</span><span><strong>${esc(c.name)}${c.standIn ? ' <em class="pe-standin">standard calendar</em>' : ''}</strong><span class="sr"> ${STATUS_WORD[c.status]}</span><small>${esc(reasonOf(c, active === `check:${c.id}`))}</small></span></button></li>`).join('');
   const strip = (role, r) => {
     const who = personFor(project, world, role);
     const peak = Math.round(r.peak.share * 100);
@@ -197,7 +201,7 @@ export function checksHtml(view, { highlight = null } = {}) {
   return `<section class="pe-checks card" aria-label="Checks">
     <h3>Checks <span class="muted">${passed}/${checks.length}</span></h3>
     <ul class="pe-check-list">${rows}</ul>
-    <p class="small muted">Tap a check to light up the tasks, weeks or risks it names. The touchpoint calendar comes in a later build step.</p>
+    <p class="small muted">Tap a check to light up the tasks, weeks or risks it names.${view.standIn ? ' You can\'t plan the meeting calendar yet, so the two marked checks use the standard calendar fitted to your task weeks.' : ''}</p>
     <h3>Team load</h3>
     <div class="pe-load">${Object.entries(lay.load).filter(([role]) => project.tasks.some((t) => t.owner === role)).map(([role, r]) => strip(role, r)).join('')}</div>
     <p class="small muted">Planned likely hours as a share of usable hours; lines at 85% and 100%.</p>
@@ -262,11 +266,34 @@ export function screenHtml(view, ui = {}) {
 // ---------- the screen ----------
 
 // Mount the editor in `root` for one project. Returns { unmount }.
-export function mountPlanEditor(root, { project, world, deck = { events: [] }, prompts = null, store = null, rank = 'coordinator', onExit = () => {}, meterOptions = {} }) {
+// baseline: the project's model plan (content/plans), which Submit scores against; flaws: check id → flaw file,
+// for the debrief's lessons; onScored(score, { standIn }) records the round (XP) and returns applyPlanRound's
+// result, or null.
+export function mountPlanEditor(root, { project, world, deck = { events: [] }, prompts = null, store = null, rank = 'coordinator', onExit = () => {}, meterOptions = {}, baseline = null, flaws = {}, onScored = () => null, submitOptions = {} }) {
   const saved = E.loadDraft(store, project, world);
   let h = E.history(saved ?? emptyPlan(project, world));
-  const ui = { tab: 'tasks', sheet: null, sheetError: '', status: saved ? 'Your saved draft is back. Reset starts over.' : '', highlight: targetsOf(null), rank, prompts, odds: null };
-  let view = planView(h.present, project, world);
+  const ui = { tab: 'tasks', sheet: null, sheetError: '', status: saved ? 'Your saved draft is back. Reset starts over.' : '', highlight: targetsOf(null), rank, prompts, odds: null, mode: 'edit', progress: null, debrief: null };
+  let view = planView(h.present, project, world, { baseline });
+  const ctx = { world, project, deck };
+  const submitRun = baseline ? createSubmitRun(ctx, baseline, {
+    ...submitOptions,
+    onProgress: (p) => {
+      ui.progress = p;
+      const el = root.querySelector('.pd-checking');
+      if (el) el.replaceWith(fragment(checkingHtml(p)));
+      else draw();
+    },
+    onDone: (score) => {
+      const submitted = view;
+      let xp = null;
+      try { xp = onScored(score, { standIn: submitted.standIn }) ?? null; } catch { xp = null; }
+      ui.debrief = debriefModel(score, { plan: submitted.effective, baseline, project, world, flaws, standIn: submitted.standIn, xp });
+      ui.mode = 'debrief';
+      draw();
+      root.querySelector('.pd-total')?.scrollIntoView?.({ block: 'start' });
+      root.querySelector('[data-pe="debrief-edit"]')?.focus({ preventScroll: true });
+    },
+  }) : null;
 
   // The odds meter patches only its own spots, so a slice finishing never disturbs typing or focus.
   const meter = createOddsMeter({ world, project, deck }, {
@@ -279,15 +306,17 @@ export function mountPlanEditor(root, { project, world, deck = { events: [] }, p
   });
   let asked = null;
   const askOdds = () => {
-    const key = `${oddsBlocked(view.blockers) ?? ''}|${oddsKey(h.present)}`;
+    const key = `${oddsBlocked(view.blockers) ?? ''}|${oddsKey(view.effective)}`;
     if (key === asked) return;
     asked = key;
-    meter.request(h.present, view.blockers);
+    meter.request(view.effective, view.blockers);
   };
   const fragment = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
 
   const draw = (focus) => {
-    view = planView(h.present, project, world);
+    if (ui.mode === 'checking') { root.innerHTML = checkingHtml(ui.progress); return; }
+    if (ui.mode === 'debrief') { root.innerHTML = debriefHtml(ui.debrief); return; }
+    view = planView(h.present, project, world, { baseline });
     askOdds();
     const scroll = root.querySelector('.pe-scroll')?.scrollLeft ?? 0;
     const sheetScroll = root.querySelector('.pe-sheet')?.scrollTop ?? 0;
@@ -346,11 +375,26 @@ export function mountPlanEditor(root, { project, world, deck = { events: [] }, p
         ui.sheet = null; ui.status = 'The plan is empty again.'; return draw();
       case 'exit': return onExit();
       case 'submit':
-        ui.status = view.blockers.length
-          ? `Fix ${view.blockers.length} thing${view.blockers.length === 1 ? '' : 's'} first: they're listed under Checks.`
-          : 'Your plan is ready. Scoring it against the baseline and the debrief are the next build step.';
-        if (view.blockers.length) ui.tab = 'checks';
-        return draw();
+        if (view.blockers.length) {
+          ui.status = `Fix ${view.blockers.length} thing${view.blockers.length === 1 ? '' : 's'} first: they're listed under Checks.`;
+          ui.tab = 'checks';
+          return draw();
+        }
+        if (!submitRun) { ui.status = 'This project has no model plan to score against yet.'; return draw(); }
+        meter.stop();
+        asked = null;
+        ui.sheet = null;
+        ui.mode = 'checking';
+        ui.progress = null;
+        submitRun.start(view.effective);
+        window.scrollTo?.(0, 0);
+        return undefined;
+      case 'cancel-submit':
+      case 'debrief-edit':
+        submitRun?.stop();
+        ui.mode = 'edit';
+        ui.status = b.dataset.pe === 'debrief-edit' ? 'Change anything and submit again; XP counts only what beats your best plan.' : '';
+        return draw('[data-pe="submit"]');
       case 'tab': ui.tab = id; return draw();
       case 'open': case 'bar': ui.sheet = id; ui.sheetError = ''; return draw('.pe-sheet .pe-close');
       case 'close': { const was = ui.sheet; ui.sheet = null; ui.sheetError = ''; return draw(`[data-pe="bar"][data-id="${CSS.escape(was)}"], [data-pe="open"][data-id="${CSS.escape(was)}"]`); }
@@ -401,6 +445,7 @@ export function mountPlanEditor(root, { project, world, deck = { events: [] }, p
   };
 
   const onKey = (e) => {
+    if (ui.mode !== 'edit') return undefined;
     const inField = e.target.closest('input, select, textarea');
     // Enter in a risk's one-line text commits it, as leaving the field would.
     if (e.key === 'Enter' && e.target.matches('[data-pe-risk][data-field="text"]')) { e.preventDefault(); e.target.blur(); return undefined; }
@@ -423,6 +468,7 @@ export function mountPlanEditor(root, { project, world, deck = { events: [] }, p
   // Touch keeps the page scrolling and edits through the sheet.
   let drag = null;
   const onDown = (e) => {
+    if (ui.mode !== 'edit') { drag = null; return; }
     const bar = e.target.closest('[data-pe="bar"]');
     if (!bar || bar.dataset.locked || e.pointerType === 'touch' || e.button !== 0) { drag = null; return; }
     const track = bar.parentElement;
@@ -463,8 +509,11 @@ export function mountPlanEditor(root, { project, world, deck = { events: [] }, p
   return {
     get plan() { return h.present; },
     get odds() { return meter.state(); },
+    get mode() { return ui.mode; },
+    get debrief() { return ui.debrief; },
     unmount() {
       meter.stop();
+      submitRun?.stop();
       root.removeEventListener('click', onClick);
       root.removeEventListener('change', onChange);
       root.removeEventListener('keydown', onKey);
