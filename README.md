@@ -24,6 +24,7 @@ Then open `http://localhost:8080/app/`. Type a **run code** (for example `fellow
 - **Pace:** Story (one more Action Point a week, a week of buffer, a rested team) for a first run, or Standard, the real ODL pace. Set in `engine/difficulty.js`.
 - **Progression:** every finished run adds XP on eight skill tracks, achievements and a rank (shown on the start screen and in Your profile). Ranks are recognition only; add `?locks=1` to the URL to lock projects and modes by rank.
 - **Build the Plan (in progress):** on the start screen, *Build the plan for …* opens the plan editor for the selected project (`app/plan-screen.js`): a timeline of task bars (tap for the task sheet: weeks, estimate, links, backup; on a computer drag bars and ends or use ← →), an Unscheduled tray, a live checks panel with the eight checks, team load strips and what blocks Submit, a Risks tab (the risk register: add from the project's list or common ODL risks in `content/risks.json`, then give each an owner, mitigation, trigger and contingency; `app/plan-risks.js`), and an on-time odds meter in the header (a seeded 200-run simulation of the plan, recomputed in slices after each edit; `app/plan-odds.js`). Drafts save per project in the browser. **Submit** plays the plan and the project's model plan (`content/plans`) 500 times each, then shows the 100-point score, the odds side by side, a lesson for each failed check (from `content/flaws`), the plan's bars over the model plan's, and XP by check (`app/plan-submit.js`). The touchpoint calendar comes next; until then a plan is checked and played with a stand-in standard calendar fitted to its task weeks, labelled wherever it counts.
+- **Critique the Plan:** on the start screen, *Critique a plan* offers three rounds (Coordinator, PM, Senior PM) on another PM's draft of the Intro to Psychology plan, with 2–4 flaws planted from `content/flaws` (`content/critique-samples.json`). The plan is read-only and no checks show; every task, link, calendar row, the director gate, each risk and each person has a **Flag** action (what's wrong, how serious, and a fix from three options for the category you picked). End with Approve or Send back. The score follows the Critique scoring table (`engine/critique.js`); then the plan as written and the plan with your fixes (only full fixes count) are each played 500 times and compared on on-time odds, rework hours and peak load, and each planted flaw gets a card with where it was, your flag, the best fix, the concept and the SOP step. XP goes to the flaws' skill tracks, best-of per round; a Senior PM round at 70+ meets the Program Manager gate (`app/critique-screen.js`). Standard mode only for now.
 - **Schedule gauge:** compares finished work with the pace needed to launch on time (earned schedule), in weeks ahead or behind.
 
 ## How it works
@@ -38,12 +39,12 @@ Then open `http://localhost:8080/app/`. Type a **run code** (for example `fellow
 
 ```
 engine/    simulation rules (sim.js), seeded random numbers (rng.js), Story pace (difficulty.js),
-           Build the Plan checks, odds and scoring (plan.js), Critique the Plan scoring (critique.js),
+           Build the Plan checks, odds and scoring (plan.js), Critique the Plan scoring, planting and play-forward (critique.js),
            Monte Carlo odds by policy (montecarlo.js), Daily Mission (mission.js), skill tracks (tracks.js),
            progression: XP, ranks, achievements and profile codes (progression.js),
            the AI end-of-run debrief: replay and ranked moves (impact.js), packet, prompt and checks (debrief-gm.js)
 content/   world.json (people), projects/, scenarios/, plans/ (Build the Plan baselines), flaws/ and critique-samples.json (Critique the Plan)  — plain JSON, edit freely
-app/       the browser game (no build step); plan-edit.js, plan-layout.js, plan-screen.js, plan-risks.js, plan-odds.js and plan-submit.js are the Build the Plan editor
+app/       the browser game (no build step); plan-edit.js, plan-layout.js, plan-screen.js, plan-risks.js, plan-odds.js and plan-submit.js are the Build the Plan editor; critique-screen.js is Critique the Plan
 test/      engine tests: npm test
 scripts/   bundle.mjs, talks.mjs (npm run talks: what talking it through is worth), missions.mjs (npm run missions: Daily Mission staging report), odds.mjs (npm run odds: on-time odds by project and policy), plans.mjs (npm run plans: baseline checks and odds; -- --write rebuilds them), grade-testset.mjs (hard-mode grading test set), pending.mjs (upload queue)
 docs/      build notes

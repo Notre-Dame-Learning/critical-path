@@ -18,5 +18,7 @@ export function bundleContent(root) {
     // whose concept, SOP step and explanation are the debrief's lessons.
     plans: Object.fromEntries(manifest.projects.filter((id) => fs.existsSync(path.join(root, `content/plans/${id}.json`))).map((id) => [id, read(`content/plans/${id}.json`)])),
     flaws: Object.fromEntries(CHECKS.map((c) => [c.id, read(`content/flaws/${c.flaw}.json`)])),
+    // Critique the Plan: the sample rounds (flaws planted on a model plan by engine/critique.js).
+    critique: read('content/critique-samples.json'),
   };
 }

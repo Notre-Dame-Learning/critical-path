@@ -16,6 +16,7 @@ import { loadProfile, saveProfile, xpPanelHtml, profileHtml } from './profile-vi
 import * as I from '../engine/impact.js';
 import * as G from '../engine/debrief-gm.js';
 import { mountPlanEditor } from './plan-screen.js';
+import { mountCritique, roundChoices } from './critique-screen.js';
 import { CHECKS as PLAN_CHECKS } from '../engine/plan.js';
 
 const $ = (id) => document.getElementById(id);
@@ -32,6 +33,7 @@ let profileReturn = 'intro';
 // The avatar maker on the start screen: null when closed, else the draft being edited.
 let maker = null;
 let planner = null;
+let critic = null;
 // Hard mode: the player's written answer for the current situation, and where it is in grading.
 let hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
 // Hard mode, six situations: a conversation with the stakeholder, played by Claude (engine/conversation.js).
@@ -82,6 +84,7 @@ async function init() {
       risks: await loadJson('../content/risks.json'),
       plans: Object.fromEntries(await Promise.all(manifest.projects.map(async (id) => [id, await loadJson(`../content/plans/${id}.json`).catch(() => null)]))),
       flaws: Object.fromEntries(await Promise.all(PLAN_CHECKS.map(async (c) => [c.id, await loadJson(`../content/flaws/${c.flaw}.json`)]))),
+      critique: await loadJson('../content/critique-samples.json').catch(() => null),
     };
   }
   selectedProject = content.projects[0].id;
@@ -186,6 +189,18 @@ function renderProjects() {
   $('plan-entry').innerHTML = open.plan.includes('build') && chosen
     ? `<button type="button" id="open-plan">Build the plan for ${esc(chosen.title)}</button><small class="muted">Or plan it before you run it: set each task's weeks, links and backup, and eight checks grade the plan as you go.</small>`
     : '<small class="muted">Build the Plan unlocks at Project Manager.</small>';
+  $('critique-entry').innerHTML = critiqueEntryHtml(open);
+}
+
+// Critique the Plan: the sample rounds (all on Intro to Psychology for now), easiest first, yours marked.
+function critiqueEntryHtml(open) {
+  const rounds = roundChoices(content.critique, P.rankOf(loadProfile(localStore()) ?? P.newProfile()).id)
+    .filter((r) => content.plans?.[r.project] && content.projects.some((p) => p.id === r.project));
+  if (!rounds.length) return '';
+  if (!open.plan.includes('critique')) return '<small class="muted">Critique the Plan unlocks at Senior PM.</small>';
+  const title = content.projects.find((p) => p.id === rounds[0].project)?.title ?? '';
+  return `<span class="small"><strong>Critique a plan</strong> · review another PM's draft for ${esc(title)}, flag what's wrong, and see what it would have cost.</span>
+    <span class="cq-rounds">${rounds.map((r) => `<button type="button" data-critique="${esc(r.id)}">${esc(r.rank)} round${r.yours ? ' <span class="chip ok">your rank</span>' : ''}</button>`).join('')}</span>`;
 }
 
 function startGame() {
@@ -773,7 +788,34 @@ function showPlanner() {
   window.scrollTo?.(0, 0);
 }
 
+function showCritique(id) {
+  const sample = content.critique?.rounds?.find((r) => r.id === id);
+  const project = content.projects.find((p) => p.id === sample?.project);
+  if (!sample || !project) return;
+  $('intro').hidden = true;
+  $('desk').hidden = true;
+  $('end').hidden = true;
+  $('game').hidden = true;
+  $('profile').hidden = true;
+  $('planner').hidden = false;
+  planner?.unmount();
+  planner = null;
+  critic?.unmount();
+  critic = mountCritique($('planner'), {
+    sample, project, world: content.world, deck: content.deck, flawFiles: content.flaws ?? {}, baseline: content.plans[project.id], onExit: showIntro,
+    // A finished review goes on the profile: XP on the flaws' tracks, only what beats your best on this round.
+    onScored: (round, result) => {
+      const res = P.applyCritiqueRound(loadProfile(localStore()) ?? P.newProfile(), { round, result, at: new Date().toISOString() });
+      saveProfile(localStore(), res.profile);
+      return res;
+    },
+  });
+  window.scrollTo?.(0, 0);
+}
+
 function closePlannerView() {
+  critic?.unmount();
+  critic = null;
   planner?.unmount();
   planner = null;
   $('planner').hidden = true;
@@ -825,6 +867,8 @@ document.addEventListener('click', (e) => {
   if (makerClick(e)) return;
   if (e.target.closest('#open-profile')) { showProfile(); return; }
   if (e.target.closest('#open-plan')) { showPlanner(); return; }
+  const crit = e.target.closest('[data-critique]');
+  if (crit) { showCritique(crit.dataset.critique); return; }
   if (e.target.closest('#profile-close')) { closeProfile(); return; }
   if (e.target.closest('#profile-copy')) { copyProfileCode(); return; }
   if (e.target.closest('#profile-import')) { importProfileCode(); return; }

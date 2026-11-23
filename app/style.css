@@ -771,3 +771,88 @@ button.big { font-size: 1.05rem; padding: .8rem 1rem; border-radius: 12px; }
   .pd-rows { --name: 7.5rem; }
   .pd-weeks span:nth-child(even):not(.launch), .pd-weeks span.pre { visibility: hidden; }
 }
+
+/* ---------- Critique the Plan (app/critique-screen.js) ---------- */
+.cq-entry { margin-top: .35rem; }
+.cq-rounds { display: flex; flex-wrap: wrap; gap: .4rem; }
+.cq-rounds button { font-size: .88rem; padding: .4rem .75rem; }
+.cq-brief { max-width: 760px; margin: 0 auto; display: grid; gap: .4rem; }
+.cq-brief h2 { margin: 0; }
+.cq-brief p { margin: 0; }
+.cq-head { grid-template-columns: minmax(0, 1fr) auto auto auto; }
+.cq-verdict { display: flex; gap: .4rem; }
+.cq-verdict button { text-align: center; }
+.cq-confirm { border: 1.5px solid var(--gold); background: var(--partial-bg); border-radius: 10px; padding: .7rem .9rem; display: grid; gap: .5rem; }
+.cq-confirm p { margin: 0; }
+.cq .cq-pane { display: none; }
+.cq[data-tab="tasks"] [data-pane="tasks"], .cq[data-tab="flags"] [data-pane="tasks"], .cq[data-tab="calendar"] [data-pane="calendar"],
+.cq[data-tab="risks"] [data-pane="risks"], .cq[data-tab="team"] [data-pane="team"] { display: block; }
+.cq .cq-tabs [data-id="flags"] { display: none; }
+.cq-bar { cursor: pointer; }
+.cq-marked .pe-name { box-shadow: inset 3px 0 0 var(--bad); }
+.cq-mark { color: var(--bad); }
+.cq-flag-btn { font-size: .8rem; padding: .25rem .6rem; white-space: nowrap; flex-shrink: 0; }
+.cq-flag-btn.on { border-color: var(--bad); color: var(--bad); background: var(--poor-bg); font-weight: 600; }
+.cq-cal-flags { list-style: none; padding: 0; margin: 0 0 .8rem; display: grid; gap: .35rem; }
+.cq-cal-flags li { display: flex; justify-content: space-between; align-items: center; gap: .6rem; border: 1px solid var(--rule); border-radius: 8px; padding: .35rem .4rem .35rem .7rem; font-size: .9rem; }
+.cq-cal { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.cq-cal th, .cq-cal td { text-align: left; padding: .3rem .5rem; border-bottom: 1px solid var(--rule); }
+.cq-cal thead th { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--quiet); }
+.cq-cal tbody th { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+.cq-cal tr.cq-launch { background: var(--partial-bg); }
+.cq-cal tr.cq-gate { background: var(--accent-bg); }
+.cq-risk-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .6rem; }
+.cq-risk-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem .9rem; margin: .45rem 0 0; }
+.cq-risk-fields dt { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--quiet); }
+.cq-risk-fields dd { margin: 0; font-size: .86rem; }
+.cq-person { display: grid; grid-template-columns: 6rem minmax(0, 1fr) auto; grid-template-rows: auto auto; gap: .2rem .6rem; align-items: end; padding: .35rem 0; border-bottom: 1px solid var(--rule); }
+.cq-person:last-child { border-bottom: 0; }
+.cq-person .cq-owns { grid-column: 2; font-size: .74rem; }
+.cq-person .cq-flag-btn { grid-column: 3; grid-row: 1 / 3; align-self: center; }
+.cq-flags h3 { display: flex; justify-content: space-between; }
+.cq-flag-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .35rem; }
+.cq-flag-list button { width: 100%; display: grid; gap: .1rem; border-left: 3px solid var(--bad); font-size: .86rem; }
+.cq-flag-list small { font-size: .78rem; overflow-wrap: anywhere; }
+.cq-links li { grid-template-columns: minmax(0, 1fr) auto; }
+.cq-sheet fieldset { border: 0; padding: 0; margin: .5rem 0 0; min-width: 0; }
+.cq-sheet legend { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--quiet); margin-bottom: .25rem; padding: 0; }
+.cq-opts { display: grid; gap: .3rem; }
+.cq-sev { grid-template-columns: repeat(3, 1fr); }
+.cq-opt { display: flex; gap: .5rem; align-items: flex-start; border: 1.5px solid var(--rule); border-radius: 8px; padding: .4rem .55rem; font-size: .88rem; cursor: pointer; line-height: 1.35; }
+.cq-opt:has(input:checked) { border-color: var(--navy); background: var(--accent-bg); }
+.cq-opt:focus-within { outline: 2px solid var(--gold); outline-offset: 1px; }
+.cq-opt input { margin-top: .2rem; accent-color: var(--navy); }
+.cq-sheet [aria-disabled="true"] { background: var(--quiet); border-color: var(--quiet); }
+.cq-forward h3 { margin: 0 0 .5rem; }
+.cq-forward p { margin: .5rem 0 0; }
+.cq-fw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .6rem; }
+.cq-fw { border: 1px solid var(--rule); border-radius: 10px; padding: .6rem .8rem; display: grid; gap: .1rem; }
+.cq-fw.written { border-style: dashed; border-color: var(--gold); }
+.cq-fw.fixed { border-color: var(--navy); background: var(--accent-bg); }
+.cq-fw b { font-family: "Source Serif 4", Georgia, serif; font-size: 2rem; line-height: 1.05; color: var(--navy); font-variant-numeric: tabular-nums; }
+.cq-fw.written b { color: var(--quiet); }
+.cq-fw small { font-size: .76rem; color: var(--quiet); }
+.cq-fw dl { display: grid; grid-template-columns: 1fr 1fr; gap: .2rem .6rem; margin: .4rem 0 0; }
+.cq-fw dt { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: var(--quiet); }
+.cq-fw dd { margin: 0; font-size: .88rem; font-variant-numeric: tabular-nums; }
+.cq-fps { margin: .3rem 0 0; padding-left: 1.1rem; }
+.cq-debrief .pd-lessons h4 { margin: .8rem 0 .2rem; }
+.cq-changed .pd-name { font-weight: 600; }
+.cq-debrief .pd-parts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 860px) {
+  .cq-head { grid-template-columns: auto minmax(0, 1fr); }
+  .cq-head .pe-score { flex-direction: row; align-items: baseline; gap: .35rem; }
+  .cq-head .pe-tools { grid-column: auto; justify-self: end; }
+  .cq-verdict { position: fixed; z-index: 15; left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
+  .cq-verdict button { flex: 1; box-shadow: 0 6px 20px rgba(0, 0, 0, .2); }
+  .cq .cq-tabs { flex-wrap: wrap; }
+  .cq .cq-tabs button { flex: 1 1 auto; }
+  .cq .cq-tabs [data-id="flags"] { display: block; }
+  .cq[data-tab="flags"] [data-pane="tasks"] { display: none; }
+  .cq[data-tab] .pe-side { display: none; }
+  .cq[data-tab="flags"] .pe-side { display: block; }
+  .cq[data-tab="flags"] .pe-main { display: none; }
+  .cq-risk-fields { grid-template-columns: 1fr; }
+  .cq-person { grid-template-columns: 4.8rem minmax(0, 1fr) auto; }
+  .cq-debrief .pd-parts { grid-template-columns: 1fr 1fr; }
+}

@@ -222,6 +222,54 @@ export function applyPlanRound(profile, { project, score, standIn = false, at = 
   };
 }
 
+// ---------- Critique the Plan ----------
+
+// "Round score ÷ 10, split by check" for a Critique round: the score's XP goes to the skill tracks of the
+// flaws, in proportion to the points each found flaw earned (found, severity, fix). Missed flaws earn
+// nothing, so a review that finds nothing earns no XP, whatever the verdict.
+const TRACK_ID = Object.fromEntries(Object.entries(TRACK_LABEL).map(([id, label]) => [label, id]));
+export const CRITIQUE_PASS = 70; // a "passed" round (the Program Manager gate asks for one at Senior PM)
+
+export function critiqueXp(result) {
+  const pts = Object.fromEntries(TRACKS.map((t) => [t, 0]));
+  const earned = result.flaws.reduce((s, f) => s + f.total, 0);
+  if (earned <= 0) return pts;
+  for (const f of result.flaws) {
+    const t = TRACK_ID[f.skill_track] ?? String(f.skill_track ?? '').toLowerCase();
+    if (t in pts) pts[t] += (result.score / 10) * (f.total / earned);
+  }
+  return Object.fromEntries(TRACKS.map((t) => [t, round(pts[t])]));
+}
+
+// Add a finished Critique round to the profile. As with plans, XP counts only what beats your best on the
+// same round, and rounds sit apart from runs. A Senior PM round at CRITIQUE_PASS or better sets
+// critiquePassedAtSenior, the Program Manager gate.
+export function applyCritiqueRound(profile, { round: r, result, at = null }) {
+  const p = structuredClone({ ...newProfile(), ...(profile ?? {}) });
+  p.planBest ??= {};
+  p.planRounds ??= [];
+  const xp = critiqueXp(result);
+  const best = (p.planBest[`critique:${r.id}`] ??= {});
+  const gained = {};
+  for (const t of TRACKS) {
+    const gain = round(Math.max(0, xp[t] - (best[t] ?? 0)));
+    if (gain > 0) { gained[t] = gain; best[t] = xp[t]; }
+  }
+  const rankBefore = rankOf(p);
+  const levelsBefore = Object.fromEntries(TRACKS.map((t) => [t, levelOf(p.xp[t] ?? 0)]));
+  for (const [t, g] of Object.entries(gained)) p.xp[t] = round((p.xp[t] ?? 0) + g);
+  const passedSenior = /senior/i.test(r.rank ?? '') && result.score >= CRITIQUE_PASS;
+  if (passedSenior) p.critiquePassedAtSenior = true;
+  const total = round(Object.values(gained).reduce((s, g) => s + g, 0));
+  p.planRounds.push({ project: r.project, mode: 'critique', round: r.id, total: result.score, found: result.flaws.filter((f) => f.found).length, of: result.flaws.length, xp: total, at });
+  const rankAfter = rankOf(p);
+  return {
+    profile: p, xp, gained, total, passedSenior,
+    promotion: rankAfter !== rankBefore ? rankAfter.label : null,
+    levelUps: TRACKS.filter((t) => levelOf(p.xp[t]) > levelsBefore[t]).map((t) => ({ track: t, level: levelOf(p.xp[t]) })),
+  };
+}
+
 // ---------- export code ----------
 
 const toBase64 = (s) => (typeof Buffer !== 'undefined' ? Buffer.from(s, 'utf8').toString('base64') : btoa(unescape(encodeURIComponent(s))));

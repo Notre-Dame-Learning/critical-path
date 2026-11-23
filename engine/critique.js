@@ -7,17 +7,28 @@
 //   False positives -3 each, at most -9 (decoys included)
 // Raw points are scaled to 0-100 against 20 per flaw + 10.
 //
-// Scoring needs no plan model. Planting flaws into a baseline plan (plantFlaw, buildRound) uses
-// engine/plan.js; playing the flawed and fixed plans forward is still to add.
+// Scoring needs no plan model. Planting flaws into a baseline plan (plantFlaw, buildRound), the plan with
+// the player's fixes (fixedPlan) and playing both forward (forwardStats) use engine/plan.js.
 
 import { makeRng } from './rng.js';
-import { criticalPath } from './plan.js';
+import { criticalPath, playPlan, loadReport } from './plan.js';
 
 export const CATEGORIES = [
   'dependency', 'buffer', 'utilization', 'single_point_of_failure',
   'quality_squeeze', 'risk_ownership', 'parallelism', 'stakeholder',
 ];
 export const SEVERITIES = ['low', 'medium', 'high'];
+// The categories in plain words, as the Flag sheet offers them (Plan editor screen tab, Critique mode).
+export const CATEGORY_LABEL = {
+  dependency: 'A missing link',
+  buffer: 'No buffer before launch',
+  quality_squeeze: 'Reviews squeezed to the end',
+  utilization: 'Someone overloaded',
+  single_point_of_failure: 'One person with no backup',
+  risk_ownership: 'A risk nobody owns',
+  parallelism: 'Work started before its input was done',
+  stakeholder: 'Stakeholders left out',
+};
 export const POINTS = {
   found: 10, foundWrongCategory: 5,
   severityExact: 3, severityNear: 1,
@@ -294,4 +305,42 @@ export function buildRound(sample, flawsById, baseline, project) {
     });
   }
   return { id: sample.id, project: project.id, rank: sample.rank, plan, flaws, decoys: sample.decoys ?? [] };
+}
+
+// ---------- the plan with your fixes, played forward ----------
+
+// The flaws a review fixed: found, with an accepted fix. A partial fix or a missed flaw stays as planted.
+export function fixedFlaws(result) {
+  return result.flaws.filter((f) => f.found && f.fix === 'accepted').map((f) => f.id);
+}
+
+// "The plan with your fixes": the baseline with only the flaws the review didn't fix planted again, in the
+// round's order. Flaws never share a target, so planting a subset is exact: with nothing fixed it is the
+// plan as written, and with everything fixed it is the baseline.
+export function fixedPlan(round, result, flawsById, baseline, project) {
+  const fixed = new Set(fixedFlaws(result));
+  let plan = baseline;
+  for (const f of round.flaws) if (!fixed.has(f.id)) plan = plantFlaw(plan, flawsById[f.id], project).plan;
+  return { plan, fixed: [...fixed] };
+}
+
+// One slice of the play-forward comparison: runs on time, and rework hours (rework fixed during the run plus
+// mistakes still hidden at launch), over seeded runs from..from+runs. Callable in slices like onTimeOdds.
+export function forwardStats(plan, ctx, { runs = 500, from = 0, seed = 'forward' } = {}) {
+  let onTime = 0;
+  let rework = 0;
+  for (let i = from; i < from + runs; i++) {
+    const g = playPlan(plan, { ...ctx, seed: `${seed}:${i}` });
+    if (g.result.launchedOnTime) onTime++;
+    for (const e of g.log) for (const spent of Object.values(e.work ?? {})) for (const w of spent) rework += w.fix ?? 0;
+    rework += g.tasks.reduce((s, t) => s + t.hidden, 0);
+  }
+  return { onTime, rework, runs };
+}
+
+// The highest planned load on anyone, as a share of usable hours (the Load check's figure).
+export function peakLoad(plan, project, world) {
+  return Object.entries(loadReport(plan, project, world))
+    .map(([role, r]) => ({ role, share: r.peak.share, from: r.peak.from, to: r.peak.to }))
+    .sort((a, b) => b.share - a.share)[0] ?? { role: null, share: 0 };
 }
