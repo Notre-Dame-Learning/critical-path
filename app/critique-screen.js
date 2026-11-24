@@ -10,10 +10,17 @@
 // Flags: { target, category, severity, fix: { id, text, grade } }. A person is flagged as `person:<role>`
 // and scored as `backup:<role>` for "one person with no backup", else `load:<role>`. Fix options are the
 // three engine/critique.js fixOptions for the category the player picked (never the planted flaw's), so
-// the choices give nothing away. Standard mode only: written fixes graded by Claude come later.
+// the choices give nothing away.
+//
+// Written fixes (hard mode, fixMode 'write'): each flag carries the player's fix in their words
+// (fix: { written }). Nothing is graded during the review. After the verdict, engine/critique-grade.js asks
+// Claude about the fixes of the flags that found a problem, in one call, and the grades (7 / 3 / 0) go in
+// before scoring. Off Claude, or when grading fails, the player picks the option closest to each fix they wrote,
+// from the same three options standard mode offers, for every flag (so the step gives nothing away).
 //
 // The top half is pure and runs in Node; mountCritique() is the only part that touches the page.
 import * as C from '../engine/critique.js';
+import * as W from '../engine/critique-grade.js';
 import { parseDep, workOrder } from '../engine/plan.js';
 import { loadStrip } from './plan-layout.js';
 import { avatarSVG } from './avatars.js';
@@ -94,13 +101,38 @@ export function setFlag(flags, flag) {
 export const removeFlag = (flags, target) => flags.filter((f) => f.target !== target);
 
 // What a flag still needs before it can be saved.
-export function flagMissing(flag) {
-  return [!flag.category && 'what is wrong', !flag.severity && 'how serious it is', !flag.fix && 'a fix'].filter(Boolean);
+export function flagMissing(flag, fixMode = 'pick') {
+  const fixed = fixMode === 'write' ? String(flag.fix?.written ?? '').trim().length >= W.MIN_FIX_CHARS : Boolean(flag.fix);
+  return [!flag.category && 'what is wrong', !flag.severity && 'how serious it is', !fixed && (fixMode === 'write' ? 'your fix (a sentence will do)' : 'a fix')].filter(Boolean);
 }
 
 // The submission engine/critique.js scores.
 export function submissionOf(flags, verdict) {
-  return { verdict, flags: flags.map((f) => ({ target: resolveTarget(f.target, f.category), category: f.category, severity: f.severity, fix: f.fix?.grade ?? 'none' })) };
+  return { verdict, flags: flags.map((f) => ({ target: resolveTarget(f.target, f.category), category: f.category, severity: f.severity, fix: f.fix?.grade ?? 'none', ...(f.fix?.written ? { written: f.fix.written } : {}) })) };
+}
+
+// What a flag's fix says, for lists and the debrief: the words the player wrote, or the option they picked.
+export const fixText = (fix) => fix?.written ?? fix?.text ?? '';
+
+// ---------- written fixes: grading after the verdict ----------
+
+// The fixes to grade, from the review as submitted: scoring once with no fix grades shows which flags found a
+// problem (matching never depends on the fix).
+export function gradingPlan(round, flags, verdict, opts = {}) {
+  const sub = submissionOf(flags.map((f) => ({ ...f, fix: { written: f.fix?.written ?? '' } })), verdict);
+  const result = C.scoreCritique(round, sub);
+  const items = W.gradingItems(round, result, sub.flags);
+  return { result, items, prompt: W.needsClaude(items) ? W.fixGradingPrompt(round, items, opts) : null };
+}
+
+// The flags with their grades in place: a flag that found a problem takes that problem's grade and feedback;
+// any other flag's fix earns nothing (it is never shown as graded, since it fixed nothing planted).
+export function gradedFlags(flags, result, grades) {
+  const byTarget = Object.fromEntries(result.flaws.filter((f) => f.found).map((f) => [f.flaggedAt, grades[f.id]]));
+  return flags.map((f) => {
+    const g = byTarget[resolveTarget(f.target, f.category)];
+    return { ...f, fix: { ...f.fix, grade: g?.grade ?? 'none', feedback: g?.feedback ?? null, by: g?.by ?? null } };
+  });
 }
 
 // Which tasks carry a flag marker: the task itself, or a link into it.
@@ -149,7 +181,7 @@ export function reviewModel(round, project, world) {
 
 // ---------- HTML: brief, review, flag sheet ----------
 
-export function briefHtml(round, project, world) {
+export function briefHtml(round, project, world, { fixMode = 'pick', canGrade = false } = {}) {
   const sup = world.supervisor ?? null;
   return `<section class="cq-brief card">
     <span class="kicker">Critique the plan · ${esc(round.rank)} round</span>
@@ -157,10 +189,14 @@ export function briefHtml(round, project, world) {
     <p>${sup ? `${esc(sup.short ?? sup.name)} wants a second pair of eyes` : 'Your supervisor wants a second pair of eyes'} on this plan before it goes to the faculty partner. Launch is week ${round.plan.launchWeek}.</p>
     <ul class="how">
       <li>Read the timeline, the meeting calendar, the risks and the team's load. Nothing is graded while you look.</li>
-      <li>When something is wrong, <strong>Flag</strong> it: say what's wrong, how serious it is, and pick a fix.</li>
+      <li>When something is wrong, <strong>Flag</strong> it: say what's wrong, how serious it is, and ${fixMode === 'write' ? 'write your fix' : 'pick a fix'}.</li>
       <li>Plans usually have two to four real problems. Some things look odd and are fine; a flag on those costs 3 points.</li>
       <li>Finish with a verdict: <strong>Approve</strong>, or <strong>Send back</strong> if anything is medium or high.</li>
     </ul>
+    <fieldset class="cq-fixmode"><legend>Your fixes</legend><div class="cq-opts">
+      <label class="cq-opt"><input type="radio" name="cq-fixmode" value="pick" data-cq-field="fixmode" ${fixMode === 'pick' ? 'checked' : ''}><span><strong>Pick from three options</strong><small>Standard: one is a full fix, one partial, one fixes something else.</small></span></label>
+      <label class="cq-opt"><input type="radio" name="cq-fixmode" value="write" data-cq-field="fixmode" ${fixMode === 'write' ? 'checked' : ''}><span><strong>Write them yourself</strong><small>Hard: ${canGrade ? 'Claude grades each fix after your verdict (full 7, partial 3, none 0). The first grading asks your permission and uses your Claude account.' : 'AI grading isn\'t available here, so after your verdict you pick the option closest to each fix you wrote.'}</small></span></label>
+    </div></fieldset>
     <p class="small muted">Then both versions are played 500 times: the plan as written, and the plan with your fixes.</p>
     <div class="pd-actions"><button type="button" class="primary" data-cq="start">Start reviewing</button><button type="button" data-cq="exit">Back</button></div>
   </section>`;
@@ -213,15 +249,15 @@ export function reviewHtml(m, ui = {}) {
   </section>`;
   const flagList = flags.length
     ? `<ul class="cq-flag-list">${flags.map((f) => `<li><button type="button" data-cq="flag" data-target="${esc(f.target)}"><strong>⚑ ${esc(targetLabel(f.target, m.project, ui.world ?? { people: [], faculty: [] }))}</strong>
-        <small>${esc(C.CATEGORY_LABEL[f.category] ?? f.category)} · ${esc(SEV_LABEL[f.severity] ?? f.severity)}</small><small class="muted">Fix: ${esc(f.fix?.text ?? '—')}</small></button></li>`).join('')}</ul>`
+        <small>${esc(C.CATEGORY_LABEL[f.category] ?? f.category)} · ${esc(SEV_LABEL[f.severity] ?? f.severity)}</small><small class="muted">Fix: ${esc(fixText(f.fix) || '—')}</small></button></li>`).join('')}</ul>`
     : '<p class="small muted">No flags yet. Flag anything that would hurt this plan.</p>';
   const confirm = ui.confirm ? `<div class="cq-confirm" role="alertdialog" aria-labelledby="cq-confirm-h">
-      <p id="cq-confirm-h"><strong>${ui.confirm === 'approve' ? 'Approve' : 'Send back'} this plan with ${plural(flags.length, 'flag')}?</strong> This ends the review.</p>
+      <p id="cq-confirm-h"><strong>${ui.confirm === 'approve' ? 'Approve' : 'Send back'} this plan with ${plural(flags.length, 'flag')}?</strong> This ends the review${ui.fixMode === 'write' && flags.length ? '; your written fixes are graded next' : ''}.</p>
       <div class="pd-actions"><button type="button" class="primary" data-cq="verdict-yes">${ui.confirm === 'approve' ? 'Yes, approve it' : 'Yes, send it back'}</button><button type="button" data-cq="verdict-no">Keep reviewing</button></div></div>` : '';
   const tabs = [['tasks', 'Tasks'], ['calendar', 'Calendar'], ['risks', 'Risks'], ['team', 'Team'], ['flags', `Flags ${flags.length}`]];
   return `<div class="pe cq" data-tab="${tab}">
     <div class="pe-head card cq-head">
-      <div class="pe-title"><span class="kicker">Critique the plan · ${esc(ui.rank ?? '')} round</span><h2>${esc(m.project.title)}</h2>
+      <div class="pe-title"><span class="kicker">Critique the plan · ${esc(ui.rank ?? '')} round${ui.fixMode === 'write' ? ' · written fixes' : ''}</span><h2>${esc(m.project.title)}</h2>
         <p class="small muted">A draft from another PM · launch week ${m.launchWeek} · ${m.rows.length} tasks</p></div>
       <div class="pe-score" aria-label="${plural(flags.length, 'flag')}"><strong>${flags.length}</strong><span class="small muted">${flags.length === 1 ? 'flag' : 'flags'}</span></div>
       <div class="pe-tools"><button type="button" data-cq="exit">Back</button></div>
@@ -255,19 +291,54 @@ export function sheetHtml(m, ui) {
   }
   const d = s.draft;
   const label = targetLabel(d.target, m.project, ui.world ?? { people: [], faculty: [] });
-  const fixes = d.category ? fixChoices(ui.roundId, d.target, d.category, ui.flawFiles) : [];
+  const write = ui.fixMode === 'write';
+  const fixes = !write && d.category ? fixChoices(ui.roundId, d.target, d.category, ui.flawFiles) : [];
   const radio = (name, value, text, checked, extra = '') => `<label class="cq-opt"><input type="radio" name="${name}" value="${esc(value)}" ${checked ? 'checked' : ''} ${extra}><span>${text}</span></label>`;
-  const missing = flagMissing(d);
+  const missing = flagMissing(d, ui.fixMode);
   const existing = (ui.flags ?? []).some((f) => f.target === d.target);
   return `<aside class="pe-sheet card cq-sheet" role="dialog" aria-modal="false" aria-labelledby="cq-sheet-h">
     <div class="pe-sheet-head"><div><span class="kicker">Flag</span><h3 id="cq-sheet-h">${esc(label)}</h3></div>${close}</div>
     <fieldset><legend>What's wrong?</legend><div class="cq-opts">${Object.entries(C.CATEGORY_LABEL).map(([id, text]) => radio('cq-cat', id, esc(text), d.category === id, 'data-cq-field="category"')).join('')}</div></fieldset>
     <fieldset><legend>How serious?</legend><div class="cq-opts cq-sev">${C.SEVERITIES.map((v) => radio('cq-sev', v, SEV_LABEL[v], d.severity === v, 'data-cq-field="severity"')).join('')}</div></fieldset>
-    <fieldset><legend>Your fix</legend>${fixes.length ? `<div class="cq-opts">${fixes.map((f) => radio('cq-fix', f.id, esc(f.text), d.fix?.id === f.id, 'data-cq-field="fix"')).join('')}</div>` : '<p class="small muted">Say what\'s wrong first; the fixes depend on it.</p>'}</fieldset>
+    ${write ? `<div class="cq-write"><label for="cq-written"><strong>Your fix</strong> <small class="muted">What would you change in the plan? Claude grades it after your verdict.</small></label>
+      <textarea id="cq-written" rows="3" maxlength="${W.MAX_FIX_CHARS}" data-cq-field="written" placeholder="For example: which task, link, week, person or meeting changes, and how">${esc(d.fix?.written ?? '')}</textarea></div>`
+    : `<fieldset><legend>Your fix</legend>${fixes.length ? `<div class="cq-opts">${fixes.map((f) => radio('cq-fix', f.id, esc(f.text), d.fix?.id === f.id, 'data-cq-field="fix"')).join('')}</div>` : '<p class="small muted">Say what\'s wrong first; the fixes depend on it.</p>'}</fieldset>`}
     <div class="pd-actions"><button type="button" class="primary" data-cq="save-flag" ${missing.length ? 'aria-disabled="true"' : ''}>${existing ? 'Update flag' : 'Save flag'}</button>
       ${existing ? `<button type="button" data-cq="remove-flag" data-target="${esc(d.target)}">Remove flag</button>` : ''}<button type="button" data-cq="close">Cancel</button></div>
-    ${missing.length ? `<p class="small muted">Still to choose: ${esc(missing.join(', '))}.</p>` : ''}
+    <p class="small muted cq-missing"${missing.length ? '' : ' hidden'}>Still to choose: ${esc(missing.join(', '))}.</p>
   </aside>`;
+}
+
+// ---------- written fixes: grading and the pick-the-closest fallback ----------
+
+export function gradingHtml(ui) {
+  const n = ui.flags.length;
+  const busy = ui.grading?.stage !== 'error';
+  return `<section class="card cq-grading" aria-busy="${busy}">
+    <span class="kicker">Critique the plan · ${esc(ui.rank ?? '')} round · written fixes</span>
+    <h2>${busy ? 'Grading your fixes' : 'Grading didn\'t finish'}</h2>
+    ${busy ? `<p>Claude is reading the ${(n === 1 ? '1 fix' : `${n} fixes`)} you wrote against ODL practice. Your score follows.</p><div class="pd-progress cq-indeterminate" role="progressbar" aria-label="Grading your fixes"><i></i></div>`
+    : `<p class="small error">${esc(ui.grading.error)}</p>`}
+    <div class="pd-actions">${busy ? '<button type="button" data-cq="grade-pick">Pick the closest options instead</button>'
+    : '<button type="button" class="primary" data-cq="grade-retry">Try again</button><button type="button" data-cq="grade-pick">Pick the closest options instead</button>'}</div>
+  </section>`;
+}
+
+// Off Claude: for every flag, what you wrote and the three options for the category you picked.
+export function pickHtml(ui, m) {
+  const world = ui.world ?? { people: [], faculty: [] };
+  const left = ui.flags.filter((f) => !f.fix?.grade).length;
+  return `<section class="card cq-pick">
+    <span class="kicker">Critique the plan · ${esc(ui.rank ?? '')} round · written fixes</span>
+    <h2>Pick the option closest to each fix</h2>
+    ${ui.pickNote ? `<p class="small muted">${esc(ui.pickNote)}</p>` : ''}
+    <ol class="cq-pick-list">${ui.flags.map((f, i) => `<li><fieldset><legend><strong>⚑ ${esc(targetLabel(f.target, m.project, world))}</strong> <small class="muted">${esc(C.CATEGORY_LABEL[f.category] ?? f.category)}</small></legend>
+      <div class="your-answer"><div class="kicker">You wrote</div><p>${esc(f.fix?.written ?? '')}</p></div>
+      <div class="cq-opts">${fixChoices(ui.roundId, f.target, f.category, ui.flawFiles).map((o) => `<label class="cq-opt"><input type="radio" name="cq-pick-${i}" value="${esc(o.id)}" data-cq-field="pick" data-target="${esc(f.target)}" ${f.fix?.id === o.id ? 'checked' : ''}><span>${esc(o.text)}</span></label>`).join('')}</div>
+    </fieldset></li>`).join('')}</ol>
+    <div class="pd-actions"><button type="button" class="primary" data-cq="pick-done" ${left ? 'aria-disabled="true"' : ''}>See my score</button></div>
+    ${left ? `<p class="small muted">${(left === 1 ? '1 fix' : `${left} fixes`)} still to match.</p>` : ''}
+  </section>`;
 }
 
 // ---------- the play-forward run ----------
@@ -318,7 +389,7 @@ export function debriefModel(round, result, { flags = [], project, world, flawFi
   const parts = [
     { id: 'found', label: 'Found', points: sum('found'), max: 10 * n, detail: `${result.flaws.filter((f) => f.found).length} of ${n} problems flagged in the right place` },
     { id: 'severity', label: 'Severity', points: sum('severity'), max: 3 * n, detail: 'Exact 3, one level off 1' },
-    { id: 'fix', label: 'Fixes', points: sum('fix'), max: 7 * n, detail: 'A full fix 7, a partial fix 3' },
+    { id: 'fix', label: 'Fixes', points: sum('fix'), max: 7 * n, detail: `A full fix 7, a partial fix 3${flags.some((f) => f.fix?.by === 'claude') ? '; written fixes graded by Claude' : flags.some((f) => f.fix?.written) ? '; written fixes matched to the closest option' : ''}` },
     { id: 'verdict', label: 'Verdict', points: result.verdict.points, max: 10, detail: result.verdict.points ? `${result.verdict.expected === 'send_back' ? 'Send back' : 'Approve'} was right` : `This plan should have been ${result.verdict.expected === 'send_back' ? 'sent back' : 'approved'}` },
   ];
   const flagFor = (f) => (f.found ? flags.find((x) => resolveTarget(x.target, x.category) === f.flaggedAt) : null);
@@ -329,7 +400,8 @@ export function debriefModel(round, result, { flags = [], project, world, flawFi
     return {
       id: rf.id, title: rf.title, found: r.found, total: r.total, points: r.points, severity: rf.severity, track: rf.skill_track,
       where: rf.where, bestFix: rf.bestFix ?? rf.accepted_fixes?.[0], concept: rf.concept ?? file.concept, explanation: rf.explanation ?? file.explanation, sop: file.sop_ref ?? '',
-      yours: flag ? { at: targetLabel(flag.target, project, world), category: C.CATEGORY_LABEL[flag.category], rightCategory: r.rightCategory, severity: flag.severity, fix: flag.fix?.text, grade: flag.fix?.grade ?? 'none' } : null,
+      yours: flag ? { at: targetLabel(flag.target, project, world), category: C.CATEGORY_LABEL[flag.category], rightCategory: r.rightCategory, severity: flag.severity, fix: fixText(flag.fix), grade: flag.fix?.grade ?? 'none',
+        written: Boolean(flag.fix?.written), picked: flag.fix?.written && flag.fix?.text ? flag.fix.text : null, feedback: flag.fix?.feedback ?? null, by: flag.fix?.by ?? null } : null,
       fixed: (fixed?.fixed ?? []).includes(rf.id),
     };
   });
@@ -396,7 +468,8 @@ export function debriefHtml(m, { progress = null } = {}) {
   const card = (c) => `<li class="pd-lesson ${c.found ? 'pass' : 'fail'}">
     <h4><span class="pe-icon" aria-hidden="true">${c.found ? '✓' : '✗'}</span><span>${c.found ? 'Found' : 'Missed'}: ${esc(c.title)} <span class="muted">· ${c.total}/20 · ${esc(c.track)}</span></span></h4>
     ${c.where ? `<p class="small"><strong>Where:</strong> ${esc(c.where)}. <strong>Severity:</strong> ${esc(c.severity)}.</p>` : ''}
-    ${c.yours ? `<p class="small"><strong>Your flag:</strong> ${esc(c.yours.at)}, ${esc(c.yours.category)}${c.yours.rightCategory ? '' : ' (right place, other category)'}, ${esc(c.yours.severity)}; fix: ${esc(c.yours.fix ?? '—')} (${grade[c.yours.grade]}).</p>` : ''}
+    ${c.yours ? `<p class="small"><strong>Your flag:</strong> ${esc(c.yours.at)}, ${esc(c.yours.category)}${c.yours.rightCategory ? '' : ' (right place, other category)'}, ${esc(c.yours.severity)}; ${c.yours.written ? `you wrote: “${esc(c.yours.fix)}”${c.yours.picked ? `, closest to “${esc(c.yours.picked)}”` : ''}` : `fix: ${esc(c.yours.fix || '—')}`} (${grade[c.yours.grade]}).</p>
+    ${c.yours.feedback ? `<p class="small cq-feedback"><strong>${c.yours.by === 'claude' ? 'Claude' : 'Note'}:</strong> ${esc(c.yours.feedback)}</p>` : ''}` : ''}
     <p class="small"><strong>Best fix:</strong> ${esc(c.bestFix)}.</p>
     ${c.explanation ? `<p class="small">${c.concept ? `<strong>${esc(c.concept)}.</strong> ` : ''}${esc(c.explanation)}</p>` : ''}
     ${c.sop ? `<p class="small muted">SOP: ${esc(c.sop)}</p>` : ''}</li>`;
@@ -432,18 +505,26 @@ export function debriefHtml(m, { progress = null } = {}) {
 
 // Mount a Critique round in `root`. sample: a round from content/critique-samples.json; flawFiles: the flaw
 // files (by check id or flaw id); baseline: the project's model plan; onScored(round, result) records XP
-// and returns applyCritiqueRound's result, or null.
-export function mountCritique(root, { sample, flawFiles, baseline, project, world, deck = { events: [] }, onExit = () => {}, onScored = () => null, forwardOptions = {} }) {
+// and returns applyCritiqueRound's result, or null. fixMode: 'pick' (standard) or 'write' (hard) as the brief
+// pre-selects it; grader(prompt, { signal }) asks Claude and resolves to its JSON reply, or is null off Claude.
+export const GRADER_UNAVAILABLE = ['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'];
+
+export function mountCritique(root, { sample, flawFiles, baseline, project, world, deck = { events: [] }, onExit = () => {}, onScored = () => null, forwardOptions = {}, fixMode = 'pick', grader = null }) {
   const byId = flawsById(flawFiles);
   const round = C.buildRound(sample, byId, baseline, project);
   const model = reviewModel(round, project, world);
   const ctx = { world, project, deck };
-  const ui = { mode: 'brief', tab: 'tasks', flags: [], sheet: null, confirm: null, status: '', world, flawFiles, roundId: round.id, rank: round.rank, debrief: null, progress: null };
+  const ui = { mode: 'brief', tab: 'tasks', flags: [], sheet: null, confirm: null, status: '', world, flawFiles, roundId: round.id, rank: round.rank, debrief: null, progress: null,
+    fixMode: fixMode === 'write' ? 'write' : 'pick', grading: null, pickNote: '' };
   let result = null;
   let forwardRun = null;
+  let gradeCtl = null;
+  let verdictGiven = null;
 
   const draw = (focus) => {
-    if (ui.mode === 'brief') root.innerHTML = briefHtml(round, project, world);
+    if (ui.mode === 'brief') root.innerHTML = briefHtml(round, project, world, { fixMode: ui.fixMode, canGrade: Boolean(grader) });
+    else if (ui.mode === 'grading') root.innerHTML = gradingHtml(ui);
+    else if (ui.mode === 'pick') root.innerHTML = pickHtml(ui, model);
     else if (ui.mode === 'debrief') root.innerHTML = debriefHtml(ui.debrief, { progress: ui.progress });
     else {
       const scroll = root.querySelector('.pe-scroll')?.scrollLeft ?? 0;
@@ -483,6 +564,52 @@ export function mountCritique(root, { sample, flawFiles, baseline, project, worl
     forwardRun.start();
   };
 
+  // Written fixes: grade after the verdict, then score. One Claude call; a reply that fails the checks is asked
+  // again once before the error card offers Try again or the pick-the-closest fallback.
+  const toPick = (note) => {
+    gradeCtl?.abort();
+    gradeCtl = null;
+    ui.flags = ui.flags.map((f) => ({ ...f, fix: { written: f.fix?.written ?? '' } }));
+    Object.assign(ui, { mode: 'pick', grading: null, pickNote: note ?? '' });
+    draw('.cq-pick input');
+    window.scrollTo?.(0, 0);
+  };
+  const grade = async () => {
+    const plan = gradingPlan(round, ui.flags, verdictGiven, { projectTitle: project.title, launchWeek: round.plan.launchWeek });
+    let grades = Object.fromEntries(plan.items.filter((i) => i.preset).map((i) => [i.id, { ...i.preset, by: 'rule' }]));
+    if (plan.prompt) {
+      if (!grader) { toPick('AI grading isn\'t available here, so match each fix you wrote to the closest option.'); return; }
+      ui.mode = 'grading';
+      ui.grading = { stage: 'busy', error: '' };
+      draw('[data-cq="grade-pick"]');
+      window.scrollTo?.(0, 0);
+      const ctl = new AbortController();
+      gradeCtl = ctl;
+      let checked = null;
+      try {
+        for (let attempt = 0; attempt < 2 && !checked?.ok; attempt++) checked = W.checkFixGrades(await grader(plan.prompt, { signal: ctl.signal }), plan.items);
+      } catch (e) {
+        if (gradeCtl !== ctl) return; // cancelled: the player chose to pick instead
+        gradeCtl = null;
+        if (GRADER_UNAVAILABLE.includes(e?.code)) { grader = null; toPick('AI grading isn\'t available, so match each fix you wrote to the closest option.'); return; }
+        ui.grading = { stage: 'error', error: e?.code === 'rate_limited' ? 'Grading is busy right now. Try again in a minute, or pick the closest options instead.' : 'Grading didn\'t go through. Try again, or pick the closest options instead.' };
+        draw('[data-cq="grade-retry"]');
+        return;
+      }
+      if (gradeCtl !== ctl) return;
+      gradeCtl = null;
+      if (!checked.ok) {
+        ui.grading = { stage: 'error', error: 'Claude\'s grades didn\'t come back in a usable form. Try again, or pick the closest options instead.' };
+        draw('[data-cq="grade-retry"]');
+        return;
+      }
+      grades = checked.grades;
+    }
+    ui.flags = gradedFlags(ui.flags, plan.result, grades);
+    ui.grading = null;
+    finish(verdictGiven);
+  };
+
   const openFlag = (target) => {
     const have = ui.flags.find((f) => f.target === target);
     ui.sheet = { draft: have ? { ...have } : { target, category: null, severity: null, fix: null }, from: ui.sheet?.task ?? null };
@@ -509,7 +636,7 @@ export function mountCritique(root, { sample, flawFiles, baseline, project, worl
       case 'save-flag': {
         const d = ui.sheet?.draft;
         if (!d) return undefined;
-        const missing = flagMissing(d);
+        const missing = flagMissing(d, ui.fixMode);
         if (missing.length) { ui.status = `Choose ${missing.join(', ')} first.`; return draw(); }
         ui.flags = setFlag(ui.flags, d);
         ui.status = `Flagged: ${targetLabel(d.target, project, world)}.`;
@@ -524,10 +651,20 @@ export function mountCritique(root, { sample, flawFiles, baseline, project, worl
       }
       case 'verdict': ui.confirm = id; ui.sheet = null; return draw('[data-cq="verdict-yes"]');
       case 'verdict-no': ui.confirm = null; return draw('[data-cq="verdict"]');
-      case 'verdict-yes': return finish(ui.confirm);
+      case 'verdict-yes':
+        verdictGiven = ui.confirm;
+        if (ui.fixMode === 'write' && ui.flags.length) { ui.confirm = null; ui.sheet = null; grade(); return undefined; }
+        return finish(ui.confirm);
+      case 'grade-retry': grade(); return undefined;
+      case 'grade-pick': toPick(''); return undefined;
+      case 'pick-done': {
+        const left = ui.flags.filter((f) => !f.fix?.grade).length;
+        if (left) return undefined;
+        return finish(verdictGiven);
+      }
       case 'again':
         forwardRun?.stop();
-        Object.assign(ui, { mode: 'review', flags: [], sheet: null, confirm: null, status: 'A fresh look: your flags are cleared.', tab: 'tasks', debrief: null, progress: null });
+        Object.assign(ui, { mode: 'review', flags: [], sheet: null, confirm: null, status: 'A fresh look: your flags are cleared.', tab: 'tasks', debrief: null, progress: null, grading: null, pickNote: '' });
         draw('[data-cq="tab"][aria-selected="true"]');
         window.scrollTo?.(0, 0);
         return undefined;
@@ -538,9 +675,19 @@ export function mountCritique(root, { sample, flawFiles, baseline, project, worl
   const onChange = (e) => {
     const el = e.target;
     const field = el.dataset?.cqField;
-    if (!field || !ui.sheet?.draft) return;
+    if (field === 'fixmode') { ui.fixMode = el.value === 'write' ? 'write' : 'pick'; draw(`.cq-brief input[value="${ui.fixMode}"]`); return; }
+    if (field === 'pick') {
+      const f = ui.flags.find((x) => x.target === el.dataset.target);
+      const opt = f && fixChoices(round.id, f.target, f.category, flawFiles).find((o) => o.id === el.value);
+      if (opt) f.fix = { written: f.fix?.written ?? '', id: opt.id, text: opt.text, grade: opt.grade };
+      const y = window.scrollY;
+      draw(`.cq-pick input[name="${el.name}"][value="${CSS.escape(el.value)}"]`);
+      window.scrollTo?.(0, y);
+      return;
+    }
+    if (!field || field === 'written' || !ui.sheet?.draft) return;
     const d = ui.sheet.draft;
-    if (field === 'category') { if (d.category !== el.value) { d.category = el.value; d.fix = null; } }
+    if (field === 'category') { if (d.category !== el.value) { d.category = el.value; if (ui.fixMode !== 'write') d.fix = null; } }
     else if (field === 'severity') d.severity = el.value;
     else if (field === 'fix') {
       const opt = fixChoices(round.id, d.target, d.category, flawFiles).find((f) => f.id === el.value);
@@ -552,6 +699,17 @@ export function mountCritique(root, { sample, flawFiles, baseline, project, worl
     if (sh) sh.scrollTop = sheet;
   };
 
+  // Typing a written fix updates the draft without redrawing, so the caret stays put.
+  const onInput = (e) => {
+    if (e.target.dataset?.cqField !== 'written' || !ui.sheet?.draft) return;
+    ui.sheet.draft.fix = { written: e.target.value };
+    const missing = flagMissing(ui.sheet.draft, ui.fixMode);
+    const hint = root.querySelector('.cq-missing');
+    if (hint) { hint.hidden = !missing.length; hint.textContent = missing.length ? `Still to choose: ${missing.join(', ')}.` : ''; }
+    const save = root.querySelector('[data-cq="save-flag"]');
+    if (save) { if (missing.length) save.setAttribute('aria-disabled', 'true'); else save.removeAttribute('aria-disabled'); }
+  };
+
   const onKey = (e) => {
     if (e.key === 'Escape' && ui.sheet) { e.preventDefault(); onClick({ target: root.querySelector('[data-cq="close"]') }); }
   };
@@ -559,17 +717,22 @@ export function mountCritique(root, { sample, flawFiles, baseline, project, worl
   root.addEventListener('click', onClick);
   root.addEventListener('change', onChange);
   root.addEventListener('keydown', onKey);
+  root.addEventListener('input', onInput);
   draw('[data-cq="start"]');
   return {
     get mode() { return ui.mode; },
     get flags() { return ui.flags; },
     get result() { return result; },
     get debrief() { return ui.debrief; },
+    get fixMode() { return ui.fixMode; },
     unmount() {
       forwardRun?.stop();
       root.removeEventListener('click', onClick);
       root.removeEventListener('change', onChange);
       root.removeEventListener('keydown', onKey);
+      root.removeEventListener('input', onInput);
+      gradeCtl?.abort();
+      gradeCtl = null;
       root.innerHTML = '';
     },
   };

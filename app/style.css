@@ -839,6 +839,25 @@ button.big { font-size: 1.05rem; padding: .8rem 1rem; border-radius: 12px; }
 .cq-debrief .pd-lessons h4 { margin: .8rem 0 .2rem; }
 .cq-changed .pd-name { font-weight: 600; }
 .cq-debrief .pd-parts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+/* Written fixes (hard mode): the brief's choice, the sheet's text box, grading and the pick fallback */
+.cq-fixmode, .cq-pick fieldset { border: 0; padding: 0; margin: .4rem 0 0; min-width: 0; }
+.cq-fixmode legend, .cq-write label strong { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--quiet); padding: 0; }
+.cq-fixmode .cq-opt span { display: grid; gap: .1rem; }
+.cq-fixmode .cq-opt small { color: var(--quiet); font-size: .8rem; }
+.cq-write { margin-top: .5rem; }
+.cq-write label { display: grid; gap: .1rem; }
+.cq-write label small { font-size: .8rem; }
+.cq-write textarea { min-height: 4.5rem; font-size: .92rem; }
+.cq-grading, .cq-pick { max-width: 760px; margin: 0 auto; display: grid; gap: .5rem; }
+.cq-grading h2, .cq-pick h2, .cq-grading p, .cq-pick p { margin: 0; }
+.cq-indeterminate i { width: 35%; animation: cq-slide 1.2s ease-in-out infinite; }
+@keyframes cq-slide { from { transform: translateX(-100%); } to { transform: translateX(290%); } }
+@media (prefers-reduced-motion: reduce) { .cq-indeterminate i { animation: none; width: 100%; opacity: .5; } }
+.cq-pick-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
+.cq-pick-list legend { display: flex; flex-wrap: wrap; gap: .1rem .5rem; align-items: baseline; padding: 0; }
+.cq-pick-list .your-answer { margin: .35rem 0 .45rem; }
+.cq-pick [aria-disabled="true"] { background: var(--quiet); border-color: var(--quiet); }
+.cq-feedback { border-left: 3px solid var(--gold); padding-left: .55rem; }
 @media (max-width: 860px) {
   .cq-head { grid-template-columns: auto minmax(0, 1fr); }
   .cq-head .pe-score { flex-direction: row; align-items: baseline; gap: .35rem; }

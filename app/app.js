@@ -789,9 +789,9 @@ function showPlanner() {
 }
 
 function showCritique(id) {
-  const sample = content.critique?.rounds?.find((r) => r.id === id);
-  const project = content.projects.find((p) => p.id === sample?.project);
-  if (!sample || !project) return;
+  const round = content.critique?.rounds?.find((r) => r.id === id);
+  const project = content.projects.find((p) => p.id === round?.project);
+  if (!round || !project) return;
   $('intro').hidden = true;
   $('desk').hidden = true;
   $('end').hidden = true;
@@ -802,10 +802,13 @@ function showCritique(id) {
   planner = null;
   critic?.unmount();
   critic = mountCritique($('planner'), {
-    sample, project, world: content.world, deck: content.deck, flawFiles: content.flaws ?? {}, baseline: content.plans[project.id], onExit: showIntro,
+    sample: round, project, world: content.world, deck: content.deck, flawFiles: content.flaws ?? {}, baseline: content.plans[project.id], onExit: showIntro,
+    // Hard mode on the start screen pre-selects written fixes; Claude grades them where the page can ask it.
+    fixMode: $('mode-hard')?.checked ? 'write' : 'pick',
+    grader: aiState === 'ready' && sample ? (prompt, opts) => sample.json(prompt, opts) : null,
     // A finished review goes on the profile: XP on the flaws' tracks, only what beats your best on this round.
-    onScored: (round, result) => {
-      const res = P.applyCritiqueRound(loadProfile(localStore()) ?? P.newProfile(), { round, result, at: new Date().toISOString() });
+    onScored: (r, result) => {
+      const res = P.applyCritiqueRound(loadProfile(localStore()) ?? P.newProfile(), { round: r, result, at: new Date().toISOString() });
       saveProfile(localStore(), res.profile);
       return res;
     },
