@@ -18,6 +18,7 @@ import * as G from '../engine/debrief-gm.js';
 import { mountPlanEditor } from './plan-screen.js';
 import { mountCritique, roundChoices } from './critique-screen.js';
 import { CHECKS as PLAN_CHECKS } from '../engine/plan.js';
+import { todaysPick, missionCardHtml, mountMission, recordResult, localDate } from './mission-screen.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -34,6 +35,7 @@ let profileReturn = 'intro';
 let maker = null;
 let planner = null;
 let critic = null;
+let missionView = null;
 // Hard mode: the player's written answer for the current situation, and where it is in grading.
 let hard = { eventId: null, text: '', stage: 'write', error: '', allowPick: false };
 // Hard mode, six situations: a conversation with the stakeholder, played by Claude (engine/conversation.js).
@@ -126,9 +128,52 @@ function renderDesk() {
   const profile = loadProfile(localStore()) ?? P.newProfile();
   $('desk').innerHTML = maker
     ? avatarMakerHtml(maker.draft, esc, { avatarSVG, mood: maker.mood })
-    : deskHtml(profile, esc, { avatarSVG });
+    : deskHtml(profile, esc, { avatarSVG, mission: missionCard(profile) });
   const name = $('av-name');
   if (name) name.oninput = () => { maker.draft.name = name.value; };
+}
+
+// ---------- the Daily Mission ----------
+
+// Today's pick from the unlocked projects; null if no situation could be staged (or something failed).
+function missionPick(profile) {
+  try {
+    const open = P.unlocked(profile, { locks: LOCKS });
+    const projects = content.projects.filter((p) => open.projects.includes(p.id));
+    return todaysPick(localStore(), profile, { date: localDate(), world: content.world, deck: content.deck, projects });
+  } catch { return null; }
+}
+
+function missionCard(profile) {
+  const open = P.unlocked(profile, { locks: LOCKS });
+  return missionCardHtml(profile, missionPick(profile), esc, { projects: content.projects, hardOpen: open.modes.includes('hard') });
+}
+
+function showMission(kind) {
+  const profile = loadProfile(localStore()) ?? P.newProfile();
+  const base = missionPick(profile);
+  if (!base) return;
+  const pick = { ...base, mode: kind === 'hard' ? 'hard' : 'standard', practice: kind === 'practice' };
+  closePlannerView();
+  for (const id of ['intro', 'desk', 'end', 'game', 'profile']) $(id).hidden = true;
+  $('mission').hidden = false;
+  missionView = mountMission($('mission'), {
+    pick, world: content.world, deck: content.deck, projects: content.projects, esc, avatarSVG,
+    grader: aiState === 'ready' && sample ? (prompt, opts) => sample.json(prompt, opts) : null,
+    onRecord: (pk, result, event) => {
+      const rec = recordResult(loadProfile(localStore()) ?? P.newProfile(), pk, result, event);
+      saveProfile(localStore(), rec.profile);
+      return rec;
+    },
+    onExit: showIntro,
+  });
+  window.scrollTo?.(0, 0);
+}
+
+function closeMissionView() {
+  missionView?.unmount();
+  missionView = null;
+  $('mission').hidden = true;
 }
 
 function openMaker() {
@@ -817,6 +862,7 @@ function showCritique(id) {
 }
 
 function closePlannerView() {
+  closeMissionView();
   critic?.unmount();
   critic = null;
   planner?.unmount();
@@ -828,6 +874,7 @@ function closePlannerView() {
 
 function showProfile() {
   profileReturn = !$('end').hidden ? 'end' : 'intro';
+  closeMissionView();
   const profile = loadProfile(localStore()) ?? P.newProfile();
   $('intro').hidden = true;
   $('desk').hidden = true;
@@ -870,6 +917,8 @@ document.addEventListener('click', (e) => {
   if (makerClick(e)) return;
   if (e.target.closest('#open-profile')) { showProfile(); return; }
   if (e.target.closest('#open-plan')) { showPlanner(); return; }
+  const mission = e.target.closest('[data-mission]');
+  if (mission) { showMission(mission.dataset.mission); return; }
   const crit = e.target.closest('[data-critique]');
   if (crit) { showCritique(crit.dataset.critique); return; }
   if (e.target.closest('#profile-close')) { closeProfile(); return; }

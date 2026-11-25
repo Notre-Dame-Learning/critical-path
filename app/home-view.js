@@ -33,7 +33,7 @@ function trackTile(track, xp) {
   return `<div class="skill"><span class="lv">L${level}</span><span class="skill-name">${TRACK_LABEL[track]}</span><span class="skill-bar"><i style="width:${Math.max(3, Math.min(100, pct))}%"></i></span></div>`;
 }
 
-export function deskHtml(profile, esc, { avatarSVG }) {
+export function deskHtml(profile, esc, { avatarSVG, mission = '' }) {
   const p = profile ?? {};
   const player = p.player ?? null;
   const rank = rankOf(p);
@@ -60,6 +60,7 @@ export function deskHtml(profile, esc, { avatarSVG }) {
       </div>
       ${nextBlock}
     </div>
+    ${mission}
     ${careerPath(p, small)}
     <div class="desk-grid">
       <div><h3>Your skills</h3><div class="skills">${TRACKS.map((t) => trackTile(t, p.xp?.[t] ?? 0)).join('')}</div></div>

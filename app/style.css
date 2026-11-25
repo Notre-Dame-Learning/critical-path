@@ -875,3 +875,39 @@ button.big { font-size: 1.05rem; padding: .8rem 1rem; border-radius: 12px; }
   .cq-person { grid-template-columns: 4.8rem minmax(0, 1fr) auto; }
   .cq-debrief .pd-parts { grid-template-columns: 1fr 1fr; }
 }
+
+/* ---------- Daily Mission (app/mission-screen.js) ---------- */
+.mission-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .8rem; align-items: center; border: 1.5px solid color-mix(in srgb, var(--gold) 55%, var(--rule)); border-radius: 12px; padding: .75rem .9rem; background: var(--card); }
+.mission-card.done { border-color: var(--rule); }
+.mission-card .mc-text { display: grid; gap: .15rem; min-width: 0; }
+.mission-card .mc-go { display: grid; gap: .4rem; }
+.mission-card .mc-go small { color: var(--quiet); font-weight: 400; }
+@media (max-width: 700px) {
+  .mission-card { grid-template-columns: auto minmax(0, 1fr); }
+  .mission-card .mc-go { grid-column: 1 / -1; }
+}
+.mission-wrap { max-width: 820px; margin: 1rem auto; }
+.mission { display: grid; gap: .9rem; }
+.ms-top { display: flex; justify-content: space-between; align-items: flex-start; gap: .8rem; flex-wrap: wrap; }
+.ms-top h2 { margin: .1rem 0 .2rem; font-size: 1.35rem; }
+.ms-top p { margin: 0; }
+.ms-standing { display: grid; gap: .6rem; border: 1px solid var(--rule); border-radius: 10px; padding: .7rem .85rem; }
+.ms-standing .status-word { font-size: 1.2rem; }
+.ms-standing .phase { flex: 1 1 0; min-width: 0; }
+.ms-standing .phase-label { font-size: .7rem; }
+.ms-meters { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); column-gap: 1.2rem; }
+.ms-meters .meter { grid-template-columns: minmax(0, 1fr) 5rem 2rem; }
+.ms-meters .meter span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mission .event { margin-bottom: 0; }
+.ms-forward { text-align: center; padding: 2rem 1rem; }
+.ms-forward .cq-indeterminate { max-width: 16rem; margin: 0 auto 1rem; }
+.ms-lead { margin: 0; font-size: 1.02rem; }
+.ms-compare table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.ms-compare th, .ms-compare td { padding: .35rem .5rem; border-bottom: 1px solid var(--rule); text-align: right; }
+.ms-compare th[scope="row"], .ms-compare thead th:first-child { text-align: left; font-weight: 500; color: var(--quiet); }
+.ms-compare thead th { font-weight: 600; color: var(--navy); }
+.ms-compare p { margin: .35rem 0 0; }
+.ms-xp { margin: 0; }
+.ms-xp p { margin: .2rem 0; }
+.mission .lesson { border-top: 1px solid var(--rule); }
+.mission-card .chip { white-space: nowrap; }
