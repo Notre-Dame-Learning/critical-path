@@ -6,6 +6,7 @@ import * as M from '../engine/mission.js';
 import * as P from '../engine/progression.js';
 import { TRACKS, TRACK_LABEL, levelOf } from '../engine/tracks.js';
 import { icon } from './icons.js';
+import { mountDrill } from './estimate-screen.js';
 
 export const MISSION_KEY = 'critical-path-mission-v1';
 const MIN_ANSWER = 15;
@@ -42,7 +43,7 @@ export function todaysPick(store, profile, ctx) {
     return stored.pick;
   }
   const pick = M.pickMission(profile ?? {}, { date: ctx.date, playerId, world: ctx.world, deck: ctx.deck, projects: ctx.projects });
-  if (pick) {
+  if (pick && pick.kind !== 'drill') { // an Estimate drill carries its own title
     const g = M.setupMission(pick, ctx);
     const ev = ctx.deck.events.find((e) => e.id === pick.eventId);
     pick.title = g ? S.say(g, ev.title) : ev.title;
@@ -70,6 +71,15 @@ export function missionCardHtml(profile, pick, esc, { projects, hardOpen = false
         <span class="small"><span class="chip ${cls}">${esc(verdict)}</span>${streakChip} A new mission tomorrow.</span></div>
       <div class="mc-go"><button type="button" data-mission="practice">Play it again <small>(practice, no XP)</small></button></div>
     </div>`;
+  }
+  if (pick.kind === 'drill') {
+    return `<div class="mission-card">${icon('overtime', { size: 44, tone: 'gold' })}
+    <div class="mc-text"><span class="kicker">Today's mission · ${esc(TRACK_LABEL[pick.track])} · Estimate drill</span>
+      <strong>${esc(pick.title)}, about 5 minutes</strong>
+      <span class="small">${esc(pick.reason)}. Give a range for one task in ${esc(project?.title ?? pick.projectId)}, with what similar work took on past courses to go on; then the project is played 60 times to see whether your range holds.</span>
+      ${streakChip ? `<span class="small">${streakChip}</span>` : ''}</div>
+    <div class="mc-go"><button type="button" class="primary" data-mission="standard">Start today's mission</button></div>
+  </div>`;
   }
   return `<div class="mission-card">${icon('situation', { size: 44, tone: 'gold' })}
     <div class="mc-text"><span class="kicker">Today's mission · ${esc(TRACK_LABEL[pick.track])}</span>
@@ -240,7 +250,8 @@ export function resultHtml(pick, result, esc, { written = null, record = null, g
 // Mount the mission in `root`. pick comes from todaysPick (mode and practice set by the button pressed).
 // grader(prompt, { signal }) → JSON reply, or null off Claude. onRecord(pick, result, event) → recordResult's
 // return (or null); not called for practice. schedule(fn) runs the play-forward after the "playing" card paints.
-export function mountMission(root, { pick, world, deck, projects, esc, avatarSVG, grader = null, onRecord = () => null, onExit = () => {}, schedule = (fn) => setTimeout(fn, 30) }) {
+export function mountMission(root, { pick, world, deck, projects, plans = {}, esc, avatarSVG, grader = null, onRecord = () => null, onExit = () => {}, schedule = (fn) => setTimeout(fn, 30) }) {
+  if (pick.kind === 'drill') return mountDrill(root, { pick: { ...pick, mode: 'standard' }, world, deck, projects, plans, esc, avatarSVG, onRecord, onExit, schedule });
   const g = M.setupMission(pick, { world, deck, projects });
   if (!g) { onExit(); return { unmount() {} }; }
   const ev = S.currentEvent(g);

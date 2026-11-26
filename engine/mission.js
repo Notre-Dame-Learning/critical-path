@@ -7,6 +7,7 @@ import * as M from './moves.js';
 import { readTheBoard } from './montecarlo.js';
 import { makeRng } from './rng.js';
 import { TRACKS, TRACK_LABEL, levelOf, tracksOf } from './tracks.js';
+import { pickDrill } from './estimate.js';
 
 export const MASTERED = 0.95;   // best credit at which a situation counts as mastered
 export const BONUS_XP = 10;     // target-track bonus for a 0.8+ answer, once a day
@@ -102,7 +103,20 @@ export function pickMission(profile, ctx) {
         .filter((e) => (tier === 'primary' ? !((best[e.id] ?? 0) >= MASTERED && recent(e.id)) : (best[e.id] ?? 0) < MASTERED))
         .sort((x, y) => Number(x.id in best) - Number(y.id in best) || (best[x.id] ?? 0) - (best[y.id] ?? 0)
           || Number(recent(x.id)) - Number(recent(y.id)) || tiebreak.get(x.id) - tiebreak.get(y.id));
-      for (const event of cands) {
+      // Estimating has its own mission kind: an Estimate drill comes after any unseen Estimating situation
+      // and before replays of seen ones (engine/estimate.js).
+      const DRILL = {};
+      let queue = cands;
+      if (track === 'estimating' && tier === 'primary') {
+        const seenAt = cands.findIndex((e) => e.id in best);
+        queue = seenAt < 0 ? [...cands, DRILL] : [...cands.slice(0, seenAt), DRILL, ...cands.slice(seenAt)];
+      }
+      for (const event of queue) {
+        if (event === DRILL) {
+          const d = pickDrill(profile, { date, playerId, world, projects: unlocked, difficulty: ctx.difficulty });
+          if (d) return { ...d, reason: `${TRACK_LABEL[track]} is your ${track === order[0] ? 'lowest' : 'next-weakest'} track (L${levelOf(profile?.xp?.[track] ?? 0)})` };
+          continue;
+        }
         for (const project of rng.shuffle(unlocked.filter((p) => inProject(event, p)))) {
           const staged = stage({ world, project, deck, event, seed: `${seed}:${event.id}`, difficulty: ctx.difficulty, mode: ctx.mode });
           if (!staged) continue;
@@ -121,6 +135,7 @@ export function pickMission(profile, ctx) {
 
 // Rebuild the staged game for a pick (deterministic from its seed).
 export function setupMission(pick, { world, deck, projects }) {
+  if (pick.kind === 'drill') return null; // drills have no staged game (engine/estimate.js)
   const project = projects.find((p) => p.id === pick.projectId);
   const event = deck.events.find((e) => e.id === pick.eventId);
   return stage({ world, project, deck, event, seed: pick.seed, difficulty: pick.difficulty, mode: pick.mode });

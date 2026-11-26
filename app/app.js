@@ -158,7 +158,7 @@ function showMission(kind) {
   for (const id of ['intro', 'desk', 'end', 'game', 'profile']) $(id).hidden = true;
   $('mission').hidden = false;
   missionView = mountMission($('mission'), {
-    pick, world: content.world, deck: content.deck, projects: content.projects, esc, avatarSVG,
+    pick, world: content.world, deck: content.deck, projects: content.projects, plans: content.plans ?? {}, esc, avatarSVG,
     grader: aiState === 'ready' && sample ? (prompt, opts) => sample.json(prompt, opts) : null,
     onRecord: (pk, result, event) => {
       const rec = recordResult(loadProfile(localStore()) ?? P.newProfile(), pk, result, event);

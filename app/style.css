@@ -911,3 +911,37 @@ button.big { font-size: 1.05rem; padding: .8rem 1rem; border-radius: 12px; }
 .ms-xp p { margin: .2rem 0; }
 .mission .lesson { border-top: 1px solid var(--rule); }
 .mission-card .chip { white-space: nowrap; }
+
+/* Estimate drill (app/estimate-screen.js) */
+.es-history h3, .es-why h3 { font-size: 1rem; margin: 0 0 .4rem; }
+.es-history table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.es-history th, .es-history td { padding: .35rem .5rem; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+.es-history thead th { font-weight: 600; color: var(--navy); }
+.es-history tbody th { font-weight: 500; }
+.es-history tbody th .small { display: block; font-weight: 400; }
+.es-history td:nth-child(n+2), .es-history thead th:nth-child(n+2) { text-align: right; white-space: nowrap; }
+.es-history p { margin: .35rem 0 0; }
+.es-answer { border: 1.5px solid color-mix(in srgb, var(--gold) 55%, var(--rule)); border-radius: 10px; padding: .75rem .9rem; display: grid; gap: .5rem; }
+.es-answer p { margin: 0; }
+.es-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; }
+.es-field { display: grid; gap: .2rem; font-size: .82rem; color: var(--quiet); }
+.es-input { display: flex; align-items: center; gap: .3rem; color: var(--ink); }
+.es-input input { width: 100%; min-width: 0; font: inherit; font-size: 1.05rem; padding: .4rem .5rem; border: 1px solid var(--rule); border-radius: 6px; background: var(--card); color: var(--ink); }
+.es-figure { margin: 0; display: grid; gap: .3rem; }
+.es-strip { width: 100%; height: auto; display: block; }
+.es-strip text { font-size: 11px; fill: var(--quiet); }
+.es-strip .es-qlabel { font-size: 11px; fill: var(--ink); }
+.es-band { fill: color-mix(in srgb, var(--good) 14%, transparent); }
+.es-in { fill: var(--good); }
+.es-out { fill: var(--bad); opacity: .75; }
+.es-quote { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.es-likely { stroke: var(--navy); stroke-width: 2; }
+.es-axis { stroke: var(--rule); stroke-width: 1; }
+.es-key { display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; vertical-align: -1px; }
+.es-key-in { background: var(--good); }
+.es-key-out { background: var(--bad); opacity: .75; }
+.es-key-likely { width: 2px; background: var(--navy); }
+.es-why ul { margin: 0; padding-left: 1.1rem; }
+.es-why li { margin: .2rem 0; }
+.es-compare td { text-align: right; }
+@media (max-width: 480px) { .es-fields { grid-template-columns: 1fr; } }
