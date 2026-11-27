@@ -8,6 +8,7 @@ import { readTheBoard } from './montecarlo.js';
 import { makeRng } from './rng.js';
 import { TRACKS, TRACK_LABEL, levelOf, tracksOf } from './tracks.js';
 import { pickDrill } from './estimate.js';
+import { pickSpot, SPOT_TRACKS } from './spot.js';
 
 export const MASTERED = 0.95;   // best credit at which a situation counts as mastered
 export const BONUS_XP = 10;     // target-track bonus for a 0.8+ answer, once a day
@@ -78,7 +79,7 @@ export function stage({ world, project, deck, event, seed, difficulty = 'standar
 const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
 
 // Today's mission for this player: the same all day (seeded by date and player id).
-// ctx = { date: 'YYYY-MM-DD', playerId, world, deck, projects, unlocked?: [projectIds], difficulty?, mode? }
+// ctx = { date: 'YYYY-MM-DD', playerId, world, deck, projects, unlocked?: [projectIds], difficulty?, mode?, flaws?, plans? }
 export function pickMission(profile, ctx) {
   const { date, playerId = 'player', world, deck, projects } = ctx;
   const unlocked = projects.filter((p) => !ctx.unlocked || ctx.unlocked.includes(p.id));
@@ -105,15 +106,20 @@ export function pickMission(profile, ctx) {
           || Number(recent(x.id)) - Number(recent(y.id)) || tiebreak.get(x.id) - tiebreak.get(y.id));
       // Estimating has its own mission kind: an Estimate drill comes after any unseen Estimating situation
       // and before replays of seen ones (engine/estimate.js).
+      // Planning, Risk and Capacity have one too: Spot the flaw (engine/spot.js), when the flaw library and
+      // the projects' baselines are passed in (ctx.flaws, ctx.plans).
       const DRILL = {};
       let queue = cands;
-      if (track === 'estimating' && tier === 'primary') {
+      const own = tier === 'primary' && (track === 'estimating' || (SPOT_TRACKS.includes(track) && ctx.flaws && ctx.plans));
+      if (own) {
         const seenAt = cands.findIndex((e) => e.id in best);
         queue = seenAt < 0 ? [...cands, DRILL] : [...cands.slice(0, seenAt), DRILL, ...cands.slice(seenAt)];
       }
       for (const event of queue) {
         if (event === DRILL) {
-          const d = pickDrill(profile, { date, playerId, world, projects: unlocked, difficulty: ctx.difficulty });
+          const d = track === 'estimating'
+            ? pickDrill(profile, { date, playerId, world, projects: unlocked, difficulty: ctx.difficulty })
+            : pickSpot(profile, { date, playerId, track, flaws: ctx.flaws, projects: unlocked, plans: ctx.plans, difficulty: ctx.difficulty });
           if (d) return { ...d, reason: `${TRACK_LABEL[track]} is your ${track === order[0] ? 'lowest' : 'next-weakest'} track (L${levelOf(profile?.xp?.[track] ?? 0)})` };
           continue;
         }
@@ -135,7 +141,7 @@ export function pickMission(profile, ctx) {
 
 // Rebuild the staged game for a pick (deterministic from its seed).
 export function setupMission(pick, { world, deck, projects }) {
-  if (pick.kind === 'drill') return null; // drills have no staged game (engine/estimate.js)
+  if (pick.kind === 'drill' || pick.kind === 'spot') return null; // drills and spots have no staged game (estimate.js, spot.js)
   const project = projects.find((p) => p.id === pick.projectId);
   const event = deck.events.find((e) => e.id === pick.eventId);
   return stage({ world, project, deck, event, seed: pick.seed, difficulty: pick.difficulty, mode: pick.mode });

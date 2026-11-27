@@ -140,7 +140,7 @@ function missionPick(profile) {
   try {
     const open = P.unlocked(profile, { locks: LOCKS });
     const projects = content.projects.filter((p) => open.projects.includes(p.id));
-    return todaysPick(localStore(), profile, { date: localDate(), world: content.world, deck: content.deck, projects });
+    return todaysPick(localStore(), profile, { date: localDate(), world: content.world, deck: content.deck, projects, plans: content.plans, flaws: content.flaws });
   } catch { return null; }
 }
 
@@ -156,9 +156,11 @@ function showMission(kind) {
   const pick = { ...base, mode: kind === 'hard' ? 'hard' : 'standard', practice: kind === 'practice' };
   closePlannerView();
   for (const id of ['intro', 'desk', 'end', 'game', 'profile']) $(id).hidden = true;
-  $('mission').hidden = false;
-  missionView = mountMission($('mission'), {
-    pick, world: content.world, deck: content.deck, projects: content.projects, plans: content.plans ?? {}, esc, avatarSVG,
+  // Spot the flaw reviews a whole plan, so it takes the plan editor's full-width space.
+  const root = pick.kind === 'spot' ? $('planner') : $('mission');
+  root.hidden = false;
+  missionView = mountMission(root, {
+    pick, world: content.world, deck: content.deck, projects: content.projects, plans: content.plans ?? {}, flaws: content.flaws ?? {}, esc, avatarSVG,
     grader: aiState === 'ready' && sample ? (prompt, opts) => sample.json(prompt, opts) : null,
     onRecord: (pk, result, event) => {
       const rec = recordResult(loadProfile(localStore()) ?? P.newProfile(), pk, result, event);
@@ -171,6 +173,7 @@ function showMission(kind) {
 }
 
 function closeMissionView() {
+  if (missionView?.round) $('planner').hidden = true; // a Spot the flaw mission sits in the planner's space
   missionView?.unmount();
   missionView = null;
   $('mission').hidden = true;

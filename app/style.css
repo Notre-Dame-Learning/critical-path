@@ -909,6 +909,7 @@ button.big { font-size: 1.05rem; padding: .8rem 1rem; border-radius: 12px; }
 .ms-compare p { margin: .35rem 0 0; }
 .ms-xp { margin: 0; }
 .ms-xp p { margin: .2rem 0; }
+.sp-result .pd-summary .ms-xp { margin-top: .6rem; }
 .mission .lesson { border-top: 1px solid var(--rule); }
 .mission-card .chip { white-space: nowrap; }
 

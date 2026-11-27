@@ -7,6 +7,7 @@ import * as P from '../engine/progression.js';
 import { TRACKS, TRACK_LABEL, levelOf } from '../engine/tracks.js';
 import { icon } from './icons.js';
 import { mountDrill } from './estimate-screen.js';
+import { mountSpot } from './spot-screen.js';
 
 export const MISSION_KEY = 'critical-path-mission-v1';
 const MIN_ANSWER = 15;
@@ -34,7 +35,7 @@ function writeStored(store, value) {
 
 // Today's mission: picked once a day and kept, so recording a result (which changes the profile) or a reload
 // never swaps it. The player id is per browser and only seeds the pick.
-// ctx = { date, world, deck, projects (unlocked), newId? }
+// ctx = { date, world, deck, projects (unlocked), plans?, flaws?, newId? } (plans and flaws let Spot the flaw be picked)
 export function todaysPick(store, profile, ctx) {
   const stored = readStored(store) ?? {};
   const playerId = stored.playerId ?? (ctx.newId ?? (() => Math.random().toString(36).slice(2, 10)))();
@@ -42,8 +43,8 @@ export function todaysPick(store, profile, ctx) {
     if (!stored.playerId) writeStored(store, { ...stored, playerId });
     return stored.pick;
   }
-  const pick = M.pickMission(profile ?? {}, { date: ctx.date, playerId, world: ctx.world, deck: ctx.deck, projects: ctx.projects });
-  if (pick && pick.kind !== 'drill') { // an Estimate drill carries its own title
+  const pick = M.pickMission(profile ?? {}, { date: ctx.date, playerId, world: ctx.world, deck: ctx.deck, projects: ctx.projects, plans: ctx.plans, flaws: ctx.flaws });
+  if (pick && !pick.kind) { // an Estimate drill or a Spot the flaw carries its own title
     const g = M.setupMission(pick, ctx);
     const ev = ctx.deck.events.find((e) => e.id === pick.eventId);
     pick.title = g ? S.say(g, ev.title) : ev.title;
@@ -79,6 +80,15 @@ export function missionCardHtml(profile, pick, esc, { projects, hardOpen = false
       <span class="small">${esc(pick.reason)}. Give a range for one task in ${esc(project?.title ?? pick.projectId)}, with what similar work took on past courses to go on; then the project is played 60 times to see whether your range holds.</span>
       ${streakChip ? `<span class="small">${streakChip}</span>` : ''}</div>
     <div class="mc-go"><button type="button" class="primary" data-mission="standard">Start today's mission</button></div>
+  </div>`;
+  }
+  if (pick.kind === 'spot') {
+    return `<div class="mission-card">${icon('review', { size: 44, tone: 'gold' })}
+    <div class="mc-text"><span class="kicker">Today's mission · ${esc(TRACK_LABEL[pick.track])} · Spot the flaw</span>
+      <strong>${esc(pick.title)}, about 5 minutes</strong>
+      <span class="small">${esc(pick.reason)}. A draft plan with one problem in it: find it, say how serious it is and fix it; then the plan is played forward with and without the fix.</span>
+      ${streakChip ? `<span class="small">${streakChip}</span>` : ''}</div>
+    <div class="mc-go"><button type="button" class="primary" data-mission="standard">Start today's mission</button>${hardOpen ? '<button type="button" data-mission="hard">Write your fix <small>(Hard, 1.5× XP)</small></button>' : ''}</div>
   </div>`;
   }
   return `<div class="mission-card">${icon('situation', { size: 44, tone: 'gold' })}
@@ -250,7 +260,8 @@ export function resultHtml(pick, result, esc, { written = null, record = null, g
 // Mount the mission in `root`. pick comes from todaysPick (mode and practice set by the button pressed).
 // grader(prompt, { signal }) → JSON reply, or null off Claude. onRecord(pick, result, event) → recordResult's
 // return (or null); not called for practice. schedule(fn) runs the play-forward after the "playing" card paints.
-export function mountMission(root, { pick, world, deck, projects, plans = {}, esc, avatarSVG, grader = null, onRecord = () => null, onExit = () => {}, schedule = (fn) => setTimeout(fn, 30) }) {
+export function mountMission(root, { pick, world, deck, projects, plans = {}, flaws = {}, esc, avatarSVG, grader = null, onRecord = () => null, onExit = () => {}, schedule = (fn) => setTimeout(fn, 30) }) {
+  if (pick.kind === 'spot') return mountSpot(root, { pick, world, deck, projects, plans, flaws, esc, grader, onRecord, onExit });
   if (pick.kind === 'drill') return mountDrill(root, { pick: { ...pick, mode: 'standard' }, world, deck, projects, plans, esc, avatarSVG, onRecord, onExit, schedule });
   const g = M.setupMission(pick, { world, deck, projects });
   if (!g) { onExit(); return { unmount() {} }; }

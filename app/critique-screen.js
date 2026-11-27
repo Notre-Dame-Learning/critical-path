@@ -207,6 +207,9 @@ const flagBtn = (target, flags, label = 'Flag') => {
   return `<button type="button" class="cq-flag-btn${on ? ' on' : ''}" data-cq="flag" data-target="${esc(target)}" aria-label="${esc(on ? `Edit flag: ${label}` : `Flag: ${label}`)}">${on ? '⚑ Flagged' : '⚐ Flag'}</button>`;
 };
 
+// The review's kicker: a Critique round's rank, or the variant's own (a Spot the flaw mission).
+const kickerOf = (ui) => ui.kicker ?? `Critique the plan · ${ui.rank ?? ''} round`;
+
 export function reviewHtml(m, ui = {}) {
   const flags = ui.flags ?? [];
   const tab = ui.tab ?? 'tasks';
@@ -252,16 +255,17 @@ export function reviewHtml(m, ui = {}) {
         <small>${esc(C.CATEGORY_LABEL[f.category] ?? f.category)} · ${esc(SEV_LABEL[f.severity] ?? f.severity)}</small><small class="muted">Fix: ${esc(fixText(f.fix) || '—')}</small></button></li>`).join('')}</ul>`
     : '<p class="small muted">No flags yet. Flag anything that would hurt this plan.</p>';
   const confirm = ui.confirm ? `<div class="cq-confirm" role="alertdialog" aria-labelledby="cq-confirm-h">
-      <p id="cq-confirm-h"><strong>${ui.confirm === 'approve' ? 'Approve' : 'Send back'} this plan with ${plural(flags.length, 'flag')}?</strong> This ends the review${ui.fixMode === 'write' && flags.length ? '; your written fixes are graded next' : ''}.</p>
-      <div class="pd-actions"><button type="button" class="primary" data-cq="verdict-yes">${ui.confirm === 'approve' ? 'Yes, approve it' : 'Yes, send it back'}</button><button type="button" data-cq="verdict-no">Keep reviewing</button></div></div>` : '';
+      <p id="cq-confirm-h"><strong>${ui.submitLabel ? `Score ${flags.length === 1 ? 'your flag' : `your ${plural(flags.length, 'flag')}`}?` : `${ui.confirm === 'approve' ? 'Approve' : 'Send back'} this plan with ${plural(flags.length, 'flag')}?`}</strong> This ends the review${ui.fixMode === 'write' && flags.length ? '; your written fixes are graded next' : ''}.</p>
+      <div class="pd-actions"><button type="button" class="primary" data-cq="verdict-yes">${ui.submitLabel ? 'Yes, score it' : ui.confirm === 'approve' ? 'Yes, approve it' : 'Yes, send it back'}</button><button type="button" data-cq="verdict-no">Keep reviewing</button></div></div>` : '';
   const tabs = [['tasks', 'Tasks'], ['calendar', 'Calendar'], ['risks', 'Risks'], ['team', 'Team'], ['flags', `Flags ${flags.length}`]];
   return `<div class="pe cq" data-tab="${tab}">
     <div class="pe-head card cq-head">
-      <div class="pe-title"><span class="kicker">Critique the plan · ${esc(ui.rank ?? '')} round${ui.fixMode === 'write' ? ' · written fixes' : ''}</span><h2>${esc(m.project.title)}</h2>
-        <p class="small muted">A draft from another PM · launch week ${m.launchWeek} · ${m.rows.length} tasks</p></div>
+      <div class="pe-title"><span class="kicker">${esc(kickerOf(ui))}${ui.fixMode === 'write' ? ' · written fixes' : ''}</span><h2>${esc(m.project.title)}</h2>
+        <p class="small muted">${esc(ui.subline ?? 'A draft from another PM')} · launch week ${m.launchWeek} · ${m.rows.length} tasks</p></div>
       <div class="pe-score" aria-label="${plural(flags.length, 'flag')}"><strong>${flags.length}</strong><span class="small muted">${flags.length === 1 ? 'flag' : 'flags'}</span></div>
       <div class="pe-tools"><button type="button" data-cq="exit">Back</button></div>
-      <div class="cq-verdict"><button type="button" data-cq="verdict" data-id="approve">Approve</button><button type="button" class="primary" data-cq="verdict" data-id="send_back">Send back</button></div>
+      <div class="cq-verdict">${ui.submitLabel ? `<button type="button" class="primary" data-cq="verdict" data-id="send_back"${flags.length ? '' : ' aria-disabled="true"'}>${esc(ui.submitLabel)}</button>`
+        : '<button type="button" data-cq="verdict" data-id="approve">Approve</button><button type="button" class="primary" data-cq="verdict" data-id="send_back">Send back</button>'}</div>
     </div>
     ${confirm}
     <p class="pe-status small" role="status" aria-live="polite">${esc(ui.status ?? '')}</p>
@@ -315,7 +319,7 @@ export function gradingHtml(ui) {
   const n = ui.flags.length;
   const busy = ui.grading?.stage !== 'error';
   return `<section class="card cq-grading" aria-busy="${busy}">
-    <span class="kicker">Critique the plan · ${esc(ui.rank ?? '')} round · written fixes</span>
+    <span class="kicker">${esc(kickerOf(ui))} · written fixes</span>
     <h2>${busy ? 'Grading your fixes' : 'Grading didn\'t finish'}</h2>
     ${busy ? `<p>Claude is reading the ${(n === 1 ? '1 fix' : `${n} fixes`)} you wrote against ODL practice. Your score follows.</p><div class="pd-progress cq-indeterminate" role="progressbar" aria-label="Grading your fixes"><i></i></div>`
     : `<p class="small error">${esc(ui.grading.error)}</p>`}
@@ -329,7 +333,7 @@ export function pickHtml(ui, m) {
   const world = ui.world ?? { people: [], faculty: [] };
   const left = ui.flags.filter((f) => !f.fix?.grade).length;
   return `<section class="card cq-pick">
-    <span class="kicker">Critique the plan · ${esc(ui.rank ?? '')} round · written fixes</span>
+    <span class="kicker">${esc(kickerOf(ui))} · written fixes</span>
     <h2>Pick the option closest to each fix</h2>
     ${ui.pickNote ? `<p class="small muted">${esc(ui.pickNote)}</p>` : ''}
     <ol class="cq-pick-list">${ui.flags.map((f, i) => `<li><fieldset><legend><strong>⚑ ${esc(targetLabel(f.target, m.project, world))}</strong> <small class="muted">${esc(C.CATEGORY_LABEL[f.category] ?? f.category)}</small></legend>
@@ -509,23 +513,33 @@ export function debriefHtml(m, { progress = null } = {}) {
 // pre-selects it; grader(prompt, { signal }) asks Claude and resolves to its JSON reply, or is null off Claude.
 export const GRADER_UNAVAILABLE = ['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'];
 
-export function mountCritique(root, { sample, flawFiles, baseline, project, world, deck = { events: [] }, onExit = () => {}, onScored = () => null, forwardOptions = {}, fixMode = 'pick', grader = null }) {
+//
+// variant (optional) turns the screen into another review, such as a Spot the flaw mission (app/spot-screen.js):
+//   { kicker, subline, submitLabel (one Score button instead of Approve / Send back), briefHtml(ui),
+//     debriefModel(round, result, args), debriefHtml(m, { progress }), forwardHtml(f, progress),
+//     forwardPlans(fixed) → { written, fixed, same } }; any hook left out keeps the Critique behaviour.
+// round: a round already built (else it is built from sample).
+export function mountCritique(root, { sample, round: given = null, flawFiles, baseline, project, world, deck = { events: [] }, onExit = () => {}, onScored = () => null, forwardOptions = {}, fixMode = 'pick', grader = null, variant = null }) {
   const byId = flawsById(flawFiles);
-  const round = C.buildRound(sample, byId, baseline, project);
+  const round = given ?? C.buildRound(sample, byId, baseline, project);
+  const v = variant ?? {};
+  const fwHtml = v.forwardHtml ?? forwardHtml;
+  const dbModel = v.debriefModel ?? debriefModel;
+  const dbHtml = v.debriefHtml ?? debriefHtml;
   const model = reviewModel(round, project, world);
   const ctx = { world, project, deck };
   const ui = { mode: 'brief', tab: 'tasks', flags: [], sheet: null, confirm: null, status: '', world, flawFiles, roundId: round.id, rank: round.rank, debrief: null, progress: null,
-    fixMode: fixMode === 'write' ? 'write' : 'pick', grading: null, pickNote: '' };
+    fixMode: fixMode === 'write' ? 'write' : 'pick', grading: null, pickNote: '', kicker: v.kicker ?? null, subline: v.subline ?? null, submitLabel: v.submitLabel ?? null };
   let result = null;
   let forwardRun = null;
   let gradeCtl = null;
   let verdictGiven = null;
 
   const draw = (focus) => {
-    if (ui.mode === 'brief') root.innerHTML = briefHtml(round, project, world, { fixMode: ui.fixMode, canGrade: Boolean(grader) });
+    if (ui.mode === 'brief') root.innerHTML = v.briefHtml ? v.briefHtml(ui) : briefHtml(round, project, world, { fixMode: ui.fixMode, canGrade: Boolean(grader) });
     else if (ui.mode === 'grading') root.innerHTML = gradingHtml(ui);
     else if (ui.mode === 'pick') root.innerHTML = pickHtml(ui, model);
-    else if (ui.mode === 'debrief') root.innerHTML = debriefHtml(ui.debrief, { progress: ui.progress });
+    else if (ui.mode === 'debrief') root.innerHTML = dbHtml(ui.debrief, { progress: ui.progress });
     else {
       const scroll = root.querySelector('.pe-scroll')?.scrollLeft ?? 0;
       root.innerHTML = reviewHtml(model, ui);
@@ -541,24 +555,25 @@ export function mountCritique(root, { sample, flawFiles, baseline, project, worl
     try { xp = onScored(round, result) ?? null; } catch { xp = null; }
     const fixed = C.fixedPlan(round, result, byId, baseline, project);
     const debriefArgs = { flags: ui.flags, project, world, flawFiles, baseline, fixed, xp };
-    ui.debrief = debriefModel(round, result, debriefArgs);
+    ui.debrief = dbModel(round, result, debriefArgs);
     ui.mode = 'debrief';
     ui.sheet = null;
     ui.confirm = null;
     ui.progress = null;
-    draw('[data-cq="again"]');
+    draw(v.debriefHtml ? '[data-cq="exit"]' : '[data-cq="again"]');
     root.querySelector('.pd-total')?.scrollIntoView?.({ block: 'start' });
-    forwardRun = createForwardRun(ctx, { written: round.plan, fixed: fixed.plan, same: fixed.fixed.length === 0 }, {
+    const plans = v.forwardPlans ? v.forwardPlans(fixed) : { written: round.plan, fixed: fixed.plan, same: fixed.fixed.length === 0 };
+    forwardRun = createForwardRun(ctx, plans, {
       ...forwardOptions,
       onProgress: (p) => {
         ui.progress = p;
         const el = root.querySelector('.cq-forward');
-        if (el) { const t = document.createElement('template'); t.innerHTML = forwardHtml(null, p).trim(); el.replaceWith(t.content.firstElementChild); }
+        if (el) { const t = document.createElement('template'); t.innerHTML = fwHtml(null, p).trim(); el.replaceWith(t.content.firstElementChild); }
       },
       onDone: (forward) => {
-        ui.debrief = debriefModel(round, result, { ...debriefArgs, forward });
+        ui.debrief = dbModel(round, result, { ...debriefArgs, forward });
         const el = root.querySelector('.cq-forward');
-        if (el) { const t = document.createElement('template'); t.innerHTML = forwardHtml(ui.debrief.forward).trim(); el.replaceWith(t.content.firstElementChild); }
+        if (el) { const t = document.createElement('template'); t.innerHTML = fwHtml(ui.debrief.forward).trim(); el.replaceWith(t.content.firstElementChild); }
       },
     });
     forwardRun.start();
@@ -649,7 +664,9 @@ export function mountCritique(root, { sample, flawFiles, baseline, project, worl
         ui.sheet = ui.sheet?.from ? { task: ui.sheet.from } : null;
         return draw();
       }
-      case 'verdict': ui.confirm = id; ui.sheet = null; return draw('[data-cq="verdict-yes"]');
+      case 'verdict':
+        if (ui.submitLabel && !ui.flags.length) { ui.status = 'Flag the problem first: tap a task, a link, a calendar row, a risk or a person.'; return draw('[data-cq="verdict"]'); }
+        ui.confirm = id; ui.sheet = null; return draw('[data-cq="verdict-yes"]');
       case 'verdict-no': ui.confirm = null; return draw('[data-cq="verdict"]');
       case 'verdict-yes':
         verdictGiven = ui.confirm;
