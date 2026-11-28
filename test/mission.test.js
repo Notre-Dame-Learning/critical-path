@@ -59,14 +59,15 @@ test("today's pick targets the weakest track, is the same all day, and differs b
 test('rotation: unseen situations first, mastered ones rested for a week, a learned track rested after two strong missions', () => {
   const comm = deck.events.filter((e) => tracksOf(e).primary === 'communication').map((e) => e.id);
   const base = { xp: { planning: 300, estimating: 300, capacity: 300, risk: 300, stakeholders: 300, communication: 0, change: 300, leadership: 300 } };
-  // Two of the three Communication situations seen: the unseen one comes first.
-  const seen = { ...base, bestCredit: { [comm[0]]: 0.3, [comm[1]]: 0.5 } };
-  assert.equal(M.pickMission(seen, { ...ctx, date: '2026-11-19' }).eventId, comm[2]);
-  // All three seen: lowest best credit first.
-  const all = { ...base, bestCredit: { [comm[0]]: 0.3, [comm[1]]: 0.5, [comm[2]]: 0.6 } };
+  const credits = (fn) => Object.fromEntries(comm.map((id, i) => [id, fn(i)]));
+  // Every Communication situation but the last one seen: the unseen one comes first.
+  const seen = { ...base, bestCredit: Object.fromEntries(comm.slice(0, -1).map((id, i) => [id, 0.3 + 0.1 * i])) };
+  assert.equal(M.pickMission(seen, { ...ctx, date: '2026-11-19' }).eventId, comm.at(-1));
+  // All seen: lowest best credit first.
+  const all = { ...base, bestCredit: credits((i) => 0.3 + 0.1 * i) };
   assert.equal(M.pickMission(all, { ...ctx, date: '2026-11-19' }).eventId, comm[0]);
   // A mastered situation played this week is skipped.
-  const mastered = { ...base, bestCredit: { [comm[0]]: 1, [comm[1]]: 1, [comm[2]]: 1 }, missions: [{ date: '2026-11-18', eventId: comm[0], track: 'communication', credit: 1 }] };
+  const mastered = { ...base, bestCredit: credits(() => 1), missions: [{ date: '2026-11-18', eventId: comm[0], track: 'communication', credit: 1 }] };
   assert.notEqual(M.pickMission(mastered, { ...ctx, date: '2026-11-19' }).eventId, comm[0]);
   // Two strong missions in a row on Communication: today goes to the next-weakest track.
   const strong = { ...base, xp: { ...base.xp, change: 290 }, missions: [

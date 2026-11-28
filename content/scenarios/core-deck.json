@@ -4273,6 +4273,1079 @@
         "escalateWhen": "If the replace list is still bigger than the time, after triage.",
         "sop": "LD SOP: assessment plan"
       }
+    },
+    {
+      "id": "screen-reader-test",
+      "title": "Nobody Has Tried It With a Screen Reader",
+      "who": "ld",
+      "mood": "worried",
+      "track": "risk",
+      "track2": "planning",
+      "projects": [
+        "a11y-sprint-ochem"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          4
+        ],
+        "requires": {
+          "taskStarted": "docs",
+          "taskNotDone": "qa"
+        },
+        "chance": 0.5
+      },
+      "prevent": {
+        "risk": "The QA plan is the checker's score, but the accessibility office reviews with a screen reader and a keyboard.",
+        "move": "Get the accessibility office's review checklist now",
+        "when": {
+          "taskStarted": "audit"
+        }
+      },
+      "text": "{ld}: \"The checker gives the course 94%. But the accessibility office reviews with a screen reader and a keyboard, and none of us has tried that yet.\"",
+      "choices": [
+        {
+          "id": "first-module-pass",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Get the accessibility office's review checklist, and have {ld} do a screen-reader and keyboard pass on the first module now, so what it finds shapes the rest of the fixes.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "qa",
+              "value": 1
+            },
+            {
+              "type": "addEffort",
+              "task": "docs",
+              "value": 1
+            }
+          ],
+          "outcome": "The first module's pass finds unlabeled buttons and a quiz you can't finish with a keyboard. The fix goes into every module from then on.",
+          "why": "An automated score checks code, not whether a student can use the page. Testing early, the way the reviewer will, turns a late surprise into a pattern you fix once."
+        },
+        {
+          "id": "trust-score",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "94% is a strong score. Submit when the fixes are done.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "docs",
+              "value": 3
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "alttext",
+              "value": 2
+            }
+          ],
+          "outcome": "The reviewer can't get past the module 2 quiz with a keyboard. The review comes back failed.",
+          "why": "Checkers miss what only a person using assistive technology finds: reading order, focus, and whether the page makes sense read aloud."
+        },
+        {
+          "id": "test-at-end",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "worried",
+          "label": "Add a full screen-reader test to QA in the last week.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "qa",
+              "value": 3
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "docs",
+              "value": 2
+            }
+          ],
+          "outcome": "QA week turns up the same problem on every page, with no time left to fix them all.",
+          "why": "Testing is right, but testing last means a repeated problem shows up on every page at once."
+        },
+        {
+          "id": "ask-sup-review",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Ask {sup} to set up an early review of the first module with the accessibility office.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "qa",
+              "value": 1
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "docs",
+              "value": 1
+            }
+          ],
+          "outcome": "{sup} gets a slot in week three. The reviewer's notes arrive in time to fix most pages.",
+          "why": "A good move, but you could have asked the office yourself and started testing today."
+        }
+      ],
+      "debrief": {
+        "concept": "Quality risk: test the way the reviewer will test, and test early.",
+        "independent": "Get the reviewer's checklist, test one module with a screen reader and a keyboard, and carry what you learn into the rest.",
+        "escalateWhen": "When the first pass finds something the team can't fix in time, such as a quiz tool that isn't accessible.",
+        "sop": "LD SOP: QA and student testing; Media SOP: accessibility"
+      }
+    },
+    {
+      "id": "captioner-out",
+      "title": "{mp} Is Out Sick",
+      "who": "mp",
+      "mood": "sad",
+      "track": "capacity",
+      "track2": "leadership",
+      "projects": [
+        "a11y-sprint-ochem"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          3
+        ],
+        "requires": {
+          "taskStarted": "captions",
+          "taskNotDone": "captions"
+        },
+        "chance": 0.45
+      },
+      "text": "{mp} is out sick for the rest of the week, with 14 of the 24 lecture videos still to correct. The review date doesn't move.",
+      "choices": [
+        {
+          "id": "send-out-longest",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Send the eight longest lectures out for professional captioning, keep the first-month videos for {mp}, and have {mp} spot-check the returned files on getting back.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -5,
+              "weeks": 1
+            },
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": 3,
+              "weeks": 2
+            }
+          ],
+          "outcome": "The captions come back in three days. {mp} spot-checks them and finishes the rest on time.",
+          "why": "When a key person is out, move the work others can do and keep the expert for the part only they can do."
+        },
+        {
+          "id": "wait-for-mp",
+          "tier": "ignore",
+          "credit": 0.2,
+          "reaction": "sad",
+          "label": "Wait for {mp} to get back and catch up.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -5,
+              "weeks": 1
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -8
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "captions",
+              "value": 2
+            }
+          ],
+          "outcome": "{mp} comes back to the same pile with a week less, and rushes it.",
+          "why": "Waiting doesn't move the deadline; it just shrinks the time for the same work."
+        },
+        {
+          "id": "ld-covers",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "frustrated",
+          "label": "Have {ld} correct captions this week instead of the PDFs.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -5,
+              "weeks": 1
+            },
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": 1,
+              "weeks": 1
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -4
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "captions",
+              "value": 2
+            }
+          ],
+          "outcome": "{ld} gets through three videos slowly, and the PDFs fall behind.",
+          "why": "Moving someone off another deadline task just moves the delay, and caption work needs practice."
+        },
+        {
+          "id": "ask-backup",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Ask {sup} for a backup media producer this week.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": -5,
+              "weeks": 1
+            },
+            {
+              "type": "capacity",
+              "who": "mp",
+              "value": 3,
+              "weeks": 1
+            }
+          ],
+          "outcome": "{sup} lends a producer for two days.",
+          "why": "A fair ask, but sending the long lectures out was an option you could use yourself."
+        }
+      ],
+      "debrief": {
+        "concept": "Capacity: when someone is out, move the work, not the date.",
+        "independent": "List what only the missing person can do, send the rest to others or out for service, and keep them on the essential part when they return.",
+        "escalateWhen": "When there's no one and no budget to take the work and the date can't hold.",
+        "sop": "PM SOP: With Timelines (shifting work between team members); Media SOP: accessibility"
+      }
+    },
+    {
+      "id": "alt-text-essays",
+      "title": "Every Description Is an Essay",
+      "who": "faculty",
+      "mood": "happy",
+      "track": "stakeholders",
+      "track2": "change",
+      "projects": [
+        "a11y-sprint-ochem"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          5
+        ],
+        "requires": {
+          "taskStarted": "facultyreview",
+          "taskNotDone": "facultyreview"
+        },
+        "chance": 0.6
+      },
+      "text": "{faculty} has rewritten the first five diagram descriptions. Each is now 300 words on the reaction's history. \"Students should understand the chemistry, not just hear the picture.\"",
+      "choices": [
+        {
+          "id": "short-plus-long",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Thank {fobj} and agree a pattern: short alt text, a linked long description of what the diagram shows, and {fpos} teaching notes in the module text. Ask {fobj} to check accuracy.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": 2
+            }
+          ],
+          "outcome": "{faculty} likes having a home for the teaching notes. The review moves quickly after that.",
+          "why": "Respect the expert's goal, then give it the right place: alt text describes, the page teaches."
+        },
+        {
+          "id": "use-essays",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "neutral",
+          "label": "Use {fpos} versions; {fsub} knows the subject.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "facultyreview",
+              "value": 3
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "alttext",
+              "value": 3
+            },
+            {
+              "type": "trust",
+              "value": 1
+            }
+          ],
+          "outcome": "Five diagrams take a week. The reviewer flags the long alt text as hard to use with a screen reader.",
+          "why": "Deferring to the expert on content is right; on accessibility format it isn't."
+        },
+        {
+          "id": "flat-no",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Tell {fobj} alt text has to be short and ask {fobj} only to check the facts.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -4
+            },
+            {
+              "type": "responsiveness",
+              "value": -0.1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "{faculty} goes quiet, and the review stalls for a few days.",
+          "why": "Right on the rule, but a flat no costs you the person whose sign-off you need."
+        },
+        {
+          "id": "sup-explains",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask {sup} to explain the alt text guidelines to {fobj}.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -1
+            },
+            {
+              "type": "addEffort",
+              "task": "facultyreview",
+              "value": 1
+            }
+          ],
+          "outcome": "{sup} explains, and suggests the long-description pattern you could have offered.",
+          "why": "You can have this conversation yourself, with an offer that meets the faculty member's goal."
+        }
+      ],
+      "debrief": {
+        "concept": "Stakeholders: find the goal behind the request and give it a home.",
+        "independent": "Agree what the faculty member wants students to get, then fit it to the standard: short alt text, a long description, teaching notes on the page.",
+        "escalateWhen": "When the faculty member insists on something that would fail the review.",
+        "sop": "PM SOP: Challenging Faculty; Media SOP: accessibility"
+      }
+    },
+    {
+      "id": "ai-tool-updated",
+      "title": "The AI Tool Changed Overnight",
+      "who": "mp",
+      "mood": "worried",
+      "track": "risk",
+      "track2": "change",
+      "projects": [
+        "teaching-ai-microcourse"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          5
+        ],
+        "requires": {
+          "taskStarted": "scripts",
+          "taskNotDone": "embed"
+        },
+        "chance": 0.5
+      },
+      "prevent": {
+        "risk": "The course shows screens of an AI tool that changes every few weeks.",
+        "move": "Agree with {faculty} to film the ideas, not the buttons",
+        "when": {
+          "taskStarted": "coursemap"
+        }
+      },
+      "text": "{mp}: \"The campus AI assistant got a redesign overnight. Every screenshot in the scripts and the course outline shows the old screens.\"",
+      "choices": [
+        {
+          "id": "design-for-change",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Update the screenshots in the build, keep the videos about the teaching rather than the buttons, and add a dated \"screens may look different\" note linking to the tool's help.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 1
+            },
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 1
+            }
+          ],
+          "outcome": "The build shows today's screens, and the videos will survive the next redesign too.",
+          "why": "In a course about a fast-changing tool, design for change: teach the idea, and keep screen details where they're cheap to update."
+        },
+        {
+          "id": "rerecord-all",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Re-script and re-record every demo with the new screens.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "scripts",
+              "value": 2
+            },
+            {
+              "type": "addEffort",
+              "task": "production",
+              "value": 2
+            },
+            {
+              "type": "addEffort",
+              "task": "post",
+              "value": 3
+            },
+            {
+              "type": "morale",
+              "who": "mp",
+              "value": -5
+            }
+          ],
+          "outcome": "The re-record eats the buffer before the workshop, and the tool changes again in August.",
+          "why": "Chasing every change costs the schedule and will need doing again."
+        },
+        {
+          "id": "cosmetic",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Leave it; the changes are cosmetic.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 4
+            },
+            {
+              "type": "trust",
+              "value": -3
+            }
+          ],
+          "outcome": "At the workshop, faculty can't find the buttons the course points to.",
+          "why": "Out-of-date screens in a how-to course break exactly the part learners rely on."
+        },
+        {
+          "id": "wait-and-see",
+          "tier": "escalate",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Ask {sup} whether ODL should wait for the tool to settle.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -1
+            }
+          ],
+          "outcome": "{sup} reminds you the workshop date won't move and asks for your options.",
+          "why": "Waiting isn't an option on a fixed date; bring a way to absorb the change."
+        }
+      ],
+      "debrief": {
+        "concept": "Risk: when the subject keeps changing, design for change.",
+        "independent": "Keep the parts that date, like screens and menus, where they're cheap to update, and make the videos about what won't change.",
+        "escalateWhen": "When the change breaks something the course depends on, such as the tool being withdrawn.",
+        "sop": "Media SOP: 3M Production; LD SOP: master site build"
+      }
+    },
+    {
+      "id": "policy-not-final",
+      "title": "The AI Guidance Isn't Final",
+      "who": "faculty",
+      "mood": "worried",
+      "track": "stakeholders",
+      "track2": "risk",
+      "projects": [
+        "teaching-ai-microcourse"
+      ],
+      "trigger": {
+        "weeks": [
+          1,
+          4
+        ],
+        "requires": {
+          "taskStarted": "coursemap",
+          "taskNotDone": "content"
+        },
+        "chance": 0.5
+      },
+      "text": "{faculty}: \"Module 2 is built around the university's draft guidance on generative AI. I just heard the final wording won't be approved until after the workshop.\"",
+      "choices": [
+        {
+          "id": "link-not-quote",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Build Module 2 around the principles that won't change, link to the official guidance page instead of quoting it, and ask the provost's office what is likely to change.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "content",
+              "value": 1
+            },
+            {
+              "type": "trust",
+              "value": 2
+            }
+          ],
+          "outcome": "Only the disclosure wording is in flux. The module links to it and is ready on time.",
+          "why": "When a source isn't final, depend on it loosely: a link stays current, a quote goes stale."
+        },
+        {
+          "id": "hold-module",
+          "tier": "resolve",
+          "credit": 0.2,
+          "reaction": "sad",
+          "label": "Hold Module 2 until the guidance is approved.",
+          "effects": [
+            {
+              "type": "responsiveness",
+              "value": -0.15,
+              "weeks": 2
+            },
+            {
+              "type": "trust",
+              "value": -1
+            }
+          ],
+          "outcome": "Module 2 is still empty in week four.",
+          "why": "Waiting on someone else's approval puts a fixed date at the mercy of their calendar."
+        },
+        {
+          "id": "quote-draft",
+          "tier": "ignore",
+          "credit": 0.2,
+          "reaction": "neutral",
+          "label": "Quote the draft as it is; it's close enough.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "content",
+              "value": 4
+            },
+            {
+              "type": "trust",
+              "value": -2
+            }
+          ],
+          "outcome": "The final guidance changes the disclosure rules. The course is out of date the week it launches.",
+          "why": "A quoted draft looks authoritative and goes wrong silently."
+        },
+        {
+          "id": "sup-asks-provost",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Ask {sup} to find out from the provost's office when it will be final.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "content",
+              "value": 1
+            }
+          ],
+          "outcome": "{sup} learns it's months away and asks how you'll build around it.",
+          "why": "Useful to know, but you still need a plan that doesn't depend on the date."
+        }
+      ],
+      "debrief": {
+        "concept": "Dependencies you don't control: depend on them loosely.",
+        "independent": "Build on what's stable, link to what may change, and ask the owner what is actually in flux.",
+        "escalateWhen": "When the course can't be accurate without a decision only leadership can get.",
+        "sop": "PM SOP: When Things Go Wrong, With Timelines; LD SOP: course map and assessment plan"
+      }
+    },
+    {
+      "id": "split-the-build",
+      "title": "{ld} Is Staying Late; {gd} Has Free Hours",
+      "who": "ld",
+      "mood": "worried",
+      "track": "capacity",
+      "track2": "leadership",
+      "projects": [
+        "teaching-ai-microcourse",
+        "stats-refresh-sprint"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          5
+        ],
+        "requires": {
+          "taskDone": "branding",
+          "taskStarted": "mastersite",
+          "taskNotDone": "mastersite"
+        },
+        "chance": 0.5
+      },
+      "text": "{ld} has two weeks of build left and has been staying late. {gd} finished the banners and the template and has free hours.",
+      "choices": [
+        {
+          "id": "bounded-pieces",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Give {gd} bounded pieces: banners, image alt text and module pages built from {ld}'s template, with {ld} reviewing each page before it goes live.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": 3,
+              "weeks": 2
+            },
+            {
+              "type": "morale",
+              "who": "gd",
+              "value": 3
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": 3
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 1
+            }
+          ],
+          "outcome": "{gd} builds pages from the template, {ld} reviews them, and both go home on time.",
+          "why": "Use idle capacity on well-defined pieces with a check. That's how the person on the critical path gets help without losing quality."
+        },
+        {
+          "id": "push-through",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Let {ld} push through with overtime; it's only two weeks.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": 2,
+              "weeks": 2
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -8
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 2
+            }
+          ],
+          "outcome": "The build lands, but {ld} is worn out and the last module has errors.",
+          "why": "Overtime trades morale and quality for hours, while help sat idle."
+        },
+        {
+          "id": "hand-off-half",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "worried",
+          "label": "Hand {gd} half the course to build alone.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": 3,
+              "weeks": 2
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 4
+            }
+          ],
+          "outcome": "{gd}'s modules look great but miss the alignment checks.",
+          "why": "Help without a template or a review step moves the work and adds errors."
+        },
+        {
+          "id": "ask-for-ld",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask {sup} for another learning designer.",
+          "effects": [
+            {
+              "type": "capacity",
+              "who": "ld",
+              "value": 1,
+              "weeks": 1
+            }
+          ],
+          "outcome": "{sup} has no one free this month and asks who on your team has time.",
+          "why": "Look at your own team's capacity before asking for more."
+        }
+      ],
+      "debrief": {
+        "concept": "Capacity: balance the load across the team before asking for more.",
+        "independent": "See who has free hours, give them well-defined pieces with a review step, and protect the person on the critical path.",
+        "escalateWhen": "When nobody on the team has the hours or the skills and the date can't move.",
+        "sop": "PM SOP: With Timelines (shifting work between team members)"
+      }
+    },
+    {
+      "id": "term-shell-missing",
+      "title": "The Term's Course Shell Doesn't Exist Yet",
+      "who": "ld",
+      "mood": "worried",
+      "track": "planning",
+      "track2": "risk",
+      "projects": [
+        "stats-refresh-sprint"
+      ],
+      "trigger": {
+        "weeks": [
+          2,
+          5
+        ],
+        "requires": {
+          "taskStarted": "branding",
+          "taskNotDone": "mastersite"
+        },
+        "chance": 0.5
+      },
+      "prevent": {
+        "risk": "Next term's Canvas shell won't exist until close to launch.",
+        "move": "Plan the copy into the term shell now",
+        "when": {
+          "taskStarted": "coursemap"
+        }
+      },
+      "text": "{ld}: \"Next term's Canvas shell won't be created until a few days before term. Where do I build the refreshed course?\"",
+      "choices": [
+        {
+          "id": "dev-shell-checklist",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Build in a development shell, keep a copy checklist as you go (dates, gradebook, quiz settings, links), and book the copy and a check of the copied course for the day the shell appears.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "qa",
+              "value": 1
+            }
+          ],
+          "outcome": "The shell appears in week five. The copy and the check take an afternoon.",
+          "why": "When a step depends on a date you don't control, keep working where you can and plan the handover step so it's quick and checked."
+        },
+        {
+          "id": "wait-for-shell",
+          "tier": "ignore",
+          "credit": 0.1,
+          "reaction": "sad",
+          "label": "Wait for the term shell before starting the migration.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 4
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -4
+            }
+          ],
+          "outcome": "The shell arrives in week five with the whole migration still to do.",
+          "why": "Waiting on another office's date stops work that didn't need to stop."
+        },
+        {
+          "id": "copy-at-end",
+          "tier": "resolve",
+          "credit": 0.4,
+          "reaction": "neutral",
+          "label": "Build in last term's course and copy everything over at the end.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 3
+            },
+            {
+              "type": "addEffort",
+              "task": "qa",
+              "value": 1
+            }
+          ],
+          "outcome": "The copy brings old due dates and a quiz set to the wrong term. QA finds most of them.",
+          "why": "Right to keep building, but an unplanned copy carries old settings across."
+        },
+        {
+          "id": "sup-registrar",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Ask {sup} to get the shell created early.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "qa",
+              "value": 1
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 1
+            }
+          ],
+          "outcome": "{sup} gets the shell a week early. The copy still needs a checklist.",
+          "why": "Worth asking, but the plan for the copy is still yours to make."
+        }
+      ],
+      "debrief": {
+        "concept": "Planning: plan around dates you don't control.",
+        "independent": "Keep building where you can, write down what the handover step needs, and schedule a check right after it.",
+        "escalateWhen": "When the missing piece blocks launch and only another office can provide it.",
+        "sop": "LD SOP: Master Site Completion; LD SOP: QA and student testing"
+      }
+    },
+    {
+      "id": "last-term-feedback",
+      "title": "Six Things Students Complained About",
+      "who": "faculty",
+      "mood": "neutral",
+      "track": "change",
+      "track2": "stakeholders",
+      "projects": [
+        "stats-refresh-sprint"
+      ],
+      "trigger": {
+        "weeks": [
+          1,
+          4
+        ],
+        "requires": {
+          "taskNotDone": "content"
+        },
+        "chance": 0.5
+      },
+      "text": "{faculty} forwards last term's student comments: confusing quiz feedback, two broken links, a video with the wrong numbers, and a request for weekly live sessions. \"Can we fix all of this in the refresh?\"",
+      "choices": [
+        {
+          "id": "triage",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Sort the list with {fobj}: fix the small items on pages you're already touching, fold the wrong-numbers video into the re-record, and put live sessions on next term's list with a note to {sup}.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "content",
+              "value": 1
+            },
+            {
+              "type": "trust",
+              "value": 2
+            }
+          ],
+          "outcome": "Four of the six fixes ride along with planned work. Live sessions go into next year's planning.",
+          "why": "A refresh is a chance to fix cheap things next to planned work; a new feature needs its own decision."
+        },
+        {
+          "id": "yes-to-all",
+          "tier": "resolve",
+          "credit": 0.3,
+          "reaction": "frustrated",
+          "label": "Yes to all six.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "content",
+              "value": 2
+            },
+            {
+              "type": "addEffort",
+              "task": "production",
+              "value": 2
+            },
+            {
+              "type": "addEffort",
+              "task": "mastersite",
+              "value": 2
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -4
+            }
+          ],
+          "outcome": "The live-session setup pulls {ld} off the migration for a week.",
+          "why": "Saying yes to everything turns a refresh into a redesign without changing the date."
+        },
+        {
+          "id": "out-of-scope",
+          "tier": "ignore",
+          "credit": 0.2,
+          "reaction": "sad",
+          "label": "None of it is in scope; log it all for later.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -4
+            },
+            {
+              "type": "addHiddenRework",
+              "task": "mastersite",
+              "value": 1
+            }
+          ],
+          "outcome": "{faculty} is disappointed, and the broken links are still there in week one of term.",
+          "why": "Some of these cost minutes and students will hit them; out of scope shouldn't be automatic."
+        },
+        {
+          "id": "sup-scope",
+          "tier": "escalate",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Ask {sup} what's in scope.",
+          "effects": [
+            {
+              "type": "trust",
+              "value": -1
+            }
+          ],
+          "outcome": "{sup} asks you to sort them by cost and value first.",
+          "why": "Sorting the list is your job; bring the sorted list and a recommendation."
+        }
+      ],
+      "debrief": {
+        "concept": "Change control: triage requests by cost and fit.",
+        "independent": "Sort each request: cheap and next to planned work, do it now; new scope, record it and decide separately; agree the list in writing.",
+        "escalateWhen": "When a request would change the charter's scope or date.",
+        "sop": "PM SOP: Change of Scope"
+      }
+    },
+    {
+      "id": "next-term-instructor",
+      "title": "Someone Else Teaches It Next Term",
+      "who": "faculty",
+      "mood": "neutral",
+      "track": "communication",
+      "track2": "planning",
+      "projects": [
+        "stats-refresh-sprint"
+      ],
+      "trigger": {
+        "weeks": [
+          3,
+          6
+        ],
+        "requires": {
+          "taskNotDone": "handoff"
+        },
+        "chance": 0.45
+      },
+      "text": "{faculty}, in passing: \"I'm on leave next term. An adjunct will teach it; I don't know who yet.\"",
+      "choices": [
+        {
+          "id": "handoff-for-teacher",
+          "tier": "resolve",
+          "credit": 1.0,
+          "reaction": "happy",
+          "label": "Write the hand-off notes for whoever teaches it (what changed, where the quiz bank and datasets live, known issues), ask the department for the name, and invite them to the final walkthrough.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "handoff",
+              "value": 1
+            },
+            {
+              "type": "trust",
+              "value": 2
+            }
+          ],
+          "outcome": "The department names the adjunct a week before term. They join the walkthrough and catch one quiz setting.",
+          "why": "A hand-off is for the person who will run the course, not the person who signed off."
+        },
+        {
+          "id": "as-planned",
+          "tier": "ignore",
+          "credit": 0.2,
+          "reaction": "neutral",
+          "label": "Keep the hand-off with {faculty} as planned.",
+          "effects": [
+            {
+              "type": "addHiddenRework",
+              "task": "handoff",
+              "value": 2
+            },
+            {
+              "type": "trust",
+              "value": -1
+            }
+          ],
+          "outcome": "In week one of term, the adjunct emails ODL asking where the quizzes are.",
+          "why": "A hand-off to someone who won't teach it leaves the real user guessing."
+        },
+        {
+          "id": "full-manual",
+          "tier": "resolve",
+          "credit": 0.5,
+          "reaction": "neutral",
+          "label": "Write a detailed manual covering every page.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "handoff",
+              "value": 3
+            },
+            {
+              "type": "morale",
+              "who": "ld",
+              "value": -3
+            }
+          ],
+          "outcome": "A 30-page manual that nobody reads before term.",
+          "why": "Thorough, but too long for a busy instructor; cover what changed and what to watch."
+        },
+        {
+          "id": "sup-finds-out",
+          "tier": "escalate_plan",
+          "credit": 0.7,
+          "reaction": "neutral",
+          "label": "Ask {sup} to find out who's teaching and set up the hand-off.",
+          "effects": [
+            {
+              "type": "addEffort",
+              "task": "handoff",
+              "value": 1
+            }
+          ],
+          "outcome": "{sup} gets the name. The notes are still yours to write.",
+          "why": "Fine to ask for help finding the name; the hand-off itself is your job."
+        }
+      ],
+      "debrief": {
+        "concept": "Communication: hand off to the person who will run it.",
+        "independent": "Find out who will teach the course, write down what changed and what to watch, and walk them through it.",
+        "escalateWhen": "When nobody can say who will teach it close to term.",
+        "sop": "PM SOP: Delivery; Retrospective"
+      }
     }
   ]
 }

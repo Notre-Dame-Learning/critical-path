@@ -123,10 +123,16 @@ const workSinceReview = (g) => {
   return round(g.tasks.reduce((s, t) => s + Math.max(0, t.done - (m.workAtReview[t.id] ?? 0)), 0), 1);
 };
 
+// A situation can only come up when every task its trigger names is in this project (a sprint has no
+// branding or scripts task, so the image-licence or silent-faculty situations can never reach it).
+export function canOccur(g, e) {
+  return Object.values(e.trigger?.requires ?? {}).every((id) => g.tasks.some((t) => t.id === id));
+}
+
 // Situations a good PM could head off, offered from two weeks before their window while their conditions hold.
 function preventable(g) {
   const m = v2(g);
-  return g.deck.filter((e) => e.prevent && !g.firedEvents.includes(e.id) && !m.attempted.includes(e.id)
+  return g.deck.filter((e) => e.prevent && canOccur(g, e) && !g.firedEvents.includes(e.id) && !m.attempted.includes(e.id)
     && g.week >= (e.trigger.weeks?.[0] ?? 1) - 2 && g.week <= (e.trigger.weeks?.[1] ?? 99)
     && Object.entries(e.prevent.when ?? {}).every(([k, id]) => {
       const t = g.tasks.find((x) => x.id === id);
@@ -137,7 +143,8 @@ function preventable(g) {
 
 function preventChance(g, eventId) {
   const m = v2(g);
-  if (g.firedEvents.includes(eventId) || m.attempted.includes(eventId) || !g.deck.some((e) => e.id === eventId)) return false;
+  const ev = g.deck.find((e) => e.id === eventId);
+  if (!ev || !canOccur(g, ev) || g.firedEvents.includes(eventId) || m.attempted.includes(eventId)) return false;
   m.attempted.push(eventId);
   if (makeRng(`${g.seed}:${eventId}:prevent`).next() < PREVENT_CHANCE) { g.firedEvents.push(eventId); m.prevented.push(eventId); return true; }
   return false;

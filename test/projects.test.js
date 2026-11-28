@@ -41,7 +41,7 @@ test('calibration: best play usually launches the new projects on time, random p
 
 test('every new situation is tagged with tracks, limited to its projects, and can come up there', () => {
   const fresh = deck.events.filter((e) => e.projects?.some((pid) => NEW.includes(pid)));
-  assert.equal(fresh.length, 9);
+  assert.equal(fresh.length, 18);
   for (const e of fresh) {
     const { primary, secondary } = tracksOf(e);
     assert.ok(TRACKS.includes(primary) && TRACKS.includes(secondary), e.id);
@@ -50,6 +50,6 @@ test('every new situation is tagged with tracks, limited to its projects, and ca
       assert.ok(stage({ world, project: byId[pid], deck, event: e, seed: `st:${e.id}` }), `${e.id} stages in ${pid}`);
     }
   }
-  // Each sprint has situations of its own across most of its weeks.
-  for (const id of NEW.slice(1)) assert.ok(fresh.filter((e) => e.projects.includes(id)).length >= 2, id);
+  // Each sprint has at least five situations of its own, so repeat runs vary (Nov 28: 7, 5 and 7).
+  for (const id of NEW.slice(1)) assert.ok(fresh.filter((e) => e.projects.includes(id)).length >= 5, id);
 });
